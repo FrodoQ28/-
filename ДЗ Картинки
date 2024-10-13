@@ -1,0 +1,23 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ДЗ_картинки
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int objectsInRow = 3;
+            int userObjects = 52;
+            int numberOfRows;
+            int extraObjects;
+            numberOfRows = userObjects / objectsInRow;
+            extraObjects = userObjects % objectsInRow;
+            Console.WriteLine($"Заполненых рядов - {numberOfRows}, Картинок сверх меры - {extraObjects}");
+            Console.ReadKey();
+        }
+    }
+}
