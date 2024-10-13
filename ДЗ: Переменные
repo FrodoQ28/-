@@ -1,0 +1,26 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            byte maxWeight = 100;
+            short weightInBackpack = 50;
+            int normalSpeed = 6;
+            float ratioNormalSpeed = 1.0f;
+            int percentConvert = 100;
+            float onePercent = maxWeight / percentConvert;
+            float ratioSlowly = ratioNormalSpeed - (weightInBackpack / onePercent / percentConvert);
+            float walkingSpeed = normalSpeed * ratioSlowly;
+            bool walkPossible = walkingSpeed > 0;
+            string message = $"Вы можете двигаться {walkPossible}. Ваша скорость {walkingSpeed} км/ч. Вес ваших вещей {weightInBackpack}/{maxWeight} кг.";
+            Console.WriteLine(message);
+                            }
+    }
+}
