@@ -1,0 +1,42 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ДЗ_работа_со_строками
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            string firstName;
+            string lastName;
+            string age;
+            string gender;
+            string country;
+            string work;
+            string conclusionPsychotherapist;
+            Console.Write("Ввдите свое имя: ");
+            firstName = Console.ReadLine();
+            Console.Write("Ввдите свою фамилию: ");
+            lastName = Console.ReadLine();
+            Console.Write("Ввдите свой пол: ");
+            gender = Console.ReadLine();
+            Console.Write("Ввдите свой возраст: ");
+            age = Console.ReadLine();
+            Console.Write("Введите вашу страну: ");
+            country = Console.ReadLine();
+            Console.Write("Ввдите свою профессию: ");
+            work = Console.ReadLine();
+            Console.Write("Вы квадробер?: ");
+            conclusionPsychotherapist = Console.ReadLine();
+            Console.WriteLine($"Вас зовут {lastName} {firstName}, ваш пол {gender}, вам {age} лет, ваша страна {country}, вы {work}.");
+            Console.WriteLine($"Заключение психотерапевта: Требуется лечение - {conclusionPsychotherapist}");
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("Если что, без обид, просто шутка))");
+            Console.ReadKey();
+        }
+    }
+}
