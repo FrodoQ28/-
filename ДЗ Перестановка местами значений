@@ -1,0 +1,26 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ДЗ_перестановка_местами_значений
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            string coffe = "Кофе";
+            string tea = "Чай";
+            Console.WriteLine($"В кружке №1 - {coffe}, В кружке №2 - {tea}.");
+            Console.WriteLine("Нажмите на любую кнопку чтобы произошло волшебство.");
+            Console.ReadKey();
+            string emptyCup = coffe;
+            coffe = tea;
+            tea = emptyCup;
+            Console.WriteLine($"Ура! В кружке №1 теперь - {coffe}, В кружке №2 - {tea}. Чудеса.");
+            Console.WriteLine("Правда теперь нужно будет мыть три кружки вместо двух.");
+            Console.ReadKey();
+        }
+    }
+}
