@@ -1,8 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ДЗ_Магазин_кристаллов
 {
@@ -33,7 +29,7 @@ namespace ДЗ_Магазин_кристаллов
             Console.Write($"Цена одного кристалла {priceCrystal} золотых. Сколько кристаллов тебе нужно? ");
             numberOfCrystal = Convert.ToInt32(Console.ReadLine());
             Console.WriteLine("Чесночный фермер Грег: Спасибо за покупку Авантюрист, надеюсь в следующий раз ты не будешь таким скрягой и попробуешь мой отменный чеснок, ты не пожалеешь!");
-            money = money - numberOfCrystal * priceCrystal;
+            money -= numberOfCrystal * priceCrystal;
             Console.WriteLine($"Ваши кристаллы - {numberOfCrystal} шт., Ваше золото - {money} з.");
             Console.ReadKey();
         }
