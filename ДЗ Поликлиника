@@ -1,0 +1,21 @@
+using System;
+
+namespace ДЗ_Поликлиника
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int peopleInQueue;
+            int receptionTime = 10;
+            int oneHour = 60;
+
+            Console.Write("Введите количество людей перед вами: ");
+            peopleInQueue = Convert.ToInt32(Console.ReadLine());
+            int numberOfHours = peopleInQueue * receptionTime / oneHour;
+            int numberOfMinutes = peopleInQueue * receptionTime % oneHour;
+            Console.WriteLine($"Вы должны отстоять в очереди {numberOfHours} часа и {numberOfMinutes} минут.");
+            Console.ReadKey();
+        }
+    }
+}
