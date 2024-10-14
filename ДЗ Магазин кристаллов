@@ -7,8 +7,8 @@ namespace ДЗ_Магазин_кристаллов
         static void Main(string[] args)
         {
             int money;
-            int priceCrystal = 10;
-            int numberOfCrystal;
+            int crystalPryce = 10;
+            int crystals;
             Console.Write("Введите количество вашего золота ");
             money = Convert.ToInt32(Console.ReadLine());
             Console.WriteLine("Вы входите в небольшое поселение посреди густого леса, на берегу живописного озера. Сквозь густые кроны многочисленных деревьев лиственных пород мощным потоком пробиваются лучи палящего июньского солнца. При входе на табличке вы замечаете полустертую надпись \"Светлолесье\".");
@@ -26,11 +26,11 @@ namespace ДЗ_Магазин_кристаллов
             Console.WriteLine("Чесночный фермер Грег: Говоришь тебе не нужен чеснок, а только \"Супер-пупер-волшебные кристаллы\"? У меня есть немного, но я не советую тебе отказываться от самого вкусного чеснока в твоей жизни!");
             Console.WriteLine("Нажмите любую клавишу для продолжения...");
             Console.ReadKey();
-            Console.Write($"Цена одного кристалла {priceCrystal} золотых. Сколько кристаллов тебе нужно? ");
-            numberOfCrystal = Convert.ToInt32(Console.ReadLine());
+            Console.Write($"Цена одного кристалла {crystalPryce} золотых. Сколько кристаллов тебе нужно? ");
+            crystals = Convert.ToInt32(Console.ReadLine());
             Console.WriteLine("Чесночный фермер Грег: Спасибо за покупку Авантюрист, надеюсь в следующий раз ты не будешь таким скрягой и попробуешь мой отменный чеснок, ты не пожалеешь!");
-            money -= numberOfCrystal * priceCrystal;
-            Console.WriteLine($"Ваши кристаллы - {numberOfCrystal} шт., Ваше золото - {money} з.");
+            money -= crystals * crystalPryce;
+            Console.WriteLine($"Ваши кристаллы - {crystals} шт., Ваше золото - {money} з.");
             Console.ReadKey();
         }
     }
