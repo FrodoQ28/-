@@ -8,11 +8,11 @@ namespace ДЗ_картинки
         {
             int picturesInRow = 3;
             int userPictures = 52;
-            int numberOfRowsWithPictures;
+            int fullRows;
             int extraPictures;
-            numberOfRowsWithPictures = userPictures / picturesInRow;
+            fullRows = userPictures / picturesInRow;
             extraPictures = userPictures % picturesInRow;
-            Console.WriteLine($"Заполненых рядов - {numberOfRowsWithPictures}, Картинок сверх меры - {extraPictures}");
+            Console.WriteLine($"Заполненых рядов - {fullRows}, Картинок сверх меры - {extraPictures}");
             Console.ReadKey();
         }
     }
