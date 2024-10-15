@@ -1,0 +1,58 @@
+using System;
+
+namespace HW_ConsoleMenu
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Random random = new Random();
+            const string CommandRich = "$$$";
+            const string CommandPoor = "Деньги";
+            const string CommandRandomNumber = "Число";
+            const string CommandClearConsole = "Очистить";
+            const string CommandExit = "Выход";
+            string userInput = string.Empty;
+            Console.Write($"Приветствую тебя товарищ, для работы с этим приложением введи одну из команд:\nХочешь разбогатеть? - {CommandRich}\n" +
+                $"Хочешь выгодно вложить деньги? - {CommandPoor}" +
+                $"\nХочешь выбрать счастилвое число? - {CommandRandomNumber}\nХочешь очистить консоль от этой белиберды? - {CommandClearConsole}\n" +
+                $"Хочешь свалить отсюда поскорей? - {CommandExit}\nВведите команду: ");
+
+            while (userInput != CommandExit)
+            {
+                userInput =  Console.ReadLine();
+                switch (userInput)
+                {
+                    case CommandRich:
+                        Console.WriteLine("Проверь карманы зимней куртки.");
+                        Console.Write("Введите команду: ");
+                        break;
+
+                    case CommandPoor:
+                        Console.WriteLine("Переводи деньги мне и вселенная тебя вознаградит!");
+                        Console.Write("Введите команду: ");
+                        Console.Write("Введите команду: ");
+                        break;
+
+                    case CommandRandomNumber:
+                        Console.WriteLine(random.Next(0, 99999));
+                        Console.Write("Введите команду: ");
+                        break;
+
+                    case CommandClearConsole:
+                        Console.Clear();
+                        Console.Write("Введите команду: ");
+                        break;
+
+                    case CommandExit:
+                        break;
+
+                    default:
+                        Console.WriteLine("Нет такой комманды");
+                        Console.Write("Введите команду: ");
+                        break;
+                }
+            }
+        }
+    }
+}
