@@ -6,12 +6,14 @@ namespace ДЗ_Контроль_выхода
     {
         static void Main(string[] args)
         {
-            string closeProgram = "0";
-
-            while (closeProgram != "exit") 
+            string closeProgram = "exit";
+            string userInput = "0";
+            
+            while (closeProgram != userInput) 
             {
-                Console.WriteLine("Чтобы завершить работу программы введите exit: ");
-                closeProgram = Console.ReadLine();
+                Console.WriteLine($"Чтобы завершить работу программы введите {closeProgram}: ");
+                userInput = Console.ReadLine();
+
             }
         }
     }
