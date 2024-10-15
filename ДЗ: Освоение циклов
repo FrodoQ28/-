@@ -1,0 +1,23 @@
+using System;
+
+namespace ДЗ_освоение_циклов
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            string userMessage;
+            int userNumberRepeat;
+            Console.Write("Введите ваше сообщение: ");
+            userMessage = Console.ReadLine();
+            Console.Write("Сколько раз повторить ваше сообщение? ");
+            userNumberRepeat = Convert.ToInt32(Console.ReadLine ());
+            
+            for (int numberRepeat = userNumberRepeat; numberRepeat > 0; numberRepeat--)
+            {
+                Console.WriteLine(userMessage);
+            }
+        Console.ReadKey();
+        }
+    }
+}
