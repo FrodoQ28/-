@@ -1,0 +1,18 @@
+using System;
+
+namespace ДЗ_Контроль_выхода
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            string closeProgram = "0";
+
+            while (closeProgram != "exit") 
+            {
+                Console.WriteLine("Чтобы завершить работу программы введите exit: ");
+                closeProgram = Console.ReadLine();
+            }
+        }
+    }
+}
