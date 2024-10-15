@@ -6,11 +6,13 @@ namespace ДЗ_Последовательность
     {
         static void Main(string[] args)
         {
-            int startNumber = 5, endNumber = 110;
+            int startNumber = 5;
+            int endNumber = 110;
+            int plusNumber = 7;
 
-            for (int condition = startNumber; condition != endNumber; condition += 7)
+            for (int i = startNumber; i != endNumber; i += plusNumber)
             {
-                Console.WriteLine(condition);
+                Console.WriteLine(i);
             }
         }
     }
