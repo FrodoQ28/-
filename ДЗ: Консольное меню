@@ -13,6 +13,8 @@ namespace HW_ConsoleMenu
             const string CommandClearConsole = "Очистить";
             const string CommandExit = "Выход";
             string userInput = string.Empty;
+            int randomNumberMin = 0;
+            int randomNumberMax = 99999;
             Console.Write($"Приветствую тебя товарищ, для работы с этим приложением введи одну из команд:\nХочешь разбогатеть? - {CommandRich}\n" +
                 $"Хочешь выгодно вложить деньги? - {CommandPoor}" +
                 $"\nХочешь выбрать счастилвое число? - {CommandRandomNumber}\nХочешь очистить консоль от этой белиберды? - {CommandClearConsole}\n" +
@@ -20,28 +22,24 @@ namespace HW_ConsoleMenu
 
             while (userInput != CommandExit)
             {
+                Console.Write("Введите команду: ");
                 userInput =  Console.ReadLine();
                 switch (userInput)
                 {
                     case CommandRich:
                         Console.WriteLine("Проверь карманы зимней куртки.");
-                        Console.Write("Введите команду: ");
                         break;
 
                     case CommandPoor:
                         Console.WriteLine("Переводи деньги мне и вселенная тебя вознаградит!");
-                        Console.Write("Введите команду: ");
-                        Console.Write("Введите команду: ");
                         break;
 
                     case CommandRandomNumber:
-                        Console.WriteLine(random.Next(0, 99999));
-                        Console.Write("Введите команду: ");
+                        Console.WriteLine(random.Next(randomNumberMin, randomNumberMax));
                         break;
 
                     case CommandClearConsole:
                         Console.Clear();
-                        Console.Write("Введите команду: ");
                         break;
 
                     case CommandExit:
@@ -49,7 +47,6 @@ namespace HW_ConsoleMenu
 
                     default:
                         Console.WriteLine("Нет такой комманды");
-                        Console.Write("Введите команду: ");
                         break;
                 }
             }
