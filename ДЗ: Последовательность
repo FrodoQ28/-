@@ -1,0 +1,17 @@
+using System;
+
+namespace ДЗ_Последовательность
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int startNumber = 5, endNumber = 110;
+
+            for (int condition = startNumber; condition != endNumber; condition += 7)
+            {
+                Console.WriteLine(condition);
+            }
+        }
+    }
+}
