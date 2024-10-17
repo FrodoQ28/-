@@ -6,13 +6,13 @@ namespace HW_currency_converter
     {
         static void Main(string[] args)
         {
-            const string SilverToGoldOperation = "1";
-            const string GoldToSilverOperation = "2";
-            const string SilverToPlatinumOperation = "3";
-            const string PlatinumToSilverOperation = "4";
-            const string GoldToPlatinumOperation = "5";
-            const string PlatinumToGoldOperation = "6";
-            const string CloseAppOperation = "Выход";
+            const string CommandSilverToGoldOperation = "1";
+            const string CommandGoldToSilverOperation = "2";
+            const string CommandSilverToPlatinumOperation = "3";
+            const string CommandPlatinumToSilverOperation = "4";
+            const string CommandGoldToPlatinumOperation = "5";
+            const string CommandPlatinumToGoldOperation = "6";
+            const string CommandExitAppOperation = "Выход";
 
             float silverInWallet;
             float goldInWallet;
@@ -25,8 +25,8 @@ namespace HW_currency_converter
             float goldToPlatinumRate = 1 / 103f;
             float platinumToGoldRate = 99f;
             string desiredOperation;
-            string closeApp = string.Empty;
-
+            bool exitApp = false;
+            
             Console.WriteLine("Введите количество ваших серебрянных монет");
             silverInWallet = Convert.ToSingle(Console.ReadLine());
             Console.WriteLine("Введите количество ваших золотых монет");
@@ -35,22 +35,22 @@ namespace HW_currency_converter
             platinumInWallet = Convert.ToSingle(Console.ReadLine());
 
             Console.WriteLine("Добро пожаловать в обменник валюты Светлолесья, Авантюрист.\nКакую операцию вы желаете провести?");
-            Console.Write($"Обмен серебро - золото, курс 102/1    - {SilverToGoldOperation}\n" +
-                $"Обмен золото - серебро, курс 1/98     - {GoldToSilverOperation}\n" +
-                $"Обмен серебро - платина, курс 1020/1  - {SilverToPlatinumOperation}\n" +
-                $"Обмен платина - серебро, курс 1/980   - {PlatinumToSilverOperation}\n" +
-                $"Обмен золото - платина, курс 103/1    - {GoldToPlatinumOperation}\n" +
-                $"Обмен платина - золото, курс 1/99     - {PlatinumToGoldOperation}\n" +
-                $"Закрыть обменник                      - {CloseAppOperation}\n");
+            Console.Write($"Обмен серебро - золото, курс 1/{silverToGoldRate}   - {CommandSilverToGoldOperation}\n" +
+                $"Обмен золото - серебро, курс 1/{goldToSilverRate}            - {CommandGoldToSilverOperation}\n" +
+                $"Обмен серебро - платина, курс 1/{silverToPlatinumRate} - {CommandSilverToPlatinumOperation}\n" +
+                $"Обмен платина - серебро, курс 1/{platinumToSilverRate}          - {CommandPlatinumToSilverOperation}\n" +
+                $"Обмен золото - платина, курс 1/{goldToPlatinumRate}   - {CommandGoldToPlatinumOperation}\n" +
+                $"Обмен платина - золото, курс 1/{platinumToGoldRate}            - {CommandPlatinumToGoldOperation}\n" +
+                $"Закрыть обменник                             - {CommandExitAppOperation}\n");
 
-            while (closeApp != CloseAppOperation)
+            while (exitApp != true)
             {
                 Console.Write("Введите желаемую операцию: ");
                 desiredOperation = Console.ReadLine();
 
                 switch (desiredOperation)
                 {
-                    case SilverToGoldOperation:
+                    case CommandSilverToGoldOperation:
                         Console.Write("Сколько серебрянных монет вы хотите обменять?: ");
                         exchangeCurrencyCount = Convert.ToSingle(Console.ReadLine());
 
@@ -66,7 +66,7 @@ namespace HW_currency_converter
                         }
                         break;
 
-                    case GoldToSilverOperation:
+                    case CommandGoldToSilverOperation:
                         Console.Write("Сколько золотых монет вы хотите обменять?: ");
                         exchangeCurrencyCount = Convert.ToSingle(Console.ReadLine());
 
@@ -82,7 +82,7 @@ namespace HW_currency_converter
                         }
                         break;
 
-                    case SilverToPlatinumOperation:
+                    case CommandSilverToPlatinumOperation:
                         Console.Write("Сколько серебрянных монет вы хотите обменять?: ");
                         exchangeCurrencyCount = Convert.ToSingle(Console.ReadLine());
 
@@ -98,7 +98,7 @@ namespace HW_currency_converter
                         }
                         break;
 
-                    case PlatinumToSilverOperation:
+                    case CommandPlatinumToSilverOperation:
                         Console.Write("Сколько платиновых монет вы хотите обменять?: ");
                         exchangeCurrencyCount = Convert.ToSingle(Console.ReadLine());
 
@@ -114,7 +114,7 @@ namespace HW_currency_converter
                         }
                         break;
 
-                    case GoldToPlatinumOperation:
+                    case CommandGoldToPlatinumOperation:
                         Console.Write("Сколько золотых монет вы хотите обменять?: ");
                         exchangeCurrencyCount = Convert.ToSingle(Console.ReadLine());
 
@@ -130,7 +130,7 @@ namespace HW_currency_converter
                         }
                         break;
 
-                    case PlatinumToGoldOperation:
+                    case CommandPlatinumToGoldOperation:
                         Console.Write("Сколько платиновых монет вы хотите обменять?: ");
                         exchangeCurrencyCount = Convert.ToSingle(Console.ReadLine());
 
@@ -146,8 +146,8 @@ namespace HW_currency_converter
                         }
                         break;
 
-                    case CloseAppOperation:
-                        closeApp = CloseAppOperation;
+                    case CommandExitAppOperation:
+                        exitApp = true;
                         break;
 
                     default:
