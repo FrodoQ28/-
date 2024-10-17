@@ -1,0 +1,41 @@
+using System;
+
+namespace HW_multiples_of_numbers
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int userInputMinNumber = 10;
+            int userInputMaxNumber = 25;
+            int userInput;
+            int startNumberMultiplicity = 50;
+            int endNumberMultiplicity = 150;
+            int numberOfNubersMultiplicity = 0;
+            bool isRunning = true;
+
+            Console.Write($"Введите число от {userInputMinNumber} до {userInputMaxNumber}: ");
+            userInput = Convert.ToInt32(Console.ReadLine());
+
+            int enumerationNumbers = userInput;
+
+            while (isRunning == true)
+            {
+                if (enumerationNumbers >= startNumberMultiplicity && enumerationNumbers <= endNumberMultiplicity)
+                {
+                    numberOfNubersMultiplicity++;
+                    enumerationNumbers += userInput;
+                }
+                else
+                {
+                    enumerationNumbers += userInput;
+                }
+
+                isRunning = enumerationNumbers <= endNumberMultiplicity;
+            }
+
+            Console.WriteLine($"Количество чисел от {startNumberMultiplicity} до {endNumberMultiplicity} кратных {userInput} - {numberOfNubersMultiplicity}");
+            Console.ReadKey();
+        }
+    }
+}
