@@ -26,12 +26,14 @@ namespace HW_currency_converter
             float platinumToGoldRate = 99f;
             string desiredOperation;
             string closeApp = string.Empty;
+
             Console.WriteLine("Введите количество ваших серебрянных монет");
             silverInWallet = Convert.ToSingle(Console.ReadLine());
             Console.WriteLine("Введите количество ваших золотых монет");
             goldInWallet = Convert.ToSingle(Console.ReadLine());
             Console.WriteLine("Введите количество ваших платиновых монет");
             platinumInWallet = Convert.ToSingle(Console.ReadLine());
+
             Console.WriteLine("Добро пожаловать в обменник валюты Светлолесья, Авантюрист.\nКакую операцию вы желаете провести?");
             Console.Write($"Обмен серебро - золото, курс 102/1    - {SilverToGoldOperation}\n" +
                 $"Обмен золото - серебро, курс 1/98     - {GoldToSilverOperation}\n" +
@@ -51,6 +53,7 @@ namespace HW_currency_converter
                     case SilverToGoldOperation:
                         Console.Write("Сколько серебрянных монет вы хотите обменять?: ");
                         exchangeCurrencyCount = Convert.ToSingle(Console.ReadLine());
+
                         if (silverInWallet >= exchangeCurrencyCount)
                         {
                             silverInWallet -= exchangeCurrencyCount;
@@ -66,6 +69,7 @@ namespace HW_currency_converter
                     case GoldToSilverOperation:
                         Console.Write("Сколько золотых монет вы хотите обменять?: ");
                         exchangeCurrencyCount = Convert.ToSingle(Console.ReadLine());
+
                         if (goldInWallet >= exchangeCurrencyCount)
                         {
                             goldInWallet -= exchangeCurrencyCount;
@@ -81,6 +85,7 @@ namespace HW_currency_converter
                     case SilverToPlatinumOperation:
                         Console.Write("Сколько серебрянных монет вы хотите обменять?: ");
                         exchangeCurrencyCount = Convert.ToSingle(Console.ReadLine());
+
                         if (silverInWallet >= exchangeCurrencyCount)
                         {
                             silverInWallet -= exchangeCurrencyCount;
@@ -96,6 +101,7 @@ namespace HW_currency_converter
                     case PlatinumToSilverOperation:
                         Console.Write("Сколько платиновых монет вы хотите обменять?: ");
                         exchangeCurrencyCount = Convert.ToSingle(Console.ReadLine());
+
                         if (platinumInWallet >= exchangeCurrencyCount)
                         {
                             platinumInWallet -= exchangeCurrencyCount;
@@ -111,6 +117,7 @@ namespace HW_currency_converter
                     case GoldToPlatinumOperation:
                         Console.Write("Сколько золотых монет вы хотите обменять?: ");
                         exchangeCurrencyCount = Convert.ToSingle(Console.ReadLine());
+
                         if (goldInWallet >= exchangeCurrencyCount)
                         {
                             goldInWallet -= exchangeCurrencyCount;
@@ -126,6 +133,7 @@ namespace HW_currency_converter
                     case PlatinumToGoldOperation:
                         Console.Write("Сколько платиновых монет вы хотите обменять?: ");
                         exchangeCurrencyCount = Convert.ToSingle(Console.ReadLine());
+
                         if (platinumInWallet >= exchangeCurrencyCount)
                         {
                             platinumInWallet -= exchangeCurrencyCount;
