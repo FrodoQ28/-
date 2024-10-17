@@ -25,7 +25,7 @@ namespace HW_currency_converter
             float goldToPlatinumRate = 1 / 103f;
             float platinumToGoldRate = 99f;
             string desired;
-            bool isRunning = false;
+            bool isRunning = true;
             
             Console.WriteLine("Введите количество ваших серебрянных монет");
             silverInWallet = Convert.ToSingle(Console.ReadLine());
@@ -43,7 +43,7 @@ namespace HW_currency_converter
                 $"Обмен платина - золото, курс 1/{platinumToGoldRate}            - {CommandPlatinumToGold}\n" +
                 $"Закрыть обменник                             - {CommandExit}\n");
 
-            while (isRunning != true)
+            while (isRunning != false)
             {
                 Console.Write("Введите желаемую операцию: ");
                 desired = Console.ReadLine();
@@ -147,7 +147,7 @@ namespace HW_currency_converter
                         break;
 
                     case CommandExit:
-                        isRunning = true;
+                        isRunning = false;
                         break;
 
                     default:
