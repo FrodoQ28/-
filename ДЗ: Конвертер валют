@@ -6,13 +6,13 @@ namespace HW_currency_converter
     {
         static void Main(string[] args)
         {
-            const string CommandSilverToGoldOperation = "1";
-            const string CommandGoldToSilverOperation = "2";
-            const string CommandSilverToPlatinumOperation = "3";
-            const string CommandPlatinumToSilverOperation = "4";
-            const string CommandGoldToPlatinumOperation = "5";
-            const string CommandPlatinumToGoldOperation = "6";
-            const string CommandExitAppOperation = "Выход";
+            const string CommandSilverToGold = "1";
+            const string CommandGoldToSilver = "2";
+            const string CommandSilverToPlatinum = "3";
+            const string CommandPlatinumToSilver = "4";
+            const string CommandGoldToPlatinum = "5";
+            const string CommandPlatinumToGold = "6";
+            const string CommandExit = "Выход";
 
             float silverInWallet;
             float goldInWallet;
@@ -24,8 +24,8 @@ namespace HW_currency_converter
             float platinumToSilverRate = 980f;
             float goldToPlatinumRate = 1 / 103f;
             float platinumToGoldRate = 99f;
-            string desiredOperation;
-            bool exitApp = false;
+            string desired;
+            bool isRunning = false;
             
             Console.WriteLine("Введите количество ваших серебрянных монет");
             silverInWallet = Convert.ToSingle(Console.ReadLine());
@@ -35,22 +35,22 @@ namespace HW_currency_converter
             platinumInWallet = Convert.ToSingle(Console.ReadLine());
 
             Console.WriteLine("Добро пожаловать в обменник валюты Светлолесья, Авантюрист.\nКакую операцию вы желаете провести?");
-            Console.Write($"Обмен серебро - золото, курс 1/{silverToGoldRate}   - {CommandSilverToGoldOperation}\n" +
-                $"Обмен золото - серебро, курс 1/{goldToSilverRate}            - {CommandGoldToSilverOperation}\n" +
-                $"Обмен серебро - платина, курс 1/{silverToPlatinumRate} - {CommandSilverToPlatinumOperation}\n" +
-                $"Обмен платина - серебро, курс 1/{platinumToSilverRate}          - {CommandPlatinumToSilverOperation}\n" +
-                $"Обмен золото - платина, курс 1/{goldToPlatinumRate}   - {CommandGoldToPlatinumOperation}\n" +
-                $"Обмен платина - золото, курс 1/{platinumToGoldRate}            - {CommandPlatinumToGoldOperation}\n" +
-                $"Закрыть обменник                             - {CommandExitAppOperation}\n");
+            Console.Write($"Обмен серебро - золото, курс 1/{silverToGoldRate}   - {CommandSilverToGold}\n" +
+                $"Обмен золото - серебро, курс 1/{goldToSilverRate}            - {CommandGoldToSilver}\n" +
+                $"Обмен серебро - платина, курс 1/{silverToPlatinumRate} - {CommandSilverToPlatinum}\n" +
+                $"Обмен платина - серебро, курс 1/{platinumToSilverRate}          - {CommandPlatinumToSilver}\n" +
+                $"Обмен золото - платина, курс 1/{goldToPlatinumRate}   - {CommandGoldToPlatinum}\n" +
+                $"Обмен платина - золото, курс 1/{platinumToGoldRate}            - {CommandPlatinumToGold}\n" +
+                $"Закрыть обменник                             - {CommandExit}\n");
 
-            while (exitApp != true)
+            while (isRunning != true)
             {
                 Console.Write("Введите желаемую операцию: ");
-                desiredOperation = Console.ReadLine();
+                desired = Console.ReadLine();
 
-                switch (desiredOperation)
+                switch (desired)
                 {
-                    case CommandSilverToGoldOperation:
+                    case CommandSilverToGold:
                         Console.Write("Сколько серебрянных монет вы хотите обменять?: ");
                         exchangeCurrencyCount = Convert.ToSingle(Console.ReadLine());
 
@@ -66,7 +66,7 @@ namespace HW_currency_converter
                         }
                         break;
 
-                    case CommandGoldToSilverOperation:
+                    case CommandGoldToSilver:
                         Console.Write("Сколько золотых монет вы хотите обменять?: ");
                         exchangeCurrencyCount = Convert.ToSingle(Console.ReadLine());
 
@@ -82,7 +82,7 @@ namespace HW_currency_converter
                         }
                         break;
 
-                    case CommandSilverToPlatinumOperation:
+                    case CommandSilverToPlatinum:
                         Console.Write("Сколько серебрянных монет вы хотите обменять?: ");
                         exchangeCurrencyCount = Convert.ToSingle(Console.ReadLine());
 
@@ -98,7 +98,7 @@ namespace HW_currency_converter
                         }
                         break;
 
-                    case CommandPlatinumToSilverOperation:
+                    case CommandPlatinumToSilver:
                         Console.Write("Сколько платиновых монет вы хотите обменять?: ");
                         exchangeCurrencyCount = Convert.ToSingle(Console.ReadLine());
 
@@ -114,7 +114,7 @@ namespace HW_currency_converter
                         }
                         break;
 
-                    case CommandGoldToPlatinumOperation:
+                    case CommandGoldToPlatinum:
                         Console.Write("Сколько золотых монет вы хотите обменять?: ");
                         exchangeCurrencyCount = Convert.ToSingle(Console.ReadLine());
 
@@ -130,7 +130,7 @@ namespace HW_currency_converter
                         }
                         break;
 
-                    case CommandPlatinumToGoldOperation:
+                    case CommandPlatinumToGold:
                         Console.Write("Сколько платиновых монет вы хотите обменять?: ");
                         exchangeCurrencyCount = Convert.ToSingle(Console.ReadLine());
 
@@ -146,8 +146,8 @@ namespace HW_currency_converter
                         }
                         break;
 
-                    case CommandExitAppOperation:
-                        exitApp = true;
+                    case CommandExit:
+                        isRunning = true;
                         break;
 
                     default:
