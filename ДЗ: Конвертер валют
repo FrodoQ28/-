@@ -1,0 +1,143 @@
+using System;
+
+namespace HW_currency_converter
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            float silverInWallet;
+            float goldInWallet;
+            float platinumInWallet;
+            float exchangeCurrencyCount;
+            int silverToGoldRate = 102;
+            int goldToSilverRate = 98;
+            int silverToPlatinumRate = 1020;
+            int platinumToSilverRate = 980;
+            int goldToPlatinumRate = 103;
+            int platinumToGoldRate = 99;
+            string desiredOperation;
+            const string silverToGoldOperation = "1";
+            const string goldToSilverOperation = "2";
+            const string silverToPlatinumOperation = "3";
+            const string platinumToSilverOperation = "4";
+            const string goldToPlatinumOperation = "5";
+            const string platinumToGoldOperation = "6";
+            const string closeAppOperation = "Выход";
+            string closeApp = string.Empty;
+            Console.WriteLine("Введите количество ваших серебрянных монет");
+            silverInWallet = Convert.ToSingle(Console.ReadLine());
+            Console.WriteLine("Введите количество ваших золотых монет");
+            goldInWallet = Convert.ToSingle(Console.ReadLine());
+            Console.WriteLine("Введите количество ваших платиновых монет");
+            platinumInWallet = Convert.ToSingle(Console.ReadLine());
+            Console.WriteLine("Добро пожаловать в обменник валюты Светлолесья, Авантюрист.\nКакую операцию вы желаете провести?");
+            Console.Write($"Обмен серебро - золото, курс {silverToGoldRate}/1    - {silverToGoldOperation}\n" +
+                $"Обмен золото - серебро, курс 1/{goldToSilverRate}     - {goldToSilverOperation}\n" +
+                $"Обмен серебро - платина, курс {silverToPlatinumRate}/1  - {silverToPlatinumOperation}\n" +
+                $"Обмен платина - серебро, курс 1/{platinumToSilverRate}   - {platinumToSilverOperation}\n" +
+                $"Обмен золото - платина, курс {goldToPlatinumRate}/1    - {goldToPlatinumOperation}\n" +
+                $"Обмен платина - золото, курс 1/{platinumToGoldRate}     - {platinumToGoldOperation}\n" +
+                $"Закрыть обменник                      - {closeAppOperation}\n");
+
+            while (closeApp != "Выход")
+            {
+                Console.Write("Введите желаемую операцию: ");
+                desiredOperation = Console.ReadLine();
+                switch (desiredOperation)
+                {
+                    case silverToGoldOperation:
+                        Console.Write("Сколько серебрянных монет вы хотите обменять?: ");
+                        exchangeCurrencyCount = Convert.ToSingle(Console.ReadLine());
+                        if (silverInWallet >= exchangeCurrencyCount)
+                        {
+                            silverInWallet -= exchangeCurrencyCount;
+                            goldInWallet += exchangeCurrencyCount / silverToGoldRate;
+                            Console.WriteLine($"В вашем кошельке серебрянных монет - {silverInWallet}, золотых монет - {goldInWallet}, платиновых монет - {platinumInWallet}.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("В вашем кошельке недостаточно серебрянных монет.");
+                        }
+                        break;
+                    case goldToSilverOperation:
+                        Console.Write("Сколько золотых монет вы хотите обменять?: ");
+                        exchangeCurrencyCount = Convert.ToSingle(Console.ReadLine());
+                        if (goldInWallet >= exchangeCurrencyCount)
+                        {
+                            goldInWallet -= exchangeCurrencyCount;
+                            silverInWallet += exchangeCurrencyCount * goldToSilverRate;
+                            Console.WriteLine($"В вашем кошельке серебрянных монет - {silverInWallet}, золотых монет - {goldInWallet}, платиновых монет - {platinumInWallet}.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("В вашем кошельке недостаточно золотых монет.");
+                        }
+                        break;
+                    case silverToPlatinumOperation:
+                        Console.Write("Сколько серебрянных монет вы хотите обменять?: ");
+                        exchangeCurrencyCount = Convert.ToSingle(Console.ReadLine());
+                        if (silverInWallet >= exchangeCurrencyCount)
+                        {
+                            silverInWallet -= exchangeCurrencyCount;
+                            platinumInWallet += exchangeCurrencyCount / silverToPlatinumRate;
+                            Console.WriteLine($"В вашем кошельке серебрянных монет - {silverInWallet}, золотых монет - {goldInWallet}, платиновых монет - {platinumInWallet}.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("В вашем кошельке недостаточно серебрянных монет.");
+                        }
+                        break;
+                    case platinumToSilverOperation:
+                        Console.Write("Сколько платиновых монет вы хотите обменять?: ");
+                        exchangeCurrencyCount = Convert.ToSingle(Console.ReadLine());
+                        if (platinumInWallet >= exchangeCurrencyCount)
+                        {
+                            platinumInWallet -= exchangeCurrencyCount;
+                            silverInWallet += exchangeCurrencyCount * platinumToSilverRate;
+                            Console.WriteLine($"В вашем кошельке серебрянных монет - {silverInWallet}, золотых монет - {goldInWallet}, платиновых монет - {platinumInWallet}.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("В вашем кошельке недостаточно платиновых монет.");
+                        }
+                        break;
+                    case goldToPlatinumOperation:
+                        Console.Write("Сколько золотых монет вы хотите обменять?: ");
+                        exchangeCurrencyCount = Convert.ToSingle(Console.ReadLine());
+                        if (goldInWallet >= exchangeCurrencyCount)
+                        {
+                            goldInWallet -= exchangeCurrencyCount;
+                            platinumInWallet += exchangeCurrencyCount / goldToPlatinumRate;
+                            Console.WriteLine($"В вашем кошельке серебрянных монет - {silverInWallet}, золотых монет - {goldInWallet}, платиновых монет - {platinumInWallet}.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("В вашем кошельке недостаточно золотых монет.");
+                        }
+                        break;
+                    case platinumToGoldOperation:
+                        Console.Write("Сколько платиновых монет вы хотите обменять?: ");
+                        exchangeCurrencyCount = Convert.ToSingle(Console.ReadLine());
+                        if (platinumInWallet >= exchangeCurrencyCount)
+                        {
+                            platinumInWallet -= exchangeCurrencyCount;
+                            goldInWallet += exchangeCurrencyCount * platinumToGoldRate;
+                            Console.WriteLine($"В вашем кошельке серебрянных монет - {silverInWallet}, золотых монет - {goldInWallet}, платиновых монет - {platinumInWallet}.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("В вашем кошельке недостаточно платиновых монет.");
+                        }
+                        break;
+                    case closeAppOperation:
+                        closeApp = closeAppOperation;
+                        break;
+                    default:
+                        Console.WriteLine("Неизвестная команда.");
+                        break;
+                }
+            }
+        }
+    }
+}
