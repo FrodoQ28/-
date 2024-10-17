@@ -1,0 +1,38 @@
+using System;
+
+namespace HW_name_output
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            string userName = string.Empty;
+            string userSymbol;
+            int numberSymbolInName;
+            int twoAdditionalSymbolAtEnd = 2;
+
+            Console.Write("Введите ваше имя: ");
+            userName = Console.ReadLine();
+            Console.Write("Введите любой символ: ");
+            userSymbol = Console.ReadLine();
+
+            numberSymbolInName = userName.Length;
+
+            Console.Write(userSymbol);
+
+            while (numberSymbolInName-- > 0)
+            {
+                Console.Write(userSymbol);
+            }
+            Console.WriteLine($"{userSymbol}\n{userSymbol}{userName}{userSymbol}");
+
+            numberSymbolInName = userName.Length + twoAdditionalSymbolAtEnd;
+
+            while (numberSymbolInName-- > 0)
+            {
+                Console.Write(userSymbol);
+            }
+            Console.ReadKey();
+        }
+    }
+}
