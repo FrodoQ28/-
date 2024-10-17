@@ -1,0 +1,32 @@
+using System;
+
+namespace HW_program_under_password
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            string password = "12345";
+            string userInput;
+            int triesCount = 3;
+
+            for (int i = triesCount; i > 0; i--)
+            {
+                Console.Write("Введите пароль: ");
+                userInput = Console.ReadLine();
+
+                if (userInput == password)
+                {
+                    Console.WriteLine("Ты в матрице!");
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Пароль не верен. У вас осталось попыток " + --triesCount);
+                }
+            }
+            
+            Console.ReadKey();
+        }
+    }
+}
