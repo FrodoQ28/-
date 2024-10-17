@@ -8,30 +8,23 @@ namespace HW_name_output
         {
             string userName = string.Empty;
             string userSymbol;
+            string symbolString = string.Empty;
             int numberSymbolInName;
-            int twoAdditionalSymbolAtEnd = 2;
 
             Console.Write("Введите ваше имя: ");
             userName = Console.ReadLine();
             Console.Write("Введите любой символ: ");
             userSymbol = Console.ReadLine();
 
+            userName = userSymbol + userName + userSymbol;
             numberSymbolInName = userName.Length;
 
-            Console.Write(userSymbol);
-
             while (numberSymbolInName-- > 0)
             {
-                Console.Write(userSymbol);
+                symbolString += userSymbol;
             }
-            Console.WriteLine($"{userSymbol}\n{userSymbol}{userName}{userSymbol}");
 
-            numberSymbolInName = userName.Length + twoAdditionalSymbolAtEnd;
-
-            while (numberSymbolInName-- > 0)
-            {
-                Console.Write(userSymbol);
-            }
+            Console.WriteLine($"{symbolString}\n{userName}\n{symbolString}");
             Console.ReadKey();
         }
     }
