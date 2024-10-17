@@ -1,0 +1,30 @@
+using System;
+
+namespace HW_degree_of_two
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int numberExponent = 2;
+            int resultExponent = numberExponent;
+            int numberEndExponent;
+            int exponent = 1;
+            bool inRunning = true;
+
+            Random random = new Random();
+
+            numberEndExponent = random.Next(10, 101);
+
+            while (inRunning)
+            {
+                resultExponent *= numberExponent;
+                exponent++;
+                inRunning = resultExponent <= numberEndExponent;
+            }
+
+            Console.WriteLine($"Минимальная степень {numberExponent} превосходящая {numberEndExponent} - {exponent}\n{numberExponent} в степени {exponent} = {resultExponent}");
+            Console.ReadKey();
+        }
+    }
+}
