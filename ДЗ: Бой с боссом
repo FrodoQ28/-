@@ -1,0 +1,185 @@
+using System;
+
+namespace HW_fightBoss
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            const string CommandAttack = "1";
+            const string CommandFireBall = "2";
+            const string CommandExplosion = "3";
+            const string CommandHeal = "4";
+
+            float userHealth = 100;
+            float userArmor = 50;
+            float userMana = 100;
+            int userMaxHealth = 100;
+            int userMaxMana = 100;
+            int userMinDamage = 10;
+            int userMaxDamage = 51;
+            int fireBallMinDamage = 15;
+            int fireBallMaxDamage = 61;
+            int fireBallMana = 15;
+            float explosionDamage = 100;
+            int explosionMana = 35;
+            int numberHealPotion = 3;
+
+            float enemyHealth = 500;
+            float enemyArmor = 25;
+            int enemyMinDamage = 40;
+            int enemyMaxDamage = 71;
+
+            float amountDamage = 0;
+            string selectedAction;
+            bool canExplosion = false;
+            bool canHealing = false;
+            bool canBattle = true;
+
+            Random random = new Random();
+
+            Console.WindowHeight = 25;
+            Console.WindowWidth = 130;
+
+            Console.WriteLine("Три дня и три ночи вы пробирались через дремучие леса, топкие болота и зыбучие пески в поисках затеряного города\n" +
+                "\"Оральск\", в который вас отправил верховный чародей Барадун. Сотни мерзких существ не смогли помешать вам добраться\n" +
+                "в отмеченное на карте место и наконец, поднявшись на небольшую возвышенность, вашему взору предстали давно разрушенные\n" +
+                "стены крепости, покошенные дома, заросшие сорняком пастбища, о которых намекает редко где сохранившаяся ограда.\n" +
+                "Место не выглядит опасным, но вас смутила поднимающаяся пыль из-за стен. Вы решаете подойти поближе чтобы осмотреться.\n" +
+                "Пройдя около сотни метров вы замираете на месте, из-за стен появился огромный, около четырех метров, тролль,\n" +
+                "в руках у него дубина размером с ваш рост.\n" +
+                "Выбора нет, битва начинается...");
+
+            while (canBattle)
+            {
+                Console.Write($"\nСейчас ваш ход. Чтобы использовать умение \"Взрыв\"({explosionMana} маны), нужно зарядить его использовав умение \"Огненный шар\"({fireBallMana} маны)\n" +
+                    $"Ваше здоровье - {userHealth}ед.\nВаша мана - {userMana}ед.\nВаша броня - {userArmor}ед.\nВаши зелья здоровья - {numberHealPotion}шт.\n" +
+                    $"Здоровье противника - {enemyHealth}ед.\nБроня противника - {enemyArmor}ед.\nМинимальный урон противника - {enemyMinDamage}ур.\n" +
+                    $"Максимальный урон противника - {enemyMaxDamage}ур.\n" +
+                    $"      {CommandAttack}               {CommandFireBall}          {CommandExplosion}           {CommandHeal}\n" +
+                    $"Обычная атака   Огненный шар   Взрыв   Зелье лечения\n" +
+                    $"   {userMinDamage}-{userMaxDamage}ур.       {fireBallMinDamage}-{fireBallMaxDamage}ур.     {explosionDamage}ур.       {numberHealPotion}шт.\n" +
+                    $"Введите номер действия: ");
+                selectedAction = Console.ReadLine();
+
+                switch (selectedAction)
+                {
+                    case CommandAttack:
+                        amountDamage = random.Next(userMinDamage, userMaxDamage) - enemyArmor;
+
+                        if (amountDamage < 0)
+                        {
+                            amountDamage = 0;
+                        }
+
+                        break;
+
+                    case CommandFireBall:
+
+                        if (userMana >= fireBallMana)
+                        {
+                            amountDamage = random.Next(fireBallMinDamage, fireBallMaxDamage) - enemyArmor;
+                            userMana -= fireBallMana;
+
+                            if (amountDamage < 0)
+                            {
+                                amountDamage = 0;
+                            }
+                        }
+                        else
+                        {
+                            amountDamage = 0;
+
+                            Console.WriteLine("\nУ вас недостаточно маны!");
+                        }
+                        break;
+
+                    case CommandExplosion:
+
+                        if (userMana >= explosionMana)
+                        {
+                            amountDamage = explosionDamage - enemyArmor;
+                            userMana -= explosionMana;
+
+                            if (amountDamage < 0)
+                            {
+                                amountDamage = 0;
+                            }
+                        }
+                        else
+                        {
+                            amountDamage = 0;
+
+                            Console.WriteLine("\nУ вас недостаточно маны!");
+                        }
+                        break;
+
+                    case CommandHeal:
+
+                        if (numberHealPotion > 0)
+                        {
+                            userHealth = userMaxHealth;
+                            userMana = userMaxMana;
+                            numberHealPotion--;
+                            amountDamage = 0;
+                        }
+                        else
+                        {
+                            amountDamage = 0;
+
+                            Console.WriteLine("\nУ вас закончились зелья лечения!");
+                        }
+                        break;
+
+                    default:
+                        amountDamage = 0;
+
+                        Console.WriteLine("\nВы замешкались и пропустили атаку противника!");
+                        break;
+                }
+
+                enemyHealth -= amountDamage;
+
+                Console.WriteLine($"\nВы нанесли {amountDamage} урона.");
+
+                if (enemyHealth <= 0)
+                {
+                    enemyHealth = 0;
+                    canBattle = false;
+
+                    break;
+                }
+
+                amountDamage = random.Next(enemyMinDamage, enemyMaxDamage) - userArmor;
+
+                if (amountDamage < 0)
+                {
+                    amountDamage = 0;
+                }
+
+                userHealth -= amountDamage;
+
+                Console.WriteLine($"\nВам нанесли {amountDamage} урона.");
+
+                if (userHealth <= 0)
+                {
+                    userHealth = 0;
+                    canBattle = false;
+
+                    break;
+                }
+            }
+
+            if (userHealth <= 0)
+            {
+                Console.WriteLine($"\nВаше здоровье - {userHealth}, вы погибли!\nЗдоровье противника - {enemyHealth}");
+            }
+            else
+            {
+                Console.WriteLine($"\nВаше здоровье - {userHealth}\nЗдоровье противника - {enemyHealth}, победа за вами!");
+            }
+
+            Console.ReadKey();
+        }
+    }
+}
