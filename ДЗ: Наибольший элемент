@@ -1,0 +1,68 @@
+using System;
+using System.Collections.Concurrent;
+
+namespace HW_maxElement
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int[,] arrayA = new int[10, 10];
+            int maxArrayValue = int.MinValue;
+            int minRandom = 1;
+            int maxRandom = 10;
+            int insteadMaxNumber = 0;
+            int indentationLineNumber = 1;
+
+            Random random = new Random();
+
+            Console.SetCursorPosition(0, indentationLineNumber);
+            Console.WriteLine("Исходная матрица: ");
+
+            for (int i = 0; i < arrayA.GetLength(0); i++)
+            {
+                for (int j = 0; j < arrayA.GetLength(1); j++)
+                {
+                    arrayA[i, j] = random.Next(minRandom, maxRandom);
+
+                    Console.Write(arrayA[i,j] + " ");
+
+                    if (arrayA[i, j] > maxArrayValue)
+                    {
+                        maxArrayValue = arrayA[i, j];
+                    }
+
+                }
+
+                Console.WriteLine();
+            }
+
+            Console.SetCursorPosition(0, 0);
+            Console.WriteLine("Максимальное значение в массиве - " + maxArrayValue);
+
+            for (int i = 0; i < arrayA.GetLength(0); i++)
+            {
+                for (int j = 0; j < arrayA.GetLength(1); j++)
+                {
+                    if (arrayA[i, j] == maxArrayValue)
+                    {
+                        arrayA[i, j] = insteadMaxNumber;
+                    }
+                }
+            }
+
+            Console.SetCursorPosition(0, arrayA.GetLength(0)+indentationLineNumber);
+            Console.WriteLine("Измененная матрица: ");
+
+            for (int i = 0; i < arrayA.GetLength(0); i++)
+            {
+                for (int j = 0; j < arrayA.GetLength(1); j++)
+                {
+                    Console.Write(arrayA[i, j] + " ");
+                }
+
+                Console.WriteLine();
+            }
+        }
+    }
+}
