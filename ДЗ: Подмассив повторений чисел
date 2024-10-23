@@ -1,0 +1,53 @@
+using System;
+
+namespace HW_subarrayRepetitionsNumbers
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int[] numbers = new int[30];
+
+            int maxRecurringNumber = 0;
+            int numberOfRepeat = 0;
+            int tempNumberOfRepeat = 1;
+            int minRandom = 1;
+            int maxRandom = 6;
+
+            Random random = new Random();
+
+            for (int i = 0; i < numbers.Length; i++)
+            {
+                numbers[i] = random.Next(minRandom, maxRandom);
+            }
+
+            for (int i = 1; i < numbers.Length; i++)
+            {
+                if (numbers[i] == numbers[i - 1])
+                {
+                    tempNumberOfRepeat++;
+                }
+                else if (tempNumberOfRepeat > numberOfRepeat)
+                {
+                    numberOfRepeat = tempNumberOfRepeat;
+                    maxRecurringNumber = numbers[i - 1];
+                    tempNumberOfRepeat = 1;
+                }
+                else
+                {
+                    tempNumberOfRepeat = 1;
+                }
+            }
+
+            Console.Write("Исходный массив: ");
+
+            for (int i = 0; i < numbers.Length; i++)
+            {
+                Console.Write(numbers[i] + " ");
+            }
+
+            Console.WriteLine($"\nЧисло {maxRecurringNumber} повторяется {numberOfRepeat} раз");
+        }
+    }
+}
+
