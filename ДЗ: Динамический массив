@@ -1,0 +1,70 @@
+using System;
+
+namespace HW_arrayDynamic
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            const string CommandSum = "sum";
+            const string CommandExit = "exit";
+
+            string userCommand = string.Empty;
+            int sum;
+            int[] userNumbers = new int[0];
+            string inMemoryNumbers;
+            bool isRunning = true;
+
+            while (isRunning)
+            {
+                inMemoryNumbers = string.Empty;
+
+                foreach (int number in userNumbers)
+                {
+                    inMemoryNumbers += Convert.ToString(number) + " ";
+                }
+                Console.Write($"Суммировать введенные ранее числа - {CommandSum}\n" +
+                              $"Закрыть программу - {CommandExit}\n" +
+                              $"ВВеденные ранее числа: {inMemoryNumbers}\n" +
+                              $"Введите число: ");
+                
+                userCommand = Console.ReadLine();
+
+                switch (userCommand)
+                {
+                    case CommandExit:
+                        isRunning = false;
+                        break;
+
+                    case CommandSum:
+                        sum = 0;
+
+                        foreach (int number in userNumbers)
+                        {
+                            sum += number;
+                        }
+
+                        Console.WriteLine($"Сумма введенных чисел - {sum}\nНажмите любую клавишу...");
+                        Console.ReadKey();
+                        Console.Clear();
+                        break;
+
+                    default:
+                        int[] tempUserNumbers = new int[userNumbers.Length + 1];
+
+                        for (int i = 0; i < userNumbers.Length; i++)
+                        {
+                            tempUserNumbers[i] = userNumbers[i];
+                        }
+
+                        userNumbers = tempUserNumbers;
+                        userNumbers[userNumbers.Length - 1] = Convert.ToInt32(userCommand);
+
+                        Console.Clear();
+                        break;
+                }
+
+            }
+        }
+    }
+}
