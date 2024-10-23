@@ -25,9 +25,9 @@ namespace HW_localMax
                 maxLocal += Convert.ToString(numbers[0]) + " ";
             }
 
-            for (int i = 0; i < numbers.Length; i++)
+            for (int i = 1; i < lastIndex; i++)
             {
-                if (i > 0 && i < lastIndex && numbers[i] > numbers[i - 1] && numbers[i] > numbers[i + 1])
+                if (numbers[i] > numbers[i - 1] && numbers[i] > numbers[i + 1])
                 {
                     maxLocal += Convert.ToString(numbers[i]) + " ";
                 }
