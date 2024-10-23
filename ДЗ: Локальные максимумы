@@ -7,40 +7,40 @@ namespace HW_localMax
     {
         static void Main(string[] args)
         {
-            int[] array = new int[30];
-            int lastIndex = array.Length - 1;
+            int[] numbers = new int[30];
+            int lastIndex = numbers.Length - 1;
             int maxRandom = 100;
             int minRandom = 0;
             string maxLocal = string.Empty;
 
             Random random = new Random();
 
-            for (int i = 0; i < array.Length; i++)
+            for (int i = 0; i < numbers.Length; i++)
             {
-                array[i] = random.Next(minRandom, maxRandom);
+                numbers[i] = random.Next(minRandom, maxRandom);
             }
 
-            if (array[0] > array[1])
+            if (numbers[0] > numbers[1])
             {
-                maxLocal += Convert.ToString(array[0]) + " ";
+                maxLocal += Convert.ToString(numbers[0]) + " ";
             }
 
-            for (int i = 0; i < array.Length; i++)
+            for (int i = 0; i < numbers.Length; i++)
             {
-                if (i > 0 && i < lastIndex && array[i] > array[i - 1] && array[i] > array[i + 1])
+                if (i > 0 && i < lastIndex && numbers[i] > numbers[i - 1] && numbers[i] > numbers[i + 1])
                 {
-                    maxLocal += Convert.ToString(array[i]) + " ";
+                    maxLocal += Convert.ToString(numbers[i]) + " ";
                 }
             }
 
-            if (array[lastIndex] > array[lastIndex - 1])
+            if (numbers[lastIndex] > numbers[lastIndex - 1])
             {
-                maxLocal += Convert.ToString(array[lastIndex]) + " ";
+                maxLocal += Convert.ToString(numbers[lastIndex]) + " ";
             }
 
             Console.Write("Исходный массив: ");
 
-            foreach (int number in array)
+            foreach (int number in numbers)
             {
                 Console.Write(number + " ");
             }
