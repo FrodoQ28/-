@@ -1,0 +1,18 @@
+using System;
+
+namespace HW_split
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            string line = "О сколько нам открытий чудных готовят просвещенья дух и опыт сын ошибок трудных и гений парадоксов друг";
+            string[] words = line.Split(' ');
+
+            foreach (string word in words)
+            {
+                Console.WriteLine(word);
+            }
+        }
+    }
+}
