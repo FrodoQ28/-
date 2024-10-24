@@ -1,0 +1,41 @@
+using System;
+
+namespace HW_brackets_expression
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            string brackets = "(()(())(((())())))";
+
+            int bracketOpen = 0;
+            int bracketDeep = 0;
+
+            for (int i = 0; i < brackets.Length; i++)
+            {
+                if (brackets[i] == '(')
+                {
+                    bracketOpen++;
+
+                    if (bracketOpen > bracketDeep)
+                    {
+                        bracketDeep = bracketOpen;
+                    }
+                }
+                else
+                {
+                    bracketOpen--;
+                }
+            }
+
+            if (bracketOpen == 0)
+            {
+                Console.WriteLine($"Строка корректная, максимум глубины - {bracketDeep}.");
+            }
+            else 
+            {
+                Console.WriteLine("Строка не корректная."); 
+            }
+        }
+    }
+}
