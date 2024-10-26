@@ -8,11 +8,11 @@ namespace HW_ReadInt
         {
             bool inRunning = true;
 
-            Console.Write("Введите число: ");
-
             while (inRunning)
             {
-                if (int.TryParse(Console.ReadLine(), out int number) == true)
+                Console.Write("Введите число: ");
+
+                if (int.TryParse(Console.ReadLine(), out int number))
                 {
                     Console.WriteLine($"Вы ввели число {number}");
 
@@ -23,7 +23,6 @@ namespace HW_ReadInt
                     Console.WriteLine("Вы ввели не число, попробуйте еще раз");
                 }
             }
-
         }
     }
 }
