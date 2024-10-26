@@ -6,23 +6,22 @@ namespace HW_ReadInt
     {
         static void Main(string[] args)
         {
-            bool inRunning = true;
+            Console.WriteLine($"Вы ввели число - {getNumber()}");
+        }
 
-            while (inRunning)
+        static int getNumber()
+        {
+            int number;
+
+            Console.Write("Введите число: ");
+
+            while (int.TryParse(Console.ReadLine(), out number) == false)
             {
+                Console.WriteLine("Вы ввели не число, попробуйте еще раз");
                 Console.Write("Введите число: ");
-
-                if (int.TryParse(Console.ReadLine(), out int number))
-                {
-                    Console.WriteLine($"Вы ввели число {number}");
-
-                    inRunning = false;
-                }
-                else
-                {
-                    Console.WriteLine("Вы ввели не число, попробуйте еще раз");
-                }
             }
+
+            return number;
         }
     }
 }
