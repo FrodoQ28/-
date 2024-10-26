@@ -1,0 +1,29 @@
+using System;
+
+namespace HW_ReadInt
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            bool inRunning = true;
+
+            Console.Write("Введите число: ");
+
+            while (inRunning)
+            {
+                if (int.TryParse(Console.ReadLine(), out int number) == true)
+                {
+                    Console.WriteLine($"Вы ввели число {number}");
+
+                    inRunning = false;
+                }
+                else
+                {
+                    Console.WriteLine("Вы ввели не число, попробуйте еще раз");
+                }
+            }
+
+        }
+    }
+}
