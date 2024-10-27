@@ -35,12 +35,12 @@ namespace HW_UIElement
 
             Console.Write(openBarSymbol);
             Console.ForegroundColor = color;
-            Console.Write(FillStatusBar(fillPercent, fillSymbol));
+            Console.Write(FilledStatusBar(fillPercent, fillSymbol));
             Console.ForegroundColor = defaultColor;
-            Console.Write(FillStatusBar(barLenght, emptySymbol, fillPercent) + closeBarSymbol);
+            Console.Write(FilledStatusBar(barLenght, emptySymbol, fillPercent) + closeBarSymbol);
         }
 
-        static string FillStatusBar(int lastIteration, char symbol, int iterationNumber = 0)
+        static string FilledStatusBar(int lastIteration, char symbol, int iterationNumber = 0)
         {
             string statusBar = string.Empty;
 
