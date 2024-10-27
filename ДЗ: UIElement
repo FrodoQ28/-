@@ -11,22 +11,27 @@ namespace HW_UIElement
             int mana = 40;
             int maxMana = 100;
 
-            Console.Write("Здоровье - ");
-            DrawStatusBar(health, maxHealth, ConsoleColor.Green);
-
-            Console.Write("\nМана - ");
-            DrawStatusBar(mana, maxMana, ConsoleColor.Blue);
-        }
-
-        static void DrawStatusBar(int value, int maxValue, ConsoleColor color)
-        {
-            ConsoleColor defaultColor = Console.ForegroundColor;
-
-            int iterationNumber = value;
             int barLenght = 10;
             int maxPercent = 100;
-            int onePercent = maxValue / maxPercent;
-            int fillPercent = value / onePercent / barLenght;
+
+            int oneHealthPercent = maxHealth / maxPercent;
+            int fillHealthPercent = health / oneHealthPercent / barLenght;
+            int emptyHealthPercent = barLenght - fillHealthPercent;
+
+            int oneManaPercent = maxMana / maxPercent;
+            int fillManaPercent = mana / oneManaPercent / barLenght;
+            int emptyManaPercent = barLenght - fillManaPercent;
+
+            Console.Write("Здоровье - ");
+            DrawStatusBar(fillHealthPercent, emptyHealthPercent, ConsoleColor.Green);
+
+            Console.Write("\nМана - ");
+            DrawStatusBar(fillManaPercent, emptyManaPercent, ConsoleColor.Blue);
+        }
+
+        static void DrawStatusBar(int fillPercent, int emptyPercent, ConsoleColor color)
+        {
+            ConsoleColor defaultColor = Console.ForegroundColor;
 
             char openBarSymbol = '[';
             char closeBarSymbol = ']';
@@ -37,14 +42,14 @@ namespace HW_UIElement
             Console.ForegroundColor = color;
             Console.Write(FilledStatusBar(fillPercent, fillSymbol));
             Console.ForegroundColor = defaultColor;
-            Console.Write(FilledStatusBar(barLenght, emptySymbol, fillPercent) + closeBarSymbol);
+            Console.Write(FilledStatusBar(emptyPercent, emptySymbol) + closeBarSymbol);
         }
 
-        static string FilledStatusBar(int lastIteration, char symbol, int iterationNumber = 0)
+        static string FilledStatusBar(int lastIteration, char symbol)
         {
             string statusBar = string.Empty;
 
-            for (int i = iterationNumber; i < lastIteration; i++)
+            for (int i = 0; i < lastIteration; i++)
             {
                 statusBar += symbol;
             }
