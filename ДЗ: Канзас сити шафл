@@ -1,0 +1,41 @@
+using System;
+
+namespace HW_Shuffle
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int[] numbers = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
+
+            DisplayArray(numbers);
+
+            Shuffle(numbers);
+
+            DisplayArray(numbers);
+        }
+
+        static void Shuffle(int[] array)
+        {
+            Random random = new Random();
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                int indexRandom = random.Next(0, array.Length - 1);
+                int tempIndex = array[i];
+
+                array[i] = array[indexRandom];
+                array[indexRandom] = tempIndex;
+            }
+        }
+
+        static void DisplayArray(int[] array)
+        {
+            for (int i = 0; i < array.Length; i++)
+            {
+                Console.Write(array[i]);
+            }
+            Console.WriteLine();
+        }
+    }
+}
