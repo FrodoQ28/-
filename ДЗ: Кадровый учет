@@ -23,10 +23,10 @@ namespace HW_Personnel_accounting
             };
             string[] position = new string[5]
             {
-                "Рабочий", 
-                "Прораб", 
-                "Инженер", 
-                "Мастер", 
+                "Рабочий",
+                "Прораб",
+                "Инженер",
+                "Мастер",
                 "Хозяин"
             };
 
@@ -45,17 +45,7 @@ namespace HW_Personnel_accounting
                 switch (Console.ReadLine())
                 {
                     case AddDossierCommand:
-                        string nameLine;
-                        string positionLine;
-
-                        Console.Write("Добавление досье в библиотеку\nВведите фамилию имя и отчество: ");
-                        nameLine = Console.ReadLine();
-                        Console.Write("Введите должность: ");
-                        positionLine = Console.ReadLine();
-
-                        AddDossier(ref name, ref position, nameLine, positionLine);
-
-                        Console.Write($"{ShowOneLine(name, position, name.Length)} добавлен в библиотеку.");
+                        AddDossier(ref name, ref position);
                         break;
 
                     case AllDossierCommand:
@@ -63,24 +53,11 @@ namespace HW_Personnel_accounting
                         break;
 
                     case DeleteDossierCommand:
-                        Console.Write("Удаление досье из библиотеки\nВвдите номер досье для удаления: ");
-
-                        if (int.TryParse(Console.ReadLine(), out int deleteLine) && deleteLine < name.Length)
-                        {
-                            ArrayReducing(ref name, ref position, deleteLine);
-
-                            Console.WriteLine($"Строка {deleteLine} удалена.");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Вы ввели не число или такой строки не существует.");
-                        }
+                        ArrayReducing(ref name, ref position);
                         break;
 
                     case SearchCommand:
-                        Console.WriteLine("Поиск по фамилии.\nВведите фамилию: ");
-
-                        GetSearch(name, position, Console.ReadLine());
+                        GetSearch(name, position);
                         break;
 
                     case ExitCommand:
@@ -109,13 +86,23 @@ namespace HW_Personnel_accounting
             array = tempArray;
         }
 
-        static void AddDossier(ref string[] array, ref string[] array2, string name, string position)
+        static void AddDossier(ref string[] array, ref string[] array2)
         {
+            string nameLine;
+            string positionLine;
+
+            Console.Write("Добавление досье в библиотеку\nВведите фамилию имя и отчество: ");
+            nameLine = Console.ReadLine();
+            Console.Write("Введите должность: ");
+            positionLine = Console.ReadLine();
+
             ArrayExtension(ref array);
             ArrayExtension(ref array2);
 
-            array[array.Length - 1] = name;
-            array2[array2.Length - 1] = position;
+            array[array.Length - 1] = nameLine;
+            array2[array2.Length - 1] = positionLine;
+
+            Console.Write($"{ShowOneLine(array, array2, array.Length)} добавлен в библиотеку.");
         }
 
         static void DisplayArray(string[] array, string[] array2)
@@ -130,32 +117,53 @@ namespace HW_Personnel_accounting
             }
         }
 
-        static void ArrayReducing(ref string[] array, ref string[] array2, int deleteIndex)
+        static void ArrayReducing(ref string[] array, ref string[] array2)
         {
-            string[] tempArray = new string[array.Length - 1];
-            string[] tempArray2 = new string[array.Length - 1];
+            Console.Write("Удаление досье из библиотеки\nВвдите номер досье для удаления: ");
 
-            for (int i = deleteIndex - 1; i < array.Length - 1; i++)
+            if (int.TryParse(Console.ReadLine(), out int deleteLine) && deleteLine <= array.Length)
             {
-                array[i] = array[i + 1];
-                array2[i] = array2[i + 1];
-            }
+                string[] tempArray = new string[array.Length - 1];
+                string[] tempArray2 = new string[array.Length - 1];
 
-            for (int i = 0; i < array.Length - 1; i++)
+                array[deleteLine - 1] = string.Empty;
+                array2[deleteLine - 1] = string.Empty;
+
+                for (int i = 0; i < array.Length - 1; i++)
+                {
+                    if (array[i] == string.Empty)
+                    {
+                        array[i] = array[i + 1];
+                        array2[i] = array2[i + 1];
+                        array[i + 1] = string.Empty;
+                        array2[i + 1] = string.Empty;
+                    }
+
+                    tempArray[i] = array[i];
+                    tempArray2[i] = array2[i];
+                }
+
+                array = tempArray;
+                array2 = tempArray2;
+
+                Console.WriteLine($"Строка {deleteLine} удалена.");
+            }
+            else
             {
-                tempArray[i] = array[i];
-                tempArray2[i] = array2[i];
+                Console.WriteLine("Вы ввели не число или такой строки не существует.");
             }
-
-            array = tempArray;
-            array2 = tempArray2;
         }
 
-        static void GetSearch(string[] array, string[] array2, string searchName)
+        static void GetSearch(string[] array, string[] array2)
         {
             int lastNameIndex = 0;
             int lineNumber = 1;
             string output = string.Empty;
+            string searchName = string.Empty;
+
+            Console.Write("Поиск по фамилии.\nВведите фамилию: ");
+
+            searchName = Console.ReadLine();
 
             Console.WriteLine("Результат поиска:");
             for (int i = 0; i < array.Length; i++)
@@ -167,10 +175,11 @@ namespace HW_Personnel_accounting
                     output += (i + lineNumber) + ". " + array[i] + " - " + array2[i] + "\n";
                 }
 
-                if (output == string.Empty)
-                {
-                    output = "Совпадений не найдено.";
-                }
+            }
+
+            if (output == string.Empty)
+            {
+                output = "Совпадений не найдено.";
             }
 
             Console.WriteLine(output);
