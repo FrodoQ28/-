@@ -1,0 +1,188 @@
+using System;
+using System.Xml.Linq;
+
+namespace HW_Personnel_accounting
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            const string AddDossierCommand = "1";
+            const string AllDossierCommand = "2";
+            const string DeleteDossierCommand = "3";
+            const string SearchCommand = "4";
+            const string ExitCommand = "exit";
+
+            string[] name = new string[5]
+            {
+                "Иванов Иван Иванович",
+                "Сидоров Сидор Сидорович",
+                "Петров Петр Петрович",
+                "Антонов Антон Антонович",
+                "Анатольев Анатолий Анатольевич"
+            };
+            string[] position = new string[5]
+            {
+                "Рабочий", 
+                "Прораб", 
+                "Инженер", 
+                "Мастер", 
+                "Хозяин"
+            };
+
+            bool isRunning = true;
+
+            while (isRunning)
+            {
+                Console.Write("Библиотека досье работников.\nДля работы с библиотекой используйте команды:\n" +
+                    "Добавить досье - 1\n" +
+                    "Показать все досье в библиотеке - 2\n" +
+                    "Удалить досье из библиотеки - 3\n" +
+                    "Поиск в досье по фамилии - 4\n" +
+                    "Выход из программы - exit\n" +
+                    "Введите команду: ");
+
+                switch (Console.ReadLine())
+                {
+                    case AddDossierCommand:
+                        string nameLine;
+                        string positionLine;
+
+                        Console.Write("Добавление досье в библиотеку\nВведите фамилию имя и отчество: ");
+                        nameLine = Console.ReadLine();
+                        Console.Write("Введите должность: ");
+                        positionLine = Console.ReadLine();
+
+                        AddDossier(ref name, ref position, nameLine, positionLine);
+
+                        Console.Write($"{ShowOneLine(name, position, name.Length)} добавлен в библиотеку.");
+                        break;
+
+                    case AllDossierCommand:
+                        DisplayArray(name, position);
+                        break;
+
+                    case DeleteDossierCommand:
+                        Console.Write("Удаление досье из библиотеки\nВвдите номер досье для удаления: ");
+
+                        if (int.TryParse(Console.ReadLine(), out int deleteLine) && deleteLine < name.Length)
+                        {
+                            ArrayReducing(ref name, ref position, deleteLine);
+
+                            Console.WriteLine($"Строка {deleteLine} удалена.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Вы ввели не число или такой строки не существует.");
+                        }
+                        break;
+
+                    case SearchCommand:
+                        Console.WriteLine("Поиск по фамилии.\nВведите фамилию: ");
+
+                        GetSearch(name, position, Console.ReadLine());
+                        break;
+
+                    case ExitCommand:
+                        isRunning = false;
+                        break;
+
+                    default:
+                        Console.WriteLine("Введена неверная команда.");
+                        break;
+                }
+
+                Console.ReadKey();
+                Console.Clear();
+            }
+        }
+
+        static void ArrayExtension(ref string[] array)
+        {
+            string[] tempArray = new string[array.Length + 1];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                tempArray[i] = array[i];
+            }
+
+            array = tempArray;
+        }
+
+        static void AddDossier(ref string[] array, ref string[] array2, string name, string position)
+        {
+            ArrayExtension(ref array);
+            ArrayExtension(ref array2);
+
+            array[array.Length - 1] = name;
+            array2[array2.Length - 1] = position;
+        }
+
+        static void DisplayArray(string[] array, string[] array2)
+        {
+            int numberOnList = 1;
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                Console.Write((i + numberOnList) + ". ");
+                Console.Write(array[i] + " ");
+                Console.WriteLine("- " + array2[i]);
+            }
+        }
+
+        static void ArrayReducing(ref string[] array, ref string[] array2, int deleteIndex)
+        {
+            string[] tempArray = new string[array.Length - 1];
+            string[] tempArray2 = new string[array.Length - 1];
+
+            for (int i = deleteIndex - 1; i < array.Length - 1; i++)
+            {
+                array[i] = array[i + 1];
+                array2[i] = array2[i + 1];
+            }
+
+            for (int i = 0; i < array.Length - 1; i++)
+            {
+                tempArray[i] = array[i];
+                tempArray2[i] = array2[i];
+            }
+
+            array = tempArray;
+            array2 = tempArray2;
+        }
+
+        static void GetSearch(string[] array, string[] array2, string searchName)
+        {
+            int lastNameIndex = 0;
+            int lineNumber = 1;
+            string output = string.Empty;
+
+            Console.WriteLine("Результат поиска:");
+            for (int i = 0; i < array.Length; i++)
+            {
+                string[] temp = array[i].Split(' ');
+
+                if (searchName.ToLower() == temp[lastNameIndex].ToLower())
+                {
+                    output += (i + lineNumber) + ". " + array[i] + " - " + array2[i] + "\n";
+                }
+
+                if (output == string.Empty)
+                {
+                    output = "Совпадений не найдено.";
+                }
+            }
+
+            Console.WriteLine(output);
+        }
+
+        static string ShowOneLine(string[] array, string[] array2, int lineNumber)
+        {
+            string output = string.Empty;
+
+            output += lineNumber + ". " + array[lineNumber - 1] + " - " + array2[lineNumber - 1];
+
+            return output;
+        }
+    }
+}
