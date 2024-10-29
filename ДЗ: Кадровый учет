@@ -57,7 +57,7 @@ namespace HW_Personnel_accounting
                         break;
 
                     case SearchCommand:
-                        StartSearch(names, positions);
+                        RunSearch(names, positions);
                         break;
 
                     case ExitCommand:
@@ -157,7 +157,7 @@ namespace HW_Personnel_accounting
         }
         
 
-        static void StartSearch(string[] array, string[] array2)
+        static void RunSearch(string[] array, string[] array2)
         {
             int lastNameIndex = 0;
             int lineNumber = 1;
@@ -169,6 +169,7 @@ namespace HW_Personnel_accounting
             searchName = Console.ReadLine();
 
             Console.WriteLine("Результат поиска:");
+
             for (int i = 0; i < array.Length; i++)
             {
                 string[] temp = array[i].Split(' ');
