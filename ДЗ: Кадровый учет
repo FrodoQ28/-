@@ -13,7 +13,7 @@ namespace HW_Personnel_accounting
             const string SearchCommand = "4";
             const string ExitCommand = "exit";
 
-            string[] name = new string[5]
+            string[] names = new string[5]
             {
                 "Иванов Иван Иванович",
                 "Сидоров Сидор Сидорович",
@@ -21,7 +21,7 @@ namespace HW_Personnel_accounting
                 "Антонов Антон Антонович",
                 "Анатольев Анатолий Анатольевич"
             };
-            string[] position = new string[5]
+            string[] positions = new string[5]
             {
                 "Рабочий",
                 "Прораб",
@@ -34,30 +34,30 @@ namespace HW_Personnel_accounting
 
             while (isRunning)
             {
-                Console.Write("Библиотека досье работников.\nДля работы с библиотекой используйте команды:\n" +
-                    "Добавить досье - 1\n" +
-                    "Показать все досье в библиотеке - 2\n" +
-                    "Удалить досье из библиотеки - 3\n" +
-                    "Поиск в досье по фамилии - 4\n" +
-                    "Выход из программы - exit\n" +
-                    "Введите команду: ");
+                Console.Write($"Библиотека досье работников.\nДля работы с библиотекой используйте команды:\n" +
+                    $"Добавить досье - {AddDossierCommand}\n" +
+                    $"Показать все досье в библиотеке - {AllDossierCommand}\n" +
+                    $"Удалить досье из библиотеки - {DeleteDossierCommand}\n" +
+                    $"Поиск в досье по фамилии - {SearchCommand}\n" +
+                    $"Выход из программы - {ExitCommand}\n" +
+                    $"Введите команду: ");
 
                 switch (Console.ReadLine())
                 {
                     case AddDossierCommand:
-                        AddDossier(ref name, ref position);
+                        AddDossier(ref names, ref positions);
                         break;
 
                     case AllDossierCommand:
-                        DisplayArray(name, position);
+                        DisplayArray(names, positions);
                         break;
 
                     case DeleteDossierCommand:
-                        ArrayReducing(ref name, ref position);
+                        DeleteLine(ref names, ref positions);
                         break;
 
                     case SearchCommand:
-                        GetSearch(name, position);
+                        StartSearch(names, positions);
                         break;
 
                     case ExitCommand:
@@ -74,7 +74,7 @@ namespace HW_Personnel_accounting
             }
         }
 
-        static void ArrayExtension(ref string[] array)
+        static string[] ExpandArray(string[] array, string addedLine)
         {
             string[] tempArray = new string[array.Length + 1];
 
@@ -84,6 +84,9 @@ namespace HW_Personnel_accounting
             }
 
             array = tempArray;
+            array[array.Length - 1] = addedLine;
+
+            return array;
         }
 
         static void AddDossier(ref string[] array, ref string[] array2)
@@ -96,13 +99,10 @@ namespace HW_Personnel_accounting
             Console.Write("Введите должность: ");
             positionLine = Console.ReadLine();
 
-            ArrayExtension(ref array);
-            ArrayExtension(ref array2);
+            array = ExpandArray(array, nameLine);
+            array2 = ExpandArray(array2, positionLine);
 
-            array[array.Length - 1] = nameLine;
-            array2[array2.Length - 1] = positionLine;
-
-            Console.Write($"{ShowOneLine(array, array2, array.Length)} добавлен в библиотеку.");
+            Console.Write($"{array.Length + ". " + array[array.Length - 1] + " - " + array2[array.Length - 1]} добавлен в библиотеку.");
         }
 
         static void DisplayArray(string[] array, string[] array2)
@@ -117,34 +117,14 @@ namespace HW_Personnel_accounting
             }
         }
 
-        static void ArrayReducing(ref string[] array, ref string[] array2)
+        static void DeleteLine(ref string[] array, ref string[] array2)
         {
             Console.Write("Удаление досье из библиотеки\nВвдите номер досье для удаления: ");
 
             if (int.TryParse(Console.ReadLine(), out int deleteLine) && deleteLine <= array.Length)
             {
-                string[] tempArray = new string[array.Length - 1];
-                string[] tempArray2 = new string[array.Length - 1];
-
-                array[deleteLine - 1] = string.Empty;
-                array2[deleteLine - 1] = string.Empty;
-
-                for (int i = 0; i < array.Length - 1; i++)
-                {
-                    if (array[i] == string.Empty)
-                    {
-                        array[i] = array[i + 1];
-                        array2[i] = array2[i + 1];
-                        array[i + 1] = string.Empty;
-                        array2[i + 1] = string.Empty;
-                    }
-
-                    tempArray[i] = array[i];
-                    tempArray2[i] = array2[i];
-                }
-
-                array = tempArray;
-                array2 = tempArray2;
+                array = DecreaseArray(array, deleteLine);
+                array2 = DecreaseArray(array2, deleteLine);
 
                 Console.WriteLine($"Строка {deleteLine} удалена.");
             }
@@ -154,7 +134,30 @@ namespace HW_Personnel_accounting
             }
         }
 
-        static void GetSearch(string[] array, string[] array2)
+        static string[] DecreaseArray(string[] array, int deleteLine)
+        {
+            string[] tempArray = new string[array.Length - 1];
+
+            array[deleteLine - 1] = string.Empty;
+
+            for (int i = 0; i < array.Length - 1; i++)
+            {
+                if (array[i] == string.Empty)
+                {
+                    array[i] = array[i + 1];
+                    array[i + 1] = string.Empty;
+                }
+
+                tempArray[i] = array[i];
+            }
+
+            array = tempArray;
+
+            return array;
+        }
+        
+
+        static void StartSearch(string[] array, string[] array2)
         {
             int lastNameIndex = 0;
             int lineNumber = 1;
@@ -174,7 +177,6 @@ namespace HW_Personnel_accounting
                 {
                     output += (i + lineNumber) + ". " + array[i] + " - " + array2[i] + "\n";
                 }
-
             }
 
             if (output == string.Empty)
@@ -183,15 +185,6 @@ namespace HW_Personnel_accounting
             }
 
             Console.WriteLine(output);
-        }
-
-        static string ShowOneLine(string[] array, string[] array2, int lineNumber)
-        {
-            string output = string.Empty;
-
-            output += lineNumber + ". " + array[lineNumber - 1] + " - " + array2[lineNumber - 1];
-
-            return output;
         }
     }
 }
