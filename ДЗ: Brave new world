@@ -1,0 +1,116 @@
+using System;
+using System.IO;
+
+namespace HW__Brave_new_world
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            char[,] map = ReadMap("map.txt");
+
+            int characterPositionX = 1;
+            int characterPositionY = 1;
+
+            Console.CursorVisible = false;
+
+            DrawMap(map);
+
+            while (true)
+            {
+                Console.SetCursorPosition(characterPositionX, characterPositionY);
+                Console.Write("@");
+                Console.SetCursorPosition(characterPositionX, characterPositionY);
+
+                ConsoleKeyInfo pressedKey = Console.ReadKey();
+
+                HandleInput(pressedKey, ref characterPositionX, ref characterPositionY, map);
+            }
+        }
+
+        static char[,] ReadMap(string path)
+        {
+            string[] file = File.ReadAllLines("map.txt");
+
+            char[,] map = new char[GetMaxLenghtOfLines(file), file.Length];
+
+            for (int x = 0; x < map.GetLength(0); x++)
+            {
+                for (int y = 0; y < map.GetLength(1); y++)
+                {
+                    map[x, y] = file[y][x];
+                }
+            }
+
+            return map;
+        }
+
+        static int GetMaxLenghtOfLines(string[] lines)
+        {
+            int maxLenght = 0;
+
+            foreach (var line in lines)
+            {
+                if (line.Length > maxLenght)
+                {
+                    maxLenght = line.Length;
+                }
+            }
+
+            return maxLenght;
+        }
+
+        static void DrawMap(char[,] map)
+        {
+            for (int y = 0; y < map.GetLength(1); y++)
+            {
+                for (int x = 0; x < map.GetLength(0); x++)
+                {
+                    Console.Write(map[x, y]);
+                }
+
+                Console.WriteLine();
+            }
+        }
+
+        static void HandleInput(ConsoleKeyInfo pressedKey, ref int characterPositionX, ref int characterPositionY, char[,] map)
+        {
+            int[] direction = GetDirection(pressedKey);
+
+            int nextCharacterPositionX = characterPositionX + direction[0];
+            int nextCharacterPositionY = characterPositionY + direction[1];
+
+            if (map[nextCharacterPositionX, nextCharacterPositionY] != '#')
+            {
+                characterPositionX = nextCharacterPositionX;
+                characterPositionY = nextCharacterPositionY;
+            }
+        }
+
+        static int[] GetDirection(ConsoleKeyInfo pressedKey)
+        {
+            int[] direction = { 0, 0 };
+
+            switch(pressedKey.Key)
+            {
+                case ConsoleKey.UpArrow:
+                    direction[1]--;
+                    break;
+
+                case ConsoleKey.DownArrow:
+                    direction[1]++;
+                    break;
+
+                case ConsoleKey.LeftArrow:
+                    direction[0]--;
+                    break;
+
+                case ConsoleKey.RightArrow:
+                    direction[0]++;
+                    break;
+            }
+
+            return direction;
+        }
+    }
+}
