@@ -1,0 +1,70 @@
+using System;
+using System.Collections.Generic;
+
+namespace HW_dynamicArrayPro
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            const string CommandSum = "sum";
+            const string CommandExit = "exit";
+
+            List<int> userNumbers = new List<int>();
+
+            string userCommand = string.Empty;
+            string inMemoryNumbers;
+            int sum;
+            bool isRunning = true;
+
+            while (isRunning)
+            {
+                inMemoryNumbers = string.Empty;
+
+                foreach (int number in userNumbers)
+                {
+                    inMemoryNumbers += Convert.ToString(number) + " ";
+                }
+
+                Console.Write($"Суммировать введенные ранее числа - {CommandSum}\n" +
+                              $"Закрыть программу - {CommandExit}\n" +
+                              $"ВВеденные ранее числа: {inMemoryNumbers}\n" +
+                              $"Введите число: ");
+
+                userCommand = Console.ReadLine();
+
+                switch (userCommand)
+                {
+                    case CommandExit:
+                        isRunning = false;
+                        break;
+
+                    case CommandSum:
+                        sum = 0;
+
+                        foreach (int number in userNumbers)
+                        {
+                            sum += number;
+                        }
+
+                        Console.WriteLine($"Сумма введенных чисел - {sum}\nНажмите любую клавишу...");
+                        Console.ReadKey();
+                        Console.Clear();
+                        break;
+
+                    default:
+                        int tempNumber;
+
+                        if (int.TryParse(userCommand, out tempNumber))
+                        {
+                            userNumbers.Add(tempNumber);
+                        }
+
+                        Console.Clear();
+                        break;
+                }
+
+            }
+        }
+    }
+}
