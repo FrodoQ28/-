@@ -17,7 +17,7 @@ namespace HW_dictionary
             bool isRunning = true;
             string userInput = string.Empty;
 
-            while (true)
+            while (isRunning)
             {
                 Console.Clear();
 
