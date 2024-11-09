@@ -59,6 +59,11 @@ namespace HW_dynamicArrayPro
                         {
                             userNumbers.Add(tempNumber);
                         }
+                        else
+                        {
+                            Console.WriteLine("Вы вели не число и не команду.");
+                            Console.ReadKey();
+                        }
 
                         Console.Clear();
                         break;
