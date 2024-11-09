@@ -1,0 +1,41 @@
+using System;
+using System.Collections.Generic;
+
+namespace HW_dictionary
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Dictionary<string, string> dictionary = new Dictionary<string, string>()
+            {
+                {"Аксессуар", "Аксессуар - предмет, деталь, являющиеся принадлежностью чего-либо." },
+                {"Банк", "Банк - кредитно-финансовое учреждение, сосредоточивающее денежные средства и накопления, предоставляющее кредиты, осуществляющее денежные расчёты между предприятиями или частными лицами, выпуск денег в обращение, операции с ценными бумагами" },
+                {"Бунтарь", "Бунтарь - подстрекатель или участник бунта" }
+            };
+
+            bool isRunning = true;
+            string userInput = string.Empty;
+
+            while (true)
+            {
+                Console.Clear();
+
+                Console.Write("Введите слово:");
+
+                userInput = Console.ReadLine();
+
+                if (dictionary.ContainsKey(userInput))
+                {
+                    Console.WriteLine(dictionary[userInput]);
+                }
+                else
+                {
+                    Console.WriteLine("Такого слова нет в словаре");
+                }
+
+                Console.ReadKey();
+            }
+        }
+    }
+}
