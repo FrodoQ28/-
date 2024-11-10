@@ -68,7 +68,7 @@ namespace HW_personnelAccountingPro
             }
         }
 
-        static Dictionary<string, List<string>> AddAnEmployee(Dictionary<string, List<string>> staff)
+        static void AddAnEmployee(Dictionary<string, List<string>> staff)
         {
             Console.Write("Введите должность: ");
             string position = Console.ReadLine();
@@ -89,11 +89,9 @@ namespace HW_personnelAccountingPro
             }
 
             Console.WriteLine($"{position} - {name} добавлен в базу данных.");
-
-            return staff;
         }
 
-        static Dictionary<string, List<string>> RemoveEmployee(Dictionary<string, List<string>> staff)
+        static void RemoveEmployee(Dictionary<string, List<string>> staff)
         {
             Console.Write("Введите должность: ");
             string position = Console.ReadLine();
@@ -108,7 +106,7 @@ namespace HW_personnelAccountingPro
 
                 if (list.Contains(name))
                 {
-                    list.Remove(name);
+                    list.RemoveAt(list.IndexOf(name));
 
                     if (list.Count != 0)
                     {
@@ -130,19 +128,17 @@ namespace HW_personnelAccountingPro
             {
                 Console.WriteLine("Такой должности нет.");
             }
-
-            return staff;
         }
 
         static void DisplayAll(Dictionary<string, List<string>> staff)
         {
-            foreach (var n in staff)
+            foreach (var position in staff)
             {
-                Console.WriteLine(n.Key + ": ");
+                Console.WriteLine(position.Key + ": ");
 
-                foreach (var i in staff[n.Key])
+                foreach (var name in staff[position.Key])
                 {
-                    Console.WriteLine("\t" + i);
+                    Console.WriteLine("\t" + name);
                 }
             }
         }
