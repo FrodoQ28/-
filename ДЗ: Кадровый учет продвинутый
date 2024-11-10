@@ -1,0 +1,150 @@
+using System;
+using System.Collections.Generic;
+
+namespace HW_personnelAccountingPro
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            const string AddCommand = "1";
+            const string RemoveCommand = "2";
+            const string ShowAllCommand = "3";
+            const string ExitCommand = "4";
+
+            Dictionary<string, List<string>> staff = new Dictionary<string, List<string>>();
+
+            staff.Add("Уборщик", new List<string>()
+            {
+                "Иванов Иван Иванович"
+            });
+            staff.Add("Охранник", new List<string>()
+            {
+                { "Сидоров Сидр Сидорович" },
+                { "Петров Петр Петрович" }
+            });
+
+            string userInput = string.Empty;
+            bool isRunning = true;
+
+            while (isRunning)
+            {
+                Console.Clear();
+
+                Console.Write($"Добро пожаловать в базу данных сотрудников.\n" +
+                    $"Выберите команду:\n" +
+                    $"Добавление сотрудника - {AddCommand}\n" +
+                    $"Удаление сотрудника - {RemoveCommand}\n" +
+                    $"Показ полной информации по базе данных - {ShowAllCommand}\n" +
+                    $"Выход из программы - {ExitCommand}\n" +
+                    $"Введите команду: ");
+
+                userInput = Console.ReadLine();
+
+                switch (userInput)
+                {
+                    case AddCommand:
+                        AddAnEmployee(staff);
+                        break;
+
+                    case RemoveCommand:
+                        RemoveEmployee(staff);
+                        break;
+
+                    case ShowAllCommand:
+                        DisplayAll(staff);
+                        break;
+
+                    case ExitCommand:
+                        isRunning = false;
+                        break;
+
+                    default:
+                        Console.WriteLine("Такой команды нет.");
+                        break;
+                }
+
+                Console.ReadKey();
+            }
+        }
+
+        static Dictionary<string, List<string>> AddAnEmployee(Dictionary<string, List<string>> staff)
+        {
+            Console.Write("Введите должность: ");
+            string position = Console.ReadLine();
+            Console.Write("Введите Фамилию Имя Отчество: ");
+            string name = Console.ReadLine();
+
+            if (staff.ContainsKey(position))
+            {
+                List<string> list = new List<string>();
+
+                list = staff[position];
+                list.Add(name);
+                staff[position] = list;
+            }
+            else
+            {
+                staff.Add(position, new List<string>() { name });
+            }
+
+            Console.WriteLine($"{position} - {name} добавлен в базу данных.");
+
+            return staff;
+        }
+
+        static Dictionary<string, List<string>> RemoveEmployee(Dictionary<string, List<string>> staff)
+        {
+            Console.Write("Введите должность: ");
+            string position = Console.ReadLine();
+            Console.Write("Введите Фамилию Имя Отчество: ");
+            string name = Console.ReadLine();
+
+            if (staff.ContainsKey(position))
+            {
+                List<string> list = new List<string>();
+
+                list = staff[position];
+
+                if (list.Contains(name))
+                {
+                    list.Remove(name);
+
+                    if (list.Count != 0)
+                    {
+                        staff[position] = list;
+                    }
+                    else
+                    {
+                        staff.Remove(position);
+                    }
+
+                    Console.WriteLine($"{position} - {name} удален из базы данных.");
+                }
+                else
+                {
+                    Console.WriteLine("Такого человека нет на должности - " + position);
+                }
+            }
+            else
+            {
+                Console.WriteLine("Такой должности нет.");
+            }
+
+            return staff;
+        }
+
+        static void DisplayAll(Dictionary<string, List<string>> staff)
+        {
+            foreach (var n in staff)
+            {
+                Console.WriteLine(n.Key + ": ");
+
+                foreach (var i in staff[n.Key])
+                {
+                    Console.WriteLine("\t" + i);
+                }
+            }
+        }
+    }
+}
