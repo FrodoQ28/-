@@ -13,22 +13,16 @@ namespace HW_dynamicArrayPro
             List<int> userNumbers = new List<int>();
 
             string userCommand = string.Empty;
-            string inMemoryNumbers;
-            int sum;
             bool isRunning = true;
 
             while (isRunning)
             {
-                inMemoryNumbers = string.Empty;
+                Console.Write("Введённые ранее числа: ");
 
-                foreach (int number in userNumbers)
-                {
-                    inMemoryNumbers += Convert.ToString(number) + " ";
-                }
+                DisplayList(userNumbers);
 
-                Console.Write($"Суммировать введенные ранее числа - {CommandSum}\n" +
+                Console.Write($"\nСуммировать введенные ранее числа - {CommandSum}\n" +
                               $"Закрыть программу - {CommandExit}\n" +
-                              $"ВВеденные ранее числа: {inMemoryNumbers}\n" +
                               $"Введите число: ");
 
                 userCommand = Console.ReadLine();
@@ -40,36 +34,55 @@ namespace HW_dynamicArrayPro
                         break;
 
                     case CommandSum:
-                        sum = 0;
-
-                        foreach (int number in userNumbers)
-                        {
-                            sum += number;
-                        }
-
-                        Console.WriteLine($"Сумма введенных чисел - {sum}\nНажмите любую клавишу...");
-                        Console.ReadKey();
-                        Console.Clear();
+                        DoSum(userNumbers);
                         break;
 
                     default:
-                        int tempNumber;
-
-                        if (int.TryParse(userCommand, out tempNumber))
-                        {
-                            userNumbers.Add(tempNumber);
-                        }
-                        else
-                        {
-                            Console.WriteLine("Вы вели не число и не команду.");
-                            Console.ReadKey();
-                        }
-
-                        Console.Clear();
+                        userNumbers = AddNumber(userCommand, userNumbers);
                         break;
                 }
-
             }
+        }
+
+        static void DisplayList(List<int> userNumbers)
+        {
+            foreach (int number in userNumbers)
+            {
+                Console.Write(number + " ");
+            }
+        }
+
+        static void DoSum (List<int> userNumbers)
+        {
+            int sum = 0;
+
+            foreach (int number in userNumbers)
+            {
+                sum += number;
+            }
+
+            Console.WriteLine($"Сумма введенных чисел - {sum}\nНажмите любую клавишу...");
+            Console.ReadKey();
+            Console.Clear();
+        }
+
+        static List<int> AddNumber(string userCommand, List<int> userNumbers)
+        {
+            int tempNumber;
+
+            if (int.TryParse(userCommand, out tempNumber))
+            {
+                userNumbers.Add(tempNumber);
+            }
+            else
+            {
+                Console.WriteLine("Вы вели не число и не команду.");
+                Console.ReadKey();
+            }
+
+            Console.Clear();
+
+            return userNumbers;
         }
     }
 }
