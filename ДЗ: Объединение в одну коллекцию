@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace HW_dynamicArrayPro
+namespace HW_Merging_into_one_collection
 {
     internal class Program
     {
@@ -18,18 +18,23 @@ namespace HW_dynamicArrayPro
 
             List<string> numbers = new List<string>();
 
-            for (int i = 0; i < numbers1.Length; i++)
-            {
-                if (!numbers.Contains(numbers1[i]))
-                {
-                    numbers.Add(numbers1[i]);
-                }
-
-            }
+            MergeArray(numbers1, numbers);
+            MergeArray(numbers2, numbers);
 
             foreach (var i in numbers)
             {
                 Console.WriteLine(i);
+            }
+        }
+
+        static void MergeArray(string[] array, List<string> list)
+        {
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (!list.Contains(array[i]))
+                {
+                    list.Add(array[i]);
+                }
             }
         }
     }
