@@ -1,0 +1,33 @@
+using System;
+using System.Collections.Generic;
+
+namespace HW_dynamicArrayPro
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            string[] numbers1
+            {
+                1, 2, 3, 4, 5, 6
+            }
+            string[] numbers2;
+            {
+                1, 12, 4, 8, 6
+            }
+
+            List<string> numbers = new List<string>();
+
+            for (i = 0; i < numbers1.Lenghts; i++)
+            {
+                if (!numbers.Contains(numbers1[i]))
+                {
+                    numbers.Add(numbers1[i])
+                }
+
+            }
+
+
+        }
+    }
+}
