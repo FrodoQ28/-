@@ -1,0 +1,35 @@
+using System;
+
+namespace HW_workWithClasses
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Gamer gamer = new Gamer("Алёша", 100, 10, 1);
+
+            gamer.ShowInfo();
+        }
+    }
+
+    class Gamer
+    {
+        private string _name;
+        private int _health;
+        private int _armor;
+        private int _damage;
+
+        public Gamer(string name, int health, int armor, int damage)
+        {
+            _name = name;
+            _health = health;
+            _armor = armor;
+            _damage = damage;
+        }
+
+        public void ShowInfo()
+        {
+            Console.WriteLine($"Имя: {_name}\nЗдоровье: {_health}\nБроня: {_armor}\nУрон: {_damage}");
+        }
+    }
+}
