@@ -1,0 +1,166 @@
+using System;
+using System.Collections.Generic;
+
+namespace HW_playersDataBase
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            const int CommandAddPlayer = 1;
+            const int CommandRemovePlayer = 2;
+            const int CommandBanPlayer = 3;
+            const int CommandUnbanPlayer = 4;
+            const int CommandExit = 5;
+
+            bool isRunning = true;
+
+            DataBase dataBase = new DataBase();
+            List<Player> players = new List<Player>()
+            {
+                new Player(0, "Tom"),
+                new Player(2, "Max"),
+                new Player(5, "Nagibator2018")
+            };
+
+            while (isRunning)
+            {
+                Console.Clear();
+                Console.WriteLine("База данных игроков.");
+
+                dataBase.ShowAllPlayers(players);
+
+                Console.WriteLine($"{new string('-', 120)}\n" +
+                                  $"Добавить игрока - {CommandAddPlayer}\n" +
+                                  $"Удалить игрока - {CommandRemovePlayer}\n" +
+                                  $"Забанить игрока - {CommandBanPlayer}\n" +
+                                  $"Разбанить игрока - {CommandUnbanPlayer}\n" +
+                                  $"Закрыть программу - {CommandExit}\n" +
+                                  $"Введите номер команды: ");
+
+                switch (Convert.ToInt32(Console.ReadLine()))
+                {
+                    case CommandAddPlayer:
+                        dataBase.AddPlayer(players);
+                        break;
+
+                    case CommandRemovePlayer:
+                        dataBase.RemovePlayer(players);
+                        break;
+
+                    case CommandBanPlayer:
+                        dataBase.BanPlayer(players);
+                        break;
+
+                    case CommandUnbanPlayer:
+                        dataBase.UnbanPlayer(players);
+                        break;
+
+                    case CommandExit:
+                        isRunning = false;
+                        break;
+                    default:
+                        Console.WriteLine("Такой томанды нет.");
+                        break;
+                }
+            }
+        }
+    }
+
+    class DataBase
+    {
+        public void ShowAllPlayers(List<Player> players)
+        {
+            int extensionNumber = 1;
+            foreach (var player in players)
+                Console.WriteLine($"{players.IndexOf(player) + extensionNumber}. {player.Name}, уровень {player.Level}, ID - {player.IdentificationNumber}, статус бана - {player.IsBanned}.");
+        }
+
+        public void AddPlayer(List<Player> players)
+        {
+            int extensionNumber = 1;
+
+            Console.Write("Введите ник игрока: ");
+            string name = Console.ReadLine();
+            Console.WriteLine("Введите уровень игрока: ");
+            int level = Convert.ToInt32(Console.ReadLine());
+
+            players.Add(new Player(level, name));
+
+            Console.WriteLine($"Игрок под ником {players[players.Count - extensionNumber].Name}, {players[players.Count - extensionNumber].Level} уровня добавлен.");
+            Console.ReadKey();
+        }
+
+        public void BanPlayer(List<Player> players)
+        {
+            Console.WriteLine("Введите ID игрока: ");
+            int identificationNumber = Convert.ToInt32(Console.ReadLine());
+
+            foreach (var player in players)
+            {
+                if (player.IdentificationNumber == identificationNumber)
+                {
+                    player.IsBanned = true;
+
+                    Console.WriteLine($"Игрок под ником {player.Name}, {player.Level} уровня забанен.");
+                    Console.ReadKey();
+                }
+            }
+        }
+
+        public void UnbanPlayer(List<Player> players)
+        {
+            Console.WriteLine("Введите ID игрока: ");
+            int identificationNumber = Convert.ToInt32(Console.ReadLine());
+
+            foreach (var player in players)
+            {
+                if (player.IdentificationNumber == identificationNumber)
+                {
+                    player.IsBanned = false;
+
+                    Console.WriteLine($"Игрок под ником {player.Name}, {player.Level} уровня разбанен.");
+                    Console.ReadKey();
+                }
+            }
+        }
+
+        public void RemovePlayer(List<Player> players)
+        {
+            Console.WriteLine("Введите ID игрока: ");
+            int identificationNumber = Convert.ToInt32(Console.ReadLine());
+
+            foreach (var player in players)
+            {
+                if (player.IdentificationNumber == identificationNumber)
+                {
+                    players.Remove(player);
+
+                    Console.WriteLine($"Игрок под ником {player.Name}, {player.Level} уровня удален.");
+                    Console.ReadKey();
+
+                    break;
+                }
+            }
+        }
+    }
+
+    class Player
+    {
+        private static int _identifications;
+
+        public bool IsBanned;
+
+        public Player(int level, string name)
+        {
+            Level = level;
+            Name = name;
+            IsBanned = false;
+            IdentificationNumber = ++_identifications;
+        }
+
+        public int IdentificationNumber { get; private set; }
+        public int Level { get; private set; }
+        public string Name { get; private set; }
+    }
+}
