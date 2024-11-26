@@ -20,36 +20,32 @@ namespace HW_workWithProperty
             Player player = new Player(inputX, inputY, inputSymbol);
             Renderer renderer = new Renderer();
 
-            renderer.Draw(inputX, inputY, inputSymbol);
+            renderer.Draw(player);
         }
     }
 
     class Player
     {
-        private int _positionX;
-        private int _positionY;
-        private char _playerSymbol;
-
-        public Player(int positionX, int positionY, char playerSymbol)
-        {
-            _positionX = positionX;
-            _positionY = positionY;
-            _playerSymbol = playerSymbol;
-        }
-
         public int PositionX { get; private set; }
         public int PositionY { get; private set; }
         public char PlayerSymbol { get; private set; }
+
+        public Player(int positionX, int positionY, char playerSymbol)
+        {
+            PositionX = positionX;
+            PositionY = positionY;
+            PlayerSymbol = playerSymbol;
+        }
     }
 
     class Renderer
     {
-        public void Draw(int positinX, int positinY, char playerSymbol)
+        public void Draw(Player player)
         {
             Console.Clear();
             Console.CursorVisible = false;
-            Console.SetCursorPosition(positinX, positinY);
-            Console.Write(playerSymbol);
+            Console.SetCursorPosition(player.PositionX, player.PositionY);
+            Console.Write(player.PlayerSymbol);
             Console.ReadKey(true);
         }
     }
