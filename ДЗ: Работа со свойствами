@@ -26,16 +26,16 @@ namespace HW_workWithProperty
 
     class Player
     {
-        public int PositionX { get; private set; }
-        public int PositionY { get; private set; }
-        public char PlayerSymbol { get; private set; }
-
         public Player(int positionX, int positionY, char playerSymbol)
         {
             PositionX = positionX;
             PositionY = positionY;
             PlayerSymbol = playerSymbol;
         }
+
+        public int PositionX { get; private set; }
+        public int PositionY { get; private set; }
+        public char PlayerSymbol { get; private set; }
     }
 
     class Renderer
