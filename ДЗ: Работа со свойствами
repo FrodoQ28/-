@@ -1,0 +1,56 @@
+using System;
+
+namespace HW_workWithProperty
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int inputX;
+            int inputY;
+            char inputSymbol;
+
+            Console.Write("Введите координату игрока по Х: ");
+            inputX = Convert.ToInt32(Console.ReadLine());
+            Console.Write("Введите координату игрока по Y: ");
+            inputY = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Введите символ игрока: ");
+            inputSymbol = Convert.ToChar(Console.ReadLine());
+
+            Player player = new Player(inputX, inputY, inputSymbol);
+            Renderer renderer = new Renderer();
+
+            renderer.Draw(inputX, inputY, inputSymbol);
+        }
+    }
+
+    class Player
+    {
+        private int _positionX;
+        private int _positionY;
+        private char _playerSymbol;
+
+        public Player(int positionX, int positionY, char playerSymbol)
+        {
+            _positionX = positionX;
+            _positionY = positionY;
+            _playerSymbol = playerSymbol;
+        }
+
+        public int PositionX { get; private set; }
+        public int PositionY { get; private set; }
+        public char PlayerSymbol { get; private set; }
+    }
+
+    class Renderer
+    {
+        public void Draw(int positinX, int positinY, char playerSymbol)
+        {
+            Console.Clear();
+            Console.CursorVisible = false;
+            Console.SetCursorPosition(positinX, positinY);
+            Console.Write(playerSymbol);
+            Console.ReadKey(true);
+        }
+    }
+}
