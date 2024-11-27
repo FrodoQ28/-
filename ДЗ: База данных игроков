@@ -15,20 +15,14 @@ namespace HW_playersDataBase
 
             bool isRunning = true;
 
-            DataBase dataBase = new DataBase();
-            List<Player> players = new List<Player>()
-            {
-                new Player(0, "Tom"),
-                new Player(2, "Max"),
-                new Player(5, "Nagibator2018")
-            };
+            Database database = new Database(new Dictionary<int, Player>());
 
             while (isRunning)
             {
                 Console.Clear();
                 Console.WriteLine("База данных игроков.");
 
-                dataBase.ShowAllPlayers(players);
+                database.ShowAllPlayers();
 
                 Console.WriteLine($"{new string('-', 120)}\n" +
                                   $"Добавить игрока - {CommandAddPlayer}\n" +
@@ -41,19 +35,19 @@ namespace HW_playersDataBase
                 switch (Console.ReadLine())
                 {
                     case CommandAddPlayer:
-                        dataBase.AddPlayer(players);
+                        database.AddPlayer();
                         break;
 
                     case CommandRemovePlayer:
-                        dataBase.RemovePlayer(players);
+                        database.RemovePlayer();
                         break;
 
                     case CommandBanPlayer:
-                        dataBase.ChangePlayerBanStatus(players, true);
+                        database.GetPlayer().ChangePlayerBanStatus(true);
                         break;
 
                     case CommandUnbanPlayer:
-                        dataBase.ChangePlayerBanStatus(players, false);
+                        database.GetPlayer().ChangePlayerBanStatus(false);
                         break;
 
                     case CommandExit:
@@ -67,92 +61,97 @@ namespace HW_playersDataBase
         }
     }
 
-    class DataBase
+    class Database
     {
-        public void ShowAllPlayers(List<Player> players)
-        {
-            int extensionNumber = 1;
+        private static int s_identifications;
 
-            foreach (var player in players)
-                Console.WriteLine($"{players.IndexOf(player) + extensionNumber}. {player.Name}, уровень {player.Level}, ID - {player.IdentificationNumber}, статус бана - {player.IsBanned}.");
+        private Dictionary<int, Player> _database;
+
+        public Database(Dictionary<int, Player> database)
+        {
+            _database = database;
         }
 
-        public void AddPlayer(List<Player> players)
+        public void ShowAllPlayers()
         {
-            int extensionNumber = 1;
+            int numberOnList = 0;
+
+            foreach (var data in _database)
+                Console.WriteLine($"{++numberOnList}. {data.Value.Name}, уровень {data.Value.Level}, ID - {data.Key}, статус бана - {data.Value.IsBanned}.");
+        }
+
+        public void AddPlayer()
+        {
+            int identificationNumber = ++s_identifications;
 
             Console.Write("Введите ник игрока: ");
             string name = Console.ReadLine();
             Console.WriteLine("Введите уровень игрока: ");
 
-            if (int.TryParse(Console.ReadLine(), out int level)) { }
-            else
+            if (int.TryParse(Console.ReadLine(), out int level) == false)
                 level = 1;
 
-            players.Add(new Player(level, name));
+            _database.Add(identificationNumber, new Player(level, name));
 
-            Console.WriteLine($"Игрок под ником {players[players.Count - extensionNumber].Name}, {players[players.Count - extensionNumber].Level} уровня добавлен.");
+            Console.WriteLine($"Игрок под ником {_database[identificationNumber].Name}, {_database[identificationNumber].Level} уровня добавлен.");
             Console.ReadKey();
         }
 
-        public void ChangePlayerBanStatus(List<Player> players, bool isBanned, int errorCode = -1)
+        public void RemovePlayer()
         {
-            int playerIndex = GetPlayerIndex(players);
+            Player tempPlayer = GetPlayer();
 
-            if (playerIndex != errorCode)
+            if (tempPlayer != null)
             {
-                players[playerIndex].IsBanned = isBanned;
+                foreach (var data in _database)
+                    if (data.Value == tempPlayer)
+                    {
+                        Console.WriteLine($"Игрок под ником {data.Value.Name}, {data.Value.Level} уровня удален.");
 
-                Console.WriteLine($"Игрок под ником {players[playerIndex].Name}, {players[playerIndex].Level} уровня, статус бана - {players[playerIndex].IsBanned}.");
-                Console.ReadKey();
+                        _database.Remove(data.Key);
+
+                        Console.ReadKey();
+
+                        break;
+                    }
             }
         }
 
-        public void RemovePlayer(List<Player> players, int errorCode = -1)
-        {
-            int playerIndex = GetPlayerIndex(players);
-
-            if (playerIndex != errorCode)
-            {
-                Console.WriteLine($"Игрок под ником {players[playerIndex].Name}, {players[playerIndex].Level} уровня удален.");
-
-                players.RemoveAt(playerIndex);
-
-                Console.ReadKey();
-            }
-        }
-
-        public int GetPlayerIndex(List<Player> players, int errorCode = -1)
+        public Player GetPlayer()
         {
             Console.WriteLine("Введите ID игрока: ");
 
             if (int.TryParse(Console.ReadLine(), out int identificationNumber))
-                foreach (var player in players)
-                    if (player.IdentificationNumber == identificationNumber)
-                        return players.IndexOf(player);
+                if (_database.ContainsKey(identificationNumber))
+                    return _database[identificationNumber];
 
             Console.WriteLine("Некорректный ввод.");
             Console.ReadKey();
 
-            return errorCode;
+            return null;
         }
     }
 
     class Player
     {
-        private static int s_identifications;
-
         public Player(int level, string name)
         {
             Level = level;
             Name = name;
             IsBanned = false;
-            IdentificationNumber = ++s_identifications;
         }
 
         public int IdentificationNumber { get; private set; }
         public int Level { get; private set; }
         public string Name { get; private set; }
-        public bool IsBanned { get; set; }
+        public bool IsBanned { get; private set; }
+
+        public void ChangePlayerBanStatus(bool isBanned)
+        {
+            IsBanned = isBanned;
+
+            Console.WriteLine($"Игрок под ником {Name}, {Level} уровня, статус бана - {IsBanned}.");
+            Console.ReadKey();
+        }
     }
 }
