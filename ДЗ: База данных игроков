@@ -43,16 +43,17 @@ namespace HW_playersDataBase
                         break;
 
                     case CommandBanPlayer:
-                        database.GetPlayer().ChangePlayerBanStatus(true);
+                        database.BanPlayer();
                         break;
 
                     case CommandUnbanPlayer:
-                        database.GetPlayer().ChangePlayerBanStatus(false);
+                        database.UnbanPlayer();
                         break;
 
                     case CommandExit:
                         isRunning = false;
                         break;
+
                     default:
                         Console.WriteLine("Такой томанды нет.");
                         break;
@@ -99,12 +100,10 @@ namespace HW_playersDataBase
 
         public void RemovePlayer()
         {
-            Player tempPlayer = GetPlayer();
-
-            if (tempPlayer != null)
+            if (TryGetPlayer(out Player player))
             {
                 foreach (var data in _database)
-                    if (data.Value == tempPlayer)
+                    if (data.Value == player)
                     {
                         Console.WriteLine($"Игрок под ником {data.Value.Name}, {data.Value.Level} уровня удален.");
 
@@ -115,23 +114,48 @@ namespace HW_playersDataBase
                         break;
                     }
             }
+            else
+            {
+                Console.WriteLine("Некорректный ввод, попробуйте еще раз.");
+                Console.ReadKey();
+            }
         }
 
-        public Player GetPlayer()
+        public bool TryGetPlayer(out Player player)
         {
             Console.WriteLine("Введите ID игрока: ");
 
             if (int.TryParse(Console.ReadLine(), out int identificationNumber))
                 if (_database.ContainsKey(identificationNumber))
-                    return _database[identificationNumber];
+                {
+                    player = _database[identificationNumber];
+                    return true;
+                }
 
-            Console.WriteLine("Некорректный ввод.");
-            Console.ReadKey();
+            player = default;
+            return false;
+        }
+        public void BanPlayer()
+        {
+            if (TryGetPlayer(out Player player))
+            {
+                player.Ban();
 
-            return null;
+                Console.WriteLine($"Игрок под ником {player.Name}, {player.Level} уровня, статус бана - {player.IsBanned}.");
+                Console.ReadKey();
+            }
+        }
+        public void UnbanPlayer()
+        {
+            if (TryGetPlayer(out Player player))
+            {
+                player.Unban();
+
+                Console.WriteLine($"Игрок под ником {player.Name}, {player.Level} уровня, статус бана - {player.IsBanned}.");
+                Console.ReadKey();
+            }
         }
     }
-
     class Player
     {
         public Player(int level, string name)
@@ -141,17 +165,18 @@ namespace HW_playersDataBase
             IsBanned = false;
         }
 
-        public int IdentificationNumber { get; private set; }
         public int Level { get; private set; }
         public string Name { get; private set; }
         public bool IsBanned { get; private set; }
 
-        public void ChangePlayerBanStatus(bool isBanned)
+        public void Ban()
         {
-            IsBanned = isBanned;
+            IsBanned = true;
+        }
 
-            Console.WriteLine($"Игрок под ником {Name}, {Level} уровня, статус бана - {IsBanned}.");
-            Console.ReadKey();
+        public void Unban()
+        {
+            IsBanned = false;
         }
     }
 }
