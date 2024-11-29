@@ -32,7 +32,7 @@ namespace HW_deckOfCards
                 switch (Console.ReadLine())
                 {
                     case CommandTakeCard:
-                        if (croupier.Deck.Cards.Count > 0)
+                        if (croupier.HasCard())
                             croupier.TakeCards();
                         break;
 
@@ -67,10 +67,15 @@ namespace HW_deckOfCards
             {
                 for (int i = 0; i < cardsNumber; i++)
                 {
-                    Player.AddCard(Deck.Cards[0]);
+                    Player.AddCard(Deck.GetCardByIndex(0));
                     Deck.RemoveCard();
                 }
             }
+        }
+
+        public bool HasCard()
+        {
+            return (Deck.GetCardByIndex(0) != null);
         }
     }
 
@@ -101,15 +106,14 @@ namespace HW_deckOfCards
 
     class Deck
     {
-        private Random random = new Random();
+        private Random _random = new Random();
 
-        private string[] _suit;
-        private string[] _value;
+        private List<Card> _cards;
         public Deck()
         {
-            Cards = new List<Card>();
+            _cards = new List<Card>();
 
-            _suit = new string[]
+            string[] suit = new string[]
              {
                     "Пики",
                     "Трефы",
@@ -117,7 +121,7 @@ namespace HW_deckOfCards
                     "Червы"
              };
 
-            _value = new string[]
+            string[] value = new string[]
              {
                     "6",
                     "7",
@@ -129,33 +133,37 @@ namespace HW_deckOfCards
                     "Король",
                     "Туз"
              };
-            
-            for (int i = 0; i < _suit.Length; i++)
-                for (int j = 0; j < _value.Length; j++)
-                    Cards.Add(new Card(_suit[i], _value[j]));
+
+            for (int i = 0; i < suit.Length; i++)
+                for (int j = 0; j < value.Length; j++)
+                    _cards.Add(new Card(suit[i], value[j]));
 
             Shuffle();
         }
 
-        public List<Card> Cards { get; private set; }
+        public Card GetCardByIndex(int index)
+        {
+            return _cards[index];
+        }
+
 
         private void Shuffle()
         {
-            int nextCard = Cards.Count;
+            int nextCard = _cards.Count;
 
             while (nextCard > 1)
             {
-                int randomValue = random.Next(nextCard + 1);
+                int randomValue = _random.Next(nextCard + 1);
                 nextCard--;
-                Card tempCard = Cards[randomValue];
-                Cards[randomValue] = Cards[nextCard];
-                Cards[nextCard] = tempCard;
+                Card tempCard = _cards[randomValue];
+                _cards[randomValue] = _cards[nextCard];
+                _cards[nextCard] = tempCard;
             }
         }
 
         public void RemoveCard()
         {
-            Cards.RemoveAt(0);
+            _cards.RemoveAt(0);
         }
     }
 
