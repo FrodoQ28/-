@@ -1,0 +1,184 @@
+using System;
+using System.Collections.Generic;
+
+namespace HW_deckOfCards
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            const string CommandTakeCard = "1";
+            const string CommandExit = "2";
+
+            bool isRunning = true;
+
+            Croupier croupier;
+
+            Console.Write("Введите имя игрока:");
+
+            croupier = new Croupier(Console.ReadLine());
+
+            while (isRunning)
+            {
+                Console.Clear();
+
+                croupier.Player.ShowCards();
+
+                Console.WriteLine($"{new string('*', 120)}" +
+                                  $"Взять карту - {CommandTakeCard}\n" +
+                                  $"Выход - {CommandExit}\n" +
+                                  $"Введите команду:");
+
+                switch (Console.ReadLine())
+                {
+                    case CommandTakeCard:
+                        if (croupier.Deck.Cards.Count > 0)
+                            croupier.TakeCards();
+                        break;
+
+                    case CommandExit:
+                        isRunning = false;
+                        break;
+
+                    default:
+                        Console.WriteLine("Неверная команда.");
+                        break;
+                }
+            }
+        }
+    }
+
+    class Croupier
+    {
+        public Deck Deck { get; private set; }
+        public Player Player { get; private set; }
+
+        public Croupier(string name)
+        {
+            Deck = new Deck();
+            Player = new Player(name);
+        }
+
+        public void TakeCards()
+        {
+            Console.Write("Сколько карт вы хотите взять?: ");
+
+            if (int.TryParse(Console.ReadLine(), out int cardsNumber))
+            {
+                for (int i = 0; i < cardsNumber; i++)
+                {
+                    Player.AddCard(Deck.Cards[0]);
+                    Deck.RemoveCard();
+                }
+            }
+        }
+    }
+
+    class Player
+    {
+        public List<Card> CardsOnHands { get; private set; }
+        public string Name { get; private set; }
+
+        public Player(string name)
+        {
+            Name = name;
+            CardsOnHands = new List<Card>();
+        }
+
+        public void AddCard(Card card)
+        {
+            CardsOnHands.Add(card);
+        }
+
+        public void ShowCards()
+        {
+            Console.WriteLine($"{Name} Ваши карты:\n");
+
+            foreach (var card in CardsOnHands)
+                Console.WriteLine(card.Suit + " " + card.Value);
+        }
+    }
+
+    class Deck
+    {
+        Random random = new Random();
+
+        public List<Card> Cards { get; private set; }
+
+        public Deck()
+        {
+            Cards = new List<Card>()
+            {
+                new Card("Пики", "6"),
+                new Card("Пики", "7"),
+                new Card("Пики", "8"),
+                new Card("Пики", "9"),
+                new Card("Пики", "10"),
+                new Card("Пики", "Валет"),
+                new Card("Пики", "Дама"),
+                new Card("Пики", "Король"),
+                new Card("Пики", "Туз"),
+                new Card("Трефы", "6"),
+                new Card("Трефы", "7"),
+                new Card("Трефы", "8"),
+                new Card("Трефы", "9"),
+                new Card("Трефы", "10"),
+                new Card("Трефы", "Валет"),
+                new Card("Трефы", "Дама"),
+                new Card("Трефы", "Король"),
+                new Card("Трефы", "Туз"),
+                new Card("Бубны", "6"),
+                new Card("Бубны", "7"),
+                new Card("Бубны", "8"),
+                new Card("Бубны", "9"),
+                new Card("Бубны", "10"),
+                new Card("Бубны", "Валет"),
+                new Card("Бубны", "Дама"),
+                new Card("Бубны", "Король"),
+                new Card("Бубны", "Туз"),
+                new Card("Черви", "6"),
+                new Card("Черви", "7"),
+                new Card("Черви", "8"),
+                new Card("Черви", "9"),
+                new Card("Черви", "10"),
+                new Card("Черви", "Валет"),
+                new Card("Черви", "Дама"),
+                new Card("Черви", "Король"),
+                new Card("Черви", "Туз")
+            };
+
+            Shuffle();
+        }
+
+        public void Shuffle()
+        {
+            int nextCard = Cards.Count;
+
+            while (nextCard > 1)
+            {
+                int randomValue = random.Next(nextCard + 1);
+                nextCard--;
+                Card tempCard = Cards[randomValue];
+                Cards[randomValue] = Cards[nextCard];
+                Cards[nextCard] = tempCard;
+            }
+        }
+
+        public void RemoveCard()
+        {
+            Cards.RemoveAt(0);
+        }
+    }
+
+    class Card
+    {
+        public Card(string suit, string value)
+        {
+            Suit = suit;
+            Value = value;
+        }
+
+        public string Suit { get; private set; }
+        public string Value { get; private set; }
+    }
+}
