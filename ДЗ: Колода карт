@@ -32,8 +32,7 @@ namespace HW_deckOfCards
                 switch (Console.ReadLine())
                 {
                     case CommandTakeCard:
-                        if (croupier.HasCard())
-                            croupier.TakeCards();
+                        croupier.TakeCards();
                         break;
 
                     case CommandExit:
@@ -61,21 +60,26 @@ namespace HW_deckOfCards
 
         public void TakeCards()
         {
+            Card tempCard;
+
             Console.Write("Сколько карт вы хотите взять?: ");
 
             if (int.TryParse(Console.ReadLine(), out int cardsNumber))
             {
                 for (int i = 0; i < cardsNumber; i++)
                 {
-                    Player.AddCard(Deck.GetCardByIndex(0));
-                    Deck.RemoveCard();
+                    if (Deck.TryTakeCard(out tempCard))
+                    {
+                        Player.AddCard(tempCard);
+                    }
+                    else
+                    {
+                        cardsNumber = 0;
+                        Console.WriteLine("В колоде больше нет карт.");
+                        Console.ReadKey();
+                    }
                 }
             }
-        }
-
-        public bool HasCard()
-        {
-            return (Deck.GetCardByIndex(0) != null);
         }
     }
 
@@ -141,11 +145,20 @@ namespace HW_deckOfCards
             Shuffle();
         }
 
-        public Card GetCardByIndex(int index)
+        public bool TryTakeCard(out Card card)
         {
-            return _cards[index];
+            if (_cards.Count != 0)
+            {
+                card = _cards[0];
+                _cards.RemoveAt(0);
+                return true;
+            }
+            else
+            {
+                card = default;
+                return false;
+            }
         }
-
 
         private void Shuffle()
         {
