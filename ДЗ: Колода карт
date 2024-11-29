@@ -50,14 +50,14 @@ namespace HW_deckOfCards
 
     class Croupier
     {
-        public Deck Deck { get; private set; }
-        public Player Player { get; private set; }
-
         public Croupier(string name)
         {
             Deck = new Deck();
             Player = new Player(name);
         }
+
+        public Deck Deck { get; private set; }
+        public Player Player { get; private set; }
 
         public void TakeCards()
         {
@@ -76,81 +76,70 @@ namespace HW_deckOfCards
 
     class Player
     {
-        public List<Card> CardsOnHands { get; private set; }
-        public string Name { get; private set; }
+        private List<Card> _cardsOnHands;
+        private string _name;
 
         public Player(string name)
         {
-            Name = name;
-            CardsOnHands = new List<Card>();
+            _name = name;
+            _cardsOnHands = new List<Card>();
         }
 
         public void AddCard(Card card)
         {
-            CardsOnHands.Add(card);
+            _cardsOnHands.Add(card);
         }
 
         public void ShowCards()
         {
-            Console.WriteLine($"{Name} Ваши карты:\n");
+            Console.WriteLine($"{_name} Ваши карты:\n");
 
-            foreach (var card in CardsOnHands)
+            foreach (var card in _cardsOnHands)
                 Console.WriteLine(card.Suit + " " + card.Value);
         }
     }
 
     class Deck
     {
-        Random random = new Random();
+        private Random random = new Random();
 
-        public List<Card> Cards { get; private set; }
-
+        private string[] _suit;
+        private string[] _value;
         public Deck()
         {
-            Cards = new List<Card>()
-            {
-                new Card("Пики", "6"),
-                new Card("Пики", "7"),
-                new Card("Пики", "8"),
-                new Card("Пики", "9"),
-                new Card("Пики", "10"),
-                new Card("Пики", "Валет"),
-                new Card("Пики", "Дама"),
-                new Card("Пики", "Король"),
-                new Card("Пики", "Туз"),
-                new Card("Трефы", "6"),
-                new Card("Трефы", "7"),
-                new Card("Трефы", "8"),
-                new Card("Трефы", "9"),
-                new Card("Трефы", "10"),
-                new Card("Трефы", "Валет"),
-                new Card("Трефы", "Дама"),
-                new Card("Трефы", "Король"),
-                new Card("Трефы", "Туз"),
-                new Card("Бубны", "6"),
-                new Card("Бубны", "7"),
-                new Card("Бубны", "8"),
-                new Card("Бубны", "9"),
-                new Card("Бубны", "10"),
-                new Card("Бубны", "Валет"),
-                new Card("Бубны", "Дама"),
-                new Card("Бубны", "Король"),
-                new Card("Бубны", "Туз"),
-                new Card("Черви", "6"),
-                new Card("Черви", "7"),
-                new Card("Черви", "8"),
-                new Card("Черви", "9"),
-                new Card("Черви", "10"),
-                new Card("Черви", "Валет"),
-                new Card("Черви", "Дама"),
-                new Card("Черви", "Король"),
-                new Card("Черви", "Туз")
-            };
+            Cards = new List<Card>();
+
+            _suit = new string[]
+             {
+                    "Пики",
+                    "Трефы",
+                    "Бубны",
+                    "Червы"
+             };
+
+            _value = new string[]
+             {
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "10",
+                    "Валет",
+                    "Дама",
+                    "Король",
+                    "Туз"
+             };
+            
+            for (int i = 0; i < _suit.Length; i++)
+                for (int j = 0; j < _value.Length; j++)
+                    Cards.Add(new Card(_suit[i], _value[j]));
 
             Shuffle();
         }
 
-        public void Shuffle()
+        public List<Card> Cards { get; private set; }
+
+        private void Shuffle()
         {
             int nextCard = Cards.Count;
 
