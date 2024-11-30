@@ -8,6 +8,16 @@ namespace HW_booksStorage
     {
         static void Main(string[] args)
         {
+            ConsoleMenu menu = new ConsoleMenu();
+
+            menu.Menu();
+        }
+    }
+
+    class ConsoleMenu
+    {
+        public void Menu()
+        {
             const string CommandAdd = "1";
             const string CommandDelete = "2";
             const string CommandShowAll = "3";
@@ -69,13 +79,13 @@ namespace HW_booksStorage
         {
             _books = new List<Book>()
             {
-                new Book ("Капитанская дочка", "Пушкин", "1836" ),
-                new Book ("Мастер и Маргарита", "Булгаков", "1940" ),
-                new Book ("Ася", "Тургенев", "1858" ),
-                new Book ("Мертвые души", "Гоголь", "1836" ),
-                new Book ("Хождение по мукам", "Толстой", "1941" ),
-                new Book ("Записки охотника", "Тургенев", "1852" ),
-                new Book ("Война и мир", "Толстой", "1868" )
+                new Book ("Капитанская дочка", "Пушкин", 1836 ),
+                new Book ("Мастер и Маргарита", "Булгаков", 1940 ),
+                new Book ("Ася", "Тургенев", 1858 ),
+                new Book ("Мертвые души", "Гоголь", 1836 ),
+                new Book ("Хождение по мукам", "Толстой", 1941 ),
+                new Book ("Записки охотника", "Тургенев", 1852 ),
+                new Book ("Война и мир", "Толстой", 1868 )
             };
         }
 
@@ -83,7 +93,8 @@ namespace HW_booksStorage
         {
             string name;
             string autor;
-            string date;
+            int date = 0;
+            bool isRunning = true;
 
             Console.Write("Введите название книги:");
             name = Console.ReadLine();
@@ -91,8 +102,20 @@ namespace HW_booksStorage
             Console.Write("Введите автора книги:");
             autor = Console.ReadLine();
 
-            Console.Write("Введите год публикации книги:");
-            date = Console.ReadLine();
+            while (isRunning)
+            {
+                Console.Write("Введите год публикации книги:");
+
+                if (int.TryParse(Console.ReadLine(), out date))
+                {
+                    isRunning = false;
+                }
+                else
+                {
+                    Console.WriteLine("Некорректный ввод.");
+                    Console.ReadKey();
+                }
+            }
 
             _books.Add(new Book(name, autor, date));
 
@@ -102,7 +125,7 @@ namespace HW_booksStorage
 
         public void RemoveBook()
         {
-            if (HasBook(out List<Book> foundBooks))
+            if (TryFindBook(out List<Book> foundBooks))
             {
                 bool isRunning = true;
 
@@ -115,14 +138,14 @@ namespace HW_booksStorage
                         foreach (var book in foundBooks)
                             Console.WriteLine($"{foundBooks.IndexOf(book) + 1}. {book.Name}, {book.Autor}, {book.Date}г.");
 
-                        if (int.TryParse(Console.ReadLine(), out int removableBookIndex) && removableBookIndex <= foundBooks.Count)
+                        if (int.TryParse(Console.ReadLine(), out int removableBookNumber) && removableBookNumber <= foundBooks.Count)
                         {
-                            for (int i = 0; i < _books.Count; i++)
+                            for (int i = _books.Count - 1; i >= 0; i--)
                             {
-                                if (_books[i] == foundBooks[removableBookIndex - 1])
+                                if (_books[i] == foundBooks[removableBookNumber - 1])
                                 {
                                     _books.RemoveAt(i);
-                                    i = _books.Count;
+                                    i = -1;
                                     isRunning = false;
 
                                     Console.WriteLine("Книга удалена.");
@@ -153,7 +176,7 @@ namespace HW_booksStorage
 
         public void SearchBook()
         {
-            if (HasBook(out List<Book> foundBooks))
+            if (TryFindBook(out List<Book> foundBooks))
             {
                 foreach (Book book in foundBooks)
                     Console.WriteLine($"{book.Name}, {book.Autor}, {book.Date}г.");
@@ -162,7 +185,7 @@ namespace HW_booksStorage
             }
         }
 
-        private bool HasBook(out List<Book> foundBooks)
+        private bool TryFindBook(out List<Book> foundBooks)
         {
             foundBooks = new List<Book>();
 
@@ -174,7 +197,7 @@ namespace HW_booksStorage
 
             foreach (Book book in _books)
             {
-                if (book.Name.ToLower() == searchValue || book.Autor.ToLower() == searchValue || book.Date == searchValue)
+                if (book.Name.ToLower() == searchValue || book.Autor.ToLower() == searchValue || int.TryParse(searchValue, out int searchDate) && book.Date == searchDate)
                 {
                     foundBooks.Add(book);
 
@@ -200,7 +223,7 @@ namespace HW_booksStorage
 
         class Book
         {
-            public Book(string name, string autor, string date)
+            public Book(string name, string autor, int date)
             {
                 Name = name;
                 Autor = autor;
@@ -209,7 +232,7 @@ namespace HW_booksStorage
 
             public string Name { get; private set; }
             public string Autor { get; private set; }
-            public string Date { get; private set; }
+            public int Date { get; private set; }
         }
     }
 }
