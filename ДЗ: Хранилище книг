@@ -1,0 +1,215 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace HW_booksStorage
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            const string CommandAdd = "1";
+            const string CommandDelete = "2";
+            const string CommandShowAll = "3";
+            const string CommandSearch = "4";
+            const string CommandExit = "5";
+
+            bool isRunning = true;
+
+            BookStorage bookStorage = new BookStorage();
+
+            while (isRunning)
+            {
+                Console.Clear();
+                Console.WriteLine($"Хранилище книг.\n" +
+                                  $"\n" +
+                                  $"Добавить книгу - {CommandAdd}\n" +
+                                  $"Удалить книгу - {CommandDelete}\n" +
+                                  $"Показать все книги - {CommandShowAll}\n" +
+                                  $"Найти книгу - {CommandSearch}\n" +
+                                  $"Выйти из программы - {CommandExit}\n" +
+                                  $"Введите команду:");
+
+                switch (Console.ReadLine())
+                {
+                    case CommandAdd:
+                        bookStorage.AddBook();
+                        break;
+
+                    case CommandDelete:
+                        bookStorage.RemoveBook();
+                        break;
+
+                    case CommandShowAll:
+                        bookStorage.ShowAllBooks();
+                        break;
+
+                    case CommandSearch:
+                        bookStorage.SearchBook();
+                        break;
+
+                    case CommandExit:
+                        isRunning = false;
+                        break;
+
+                    default:
+                        Console.WriteLine("Неверный ввод.");
+                        Console.ReadKey();
+                        break;
+                }
+            }
+        }
+    }
+
+    class BookStorage
+    {
+        private List<Book> _books;
+
+        public BookStorage()
+        {
+            _books = new List<Book>()
+            {
+                new Book ("Капитанская дочка", "Пушкин", "1836" ),
+                new Book ("Мастер и Маргарита", "Булгаков", "1940" ),
+                new Book ("Ася", "Тургенев", "1858" ),
+                new Book ("Мертвые души", "Гоголь", "1836" ),
+                new Book ("Хождение по мукам", "Толстой", "1941" ),
+                new Book ("Записки охотника", "Тургенев", "1852" ),
+                new Book ("Война и мир", "Толстой", "1868" )
+            };
+        }
+
+        public void AddBook()
+        {
+            string name;
+            string autor;
+            string date;
+
+            Console.Write("Введите название книги:");
+            name = Console.ReadLine();
+
+            Console.Write("Введите автора книги:");
+            autor = Console.ReadLine();
+
+            Console.Write("Введите год публикации книги:");
+            date = Console.ReadLine();
+
+            _books.Add(new Book(name, autor, date));
+
+            Console.WriteLine($"Книга {name}, автора {autor}, {date} года публикации успешно добавлена.");
+            Console.ReadKey();
+        }
+
+        public void RemoveBook()
+        {
+            if (HasBook(out List<Book> foundBooks))
+            {
+                bool isRunning = true;
+
+                while (isRunning)
+                {
+                    if (foundBooks.Count > 1)
+                    {
+                        Console.WriteLine("Найдено несколько книг, какую вы хотите удалить?");
+
+                        foreach (var book in foundBooks)
+                            Console.WriteLine($"{foundBooks.IndexOf(book) + 1}. {book.Name}, {book.Autor}, {book.Date}г.");
+
+                        if (int.TryParse(Console.ReadLine(), out int removableBookIndex) && removableBookIndex <= foundBooks.Count)
+                        {
+                            for (int i = 0; i < _books.Count; i++)
+                            {
+                                if (_books[i] == foundBooks[removableBookIndex - 1])
+                                {
+                                    _books.RemoveAt(i);
+                                    i = _books.Count;
+                                    isRunning = false;
+
+                                    Console.WriteLine("Книга удалена.");
+                                    Console.ReadKey();
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Некорректный ввод.");
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < _books.Count; i++)
+                            if (_books[i] == foundBooks.First())
+                            {
+                                _books.RemoveAt(i);
+                                Console.WriteLine("Книга удалена.");
+                                Console.ReadKey();
+
+                                isRunning = false;
+                            }
+                    }
+                }
+            }
+        }
+
+        public void SearchBook()
+        {
+            if (HasBook(out List<Book> foundBooks))
+            {
+                foreach (Book book in foundBooks)
+                    Console.WriteLine($"{book.Name}, {book.Autor}, {book.Date}г.");
+
+                Console.ReadKey();
+            }
+        }
+
+        private bool HasBook(out List<Book> foundBooks)
+        {
+            foundBooks = new List<Book>();
+
+            string searchValue;
+            bool isSuccessfulSearch = false;
+
+            Console.WriteLine("Введите название, автора или год публикации книги:");
+            searchValue = Console.ReadLine().ToLower();
+
+            foreach (Book book in _books)
+            {
+                if (book.Name.ToLower() == searchValue || book.Autor.ToLower() == searchValue || book.Date == searchValue)
+                {
+                    foundBooks.Add(book);
+
+                    isSuccessfulSearch = true;
+                }
+            }
+
+            if (isSuccessfulSearch == false)
+            {
+                Console.WriteLine("Книга не найдена");
+                Console.ReadKey();
+            }
+
+            return isSuccessfulSearch;
+        }
+        public void ShowAllBooks()
+        {
+            foreach (Book book in _books)
+                Console.WriteLine($"{book.Name}, {book.Autor}, {book.Date}г.");
+
+            Console.ReadKey();
+        }
+
+        class Book
+        {
+            public Book(string name, string autor, string date)
+            {
+                Name = name;
+                Autor = autor;
+                Date = date;
+            }
+
+            public string Name { get; private set; }
+            public string Autor { get; private set; }
+            public string Date { get; private set; }
+        }
+    }
+}
