@@ -1,0 +1,243 @@
+using System;
+using System.Collections.Generic;
+
+namespace HW_Shop
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            ConsoleMenu menu = new ConsoleMenu();
+
+            menu.GettingStarted();
+        }
+    }
+
+    class ConsoleMenu
+    {
+        private Shop _shop;
+
+        public ConsoleMenu()
+        {
+            _shop = new Shop();
+        }
+
+        public void GettingStarted()
+        {
+            const string CommandExit = "0";
+
+            bool isRunning = true;
+
+            while (isRunning)
+            {
+                string desiredProduct;
+
+                Console.Clear();
+
+                _shop.ShowAllStatistic();
+
+                Console.WriteLine($"Добро пожаловать в магазин.\nДля выхода введите - {CommandExit}\nВведите название товара который желаете купить:");
+
+                desiredProduct = Console.ReadLine().ToLower();
+
+                if (desiredProduct != CommandExit)
+                {
+                    if (_shop.TryGetProductAndPrice(ref desiredProduct, out int productPrice))
+                    {
+                        _shop.Sell(desiredProduct, productPrice);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Товара нет в ассортименте магазина.");
+                        Console.ReadKey();
+                    }
+                }
+                else
+                {
+                    isRunning = false;
+                }
+            }
+        }
+    }
+
+    class Shop
+    {
+        private Random _random = new Random();
+
+        private Dictionary<string, int> _prices;
+
+        private List<string> _products;
+
+        private Buyer _buyer;
+        private Seller _seller;
+
+        private int _minPrice;
+        private int _maxPrice;
+
+        public Shop()
+        {
+            _products = new List<string>()
+            {
+                "Яблоко",
+                "Груша",
+                "Помидор",
+                "Апельсин",
+                "Банан",
+            };
+
+            _minPrice = 1;
+            _maxPrice = 51;
+
+            _prices = new Dictionary<string, int>();
+
+            foreach (var product in _products)
+                _prices.Add(product, _random.Next(_minPrice, _maxPrice));
+
+            _buyer = new Buyer();
+            _seller = new Seller(_products);
+        }
+
+        public void ShowPriceProducts()
+        {
+            Console.WriteLine("Цены продуктов:");
+
+            foreach (var product in _prices)
+            {
+                Console.WriteLine($"{product.Key} - {product.Value} руб.");
+            }
+        }
+
+        public bool TryGetProductAndPrice(ref string productKey, out int productPrice)
+        {
+            foreach (var price in _prices)
+                if (price.Key.ToLower() == productKey)
+                {
+                    productKey = price.Key;
+                    productPrice = price.Value;
+                    return true;
+                }
+
+            productPrice = default;
+            return false;
+        }
+
+        public void Sell(string produktKey, int productPrice)
+        {
+            if (_seller.TryHasProduct(produktKey, out int productIndex))
+            {
+                if (_buyer.HasMoney(productPrice))
+                {
+                    _seller.Sell(productIndex, productPrice);
+                    _buyer.Buy(produktKey, productPrice);
+                }
+                else
+                {
+                    Console.WriteLine("Недостаточно средств для покупки.");
+                    Console.ReadKey();
+                }
+            }
+            else
+            {
+                Console.WriteLine("Товара нет в наличии.");
+                Console.ReadKey();
+            }
+        }
+
+        public void ShowAllStatistic()
+        {
+            Console.Write(new string('*', 120));
+            ShowPriceProducts();
+
+            Console.Write(new string('*', 120) + "Деньги магазина: ");
+            _seller.ShowMoney();
+
+            Console.WriteLine("Товар в наличии: ");
+            _seller.ShowProducts();
+
+            Console.Write(new string('*', 120) + "Ваши деньги: ");
+            _buyer.ShowMoney();
+
+            Console.WriteLine("Ваши покупки:");
+            _buyer.ShowProducts();
+
+            Console.WriteLine(new string('*', 120));
+        }
+    }
+
+    class Person
+    {
+        protected int _money;
+
+        protected List<string> _products;
+
+        public void ShowMoney()
+        {
+            Console.WriteLine(_money);
+        }
+
+        public void ShowProducts()
+        {
+            foreach (var product in _products)
+            {
+                Console.WriteLine(product);
+            }
+        }
+    }
+
+    class Seller : Person
+    {
+        public Seller(List<string> products)
+        {
+            _products = new List<string>();
+
+            foreach (var product in products)
+                _products.Add(product);
+        }
+
+        public void Sell(int productIndex, int productPrice)
+        {
+            _money += productPrice;
+            _products.RemoveAt(productIndex);
+        }
+
+        public bool TryHasProduct(string productKey, out int productIndex)
+        {
+            if (_products.Contains(productKey))
+            {
+                productIndex = _products.IndexOf(productKey);
+
+                return true;
+            }
+            else
+            {
+                productIndex = default;
+
+                return false;
+            }
+        }
+    }
+
+    class Buyer : Person
+    {
+        public Buyer()
+        {
+            _products = new List<string>();
+
+            _money = 100;
+        }
+
+        public bool HasMoney(int productPrice)
+        {
+            if (_money >= productPrice)
+                return true;
+            else
+                return false;
+        }
+
+        public void Buy(string product, int productPrice)
+        {
+            _products.Add(product);
+            _money -= productPrice;
+        }
+    }
+}
