@@ -54,61 +54,23 @@ namespace HW_Shop
 
     class Shop
     {
-        private Random _random = new Random();
-
-        private Dictionary<string, int> _prices;
-
         private Buyer _buyer;
         private Seller _seller;
 
         public Shop()
         {
-            _prices = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-
-            List<string> products = ProductsAdding();
-
             _buyer = new Buyer();
-            _seller = new Seller(products);
-        }
-
-        private List<string> ProductsAdding()
-        {
-            int minPrice = 1;
-            int maxPrice = 51;
-
-            List<string> products = new List<string>()
-            {
-                "Яблоко",
-                "Груша",
-                "Помидор",
-                "Апельсин",
-                "Банан",
-            };
-
-            foreach (var product in products)
-                _prices.Add(product, _random.Next(minPrice, maxPrice));
-
-            return products;
-        }
-
-        private void ShowPriceProducts()
-        {
-            Console.WriteLine("Цены продуктов:");
-
-            foreach (var product in _prices)
-                Console.WriteLine($"{product.Key} - {product.Value} руб.");
+            _seller = new Seller();
         }
 
         public void Sell(string product)
         {
-            if (_seller.TryHasProduct(ref product))
+            if (_seller.TryHasProduct(product, out Product soldProduct))
             {
-                int productPrice = _prices[product];
-
-                if (_buyer.HasMoney(productPrice))
+                if (_buyer.HasMoney(soldProduct))
                 {
-                    _seller.Sell(product, productPrice);
-                    _buyer.Buy(product, productPrice);
+                    _seller.Sell(soldProduct);
+                    _buyer.Buy(soldProduct);
                 }
                 else
                 {
@@ -125,14 +87,11 @@ namespace HW_Shop
 
         public void ShowAllStatistic()
         {
-            Console.Write(new string('*', 120));
-            ShowPriceProducts();
+            Console.Write(new string('*', 120) + "Товар в наличии:\n");
+            _seller.ShowPriceProducts();
 
             Console.Write(new string('*', 120) + "Деньги магазина: ");
             _seller.ShowMoney();
-
-            Console.WriteLine("Товар в наличии: ");
-            _seller.ShowProducts();
 
             Console.Write(new string('*', 120) + "Ваши деньги: ");
             _buyer.ShowMoney();
@@ -144,11 +103,12 @@ namespace HW_Shop
         }
     }
 
+
     class Person
     {
         protected int Money;
 
-        protected List<string> Products;
+        protected List<Product> Products;
 
         public void ShowMoney()
         {
@@ -158,40 +118,61 @@ namespace HW_Shop
         public void ShowProducts()
         {
             foreach (var product in Products)
-                Console.WriteLine(product);
+                Console.WriteLine(product.Name);
         }
     }
 
     class Seller : Person
     {
-        public Seller(List<string> products)
-        {
-            Products = new List<string>();
+        private Random _random = new Random();
 
-            ProductsAdding(products);
+        public Seller()
+        {
+            Products = new List<Product>();
+
+            ProductsAdding();
         }
 
-        private void ProductsAdding(List<string> products)
+        private void ProductsAdding()
         {
+            int minPrice = 1;
+            int maxPrice = 51;
+
+            List<string> products = new List<string>()
+            {
+                "Яблоко",
+                "Груша",
+                "Помидор",
+                "Апельсин",
+                "Банан",
+            };
+
             foreach (var product in products)
-                Products.Add(product);
+                Products.Add(new Product(product, _random.Next(minPrice, maxPrice)));
         }
 
-        public void Sell(string product, int productPrice)
+        public void ShowPriceProducts()
         {
-            Money += productPrice;
-            Products.Remove(product);
+            foreach (var product in Products)
+                Console.WriteLine($"{product.Name} - {product.Price} руб.");
         }
 
-        public bool TryHasProduct(ref string desiredProduct)
+        public void Sell(Product soldProduct)
+        {
+            Money += soldProduct.Price;
+            Products.Remove(soldProduct);
+        }
+
+        public bool TryHasProduct(string desiredProduct, out Product soldProduct)
         {
             bool hasProduct = false;
+            soldProduct = default;
 
             foreach (var product in Products)
             {
-                if (string.Equals(product, desiredProduct, StringComparison.CurrentCultureIgnoreCase))
+                if (string.Equals(product.Name, desiredProduct, StringComparison.CurrentCultureIgnoreCase))
                 {
-                    desiredProduct = product;
+                    soldProduct = product;
                     hasProduct = true;
                 }
             }
@@ -204,22 +185,34 @@ namespace HW_Shop
     {
         public Buyer()
         {
-            Products = new List<string>();
+            Products = new List<Product>();
 
             Money = 100;
         }
 
-        public bool HasMoney(int productPrice)
+        public bool HasMoney(Product soldProduct)
         {
-            bool hasMoney = Money >= productPrice;
+            bool hasMoney = Money >= soldProduct.Price;
 
             return hasMoney;
         }
 
-        public void Buy(string product, int productPrice)
+        public void Buy(Product soldProduct)
         {
-            Products.Add(product);
-            Money -= productPrice;
+            Products.Add(soldProduct);
+            Money -= soldProduct.Price;
         }
+    }
+
+    class Product
+    {
+        public Product(string name, int price)
+        {
+            Name = name;
+            Price = price;
+        }
+
+        public string Name { get; private set; }
+        public int Price { get; private set; }
     }
 }
