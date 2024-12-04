@@ -42,15 +42,7 @@ namespace HW_Shop
 
                 if (desiredProduct != CommandExit)
                 {
-                    if (_shop.TryGetProductAndPrice(ref desiredProduct, out int productPrice))
-                    {
-                        _shop.Sell(desiredProduct, productPrice);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Товара нет в ассортименте магазина.");
-                        Console.ReadKey();
-                    }
+                    _shop.Sell(desiredProduct);
                 }
                 else
                 {
@@ -88,7 +80,7 @@ namespace HW_Shop
             _minPrice = 1;
             _maxPrice = 51;
 
-            _prices = new Dictionary<string, int>();
+            _prices = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var product in _products)
                 _prices.Add(product, _random.Next(_minPrice, _maxPrice));
@@ -107,28 +99,16 @@ namespace HW_Shop
             }
         }
 
-        public bool TryGetProductAndPrice(ref string productKey, out int productPrice)
+        public void Sell(string product)
         {
-            foreach (var price in _prices)
-                if (price.Key.ToLower() == productKey)
-                {
-                    productKey = price.Key;
-                    productPrice = price.Value;
-                    return true;
-                }
-
-            productPrice = default;
-            return false;
-        }
-
-        public void Sell(string produktKey, int productPrice)
-        {
-            if (_seller.TryHasProduct(produktKey, out int productIndex))
+            if (_seller.TryHasProduct(ref product))
             {
+                int productPrice = _prices[product];
+
                 if (_buyer.HasMoney(productPrice))
                 {
-                    _seller.Sell(productIndex, productPrice);
-                    _buyer.Buy(produktKey, productPrice);
+                    _seller.Sell(product, productPrice);
+                    _buyer.Buy(product, productPrice);
                 }
                 else
                 {
@@ -166,18 +146,18 @@ namespace HW_Shop
 
     class Person
     {
-        protected int _money;
+        protected int Money;
 
-        protected List<string> _products;
+        protected List<string> Products;
 
         public void ShowMoney()
         {
-            Console.WriteLine(_money);
+            Console.WriteLine(Money);
         }
 
         public void ShowProducts()
         {
-            foreach (var product in _products)
+            foreach (var product in Products)
             {
                 Console.WriteLine(product);
             }
@@ -188,32 +168,30 @@ namespace HW_Shop
     {
         public Seller(List<string> products)
         {
-            _products = new List<string>();
+            Products = new List<string>();
 
             foreach (var product in products)
-                _products.Add(product);
+                Products.Add(product);
         }
 
-        public void Sell(int productIndex, int productPrice)
+        public void Sell(string product, int productPrice)
         {
-            _money += productPrice;
-            _products.RemoveAt(productIndex);
+            Money += productPrice;
+            Products.Remove(product);
         }
 
-        public bool TryHasProduct(string productKey, out int productIndex)
+        public bool TryHasProduct(ref string desiredProduct)
         {
-            if (_products.Contains(productKey))
-            {
-                productIndex = _products.IndexOf(productKey);
+            bool hasProduct = false;
 
-                return true;
-            }
-            else
-            {
-                productIndex = default;
+            foreach (var product in Products)
+                if (product.ToLower() == desiredProduct.ToLower())
+                {
+                    desiredProduct = product;
+                    hasProduct = true;
+                }
 
-                return false;
-            }
+            return hasProduct;
         }
     }
 
@@ -221,23 +199,21 @@ namespace HW_Shop
     {
         public Buyer()
         {
-            _products = new List<string>();
+            Products = new List<string>();
 
-            _money = 100;
+            Money = 100;
         }
 
         public bool HasMoney(int productPrice)
         {
-            if (_money >= productPrice)
-                return true;
-            else
-                return false;
+            bool hasMoney = Money >= productPrice;
+            return hasMoney;
         }
 
         public void Buy(string product, int productPrice)
         {
-            _products.Add(product);
-            _money -= productPrice;
+            Products.Add(product);
+            Money -= productPrice;
         }
     }
 }
