@@ -1,0 +1,171 @@
+using System;
+using System.Collections.Generic;
+
+namespace HW_configuratorTrains
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            ConsoleMenu menu = new ConsoleMenu();
+
+            menu.GettingStarted();
+        }
+    }
+
+    class ConsoleMenu
+    {
+        public void GettingStarted()
+        {
+            const string CommandExit = "0";
+            const string CommandCreateTrain = "1";
+
+            bool IsRunning = true;
+
+            Dispatcher dispatcher = new Dispatcher();
+
+            while (IsRunning)
+            {
+                Console.Clear();
+                Console.Write($"Добро пожаловать в программу \"Весёлый диспетчер\"\n" + new string('*', 120));
+
+                dispatcher.ShowAllTrains();
+
+                Console.Write($"Чтобы создать новый поезд введите - {CommandCreateTrain}\n" +
+                              $"Чтобы выйти из программы введите - {CommandExit}\n" +
+                              $"Введите команду: ");
+
+                switch (Console.ReadLine())
+                {
+                    case CommandCreateTrain:
+                        dispatcher.CreateTrain();
+                        break;
+
+                    case CommandExit:
+                        IsRunning = false;
+                        break;
+
+                    default:
+                        Console.WriteLine("Такой команды нет.");
+                        break;
+                }
+
+                Console.ReadKey();
+            }
+        }
+    }
+
+    class Dispatcher
+    {
+        private Random _random;
+        private List<Train> _trains;
+
+        public Dispatcher()
+        {
+            _random = new Random();
+
+            _trains = new List<Train>();
+        }
+
+        public void CreateTrain()
+        {
+            string departurePoint;
+            string arryvalPoint;
+            int minPassengersNumber = 20;
+            int maxPassengersNumber = 301;
+            int passengersNumber = _random.Next(minPassengersNumber, maxPassengersNumber);
+
+            Console.WriteLine("Введите название пункта отправки поезда:");
+            departurePoint = Console.ReadLine();
+
+            Console.WriteLine("Введите название пункта прибытия поезда:");
+            arryvalPoint = Console.ReadLine();
+
+            Console.WriteLine($"Количество пассажиров купивших билет на поезд \"{departurePoint} - {arryvalPoint}\" - {passengersNumber} человек.");
+
+            _trains.Add(new Train(departurePoint, arryvalPoint, passengersNumber));
+
+            Console.WriteLine("Поезд успешно создан.");
+        }
+
+        public void ShowAllTrains()
+        {
+            foreach (var train in _trains)
+            {
+                train.ShowTrainStatistic();
+
+                Console.WriteLine(new string('*', 120));
+            }
+        }
+    }
+
+    class Train
+    {
+        private int _wagonNumber;
+        private List<Wagon> _wagons;
+
+        public Train(string departurePoint, string arryvalPoint, int passengersNumber)
+        {
+            _wagonNumber = 0;
+
+            _wagons = new List<Wagon>();
+
+            Direction = departurePoint + '-' + arryvalPoint;
+
+            FillTrain(passengersNumber);
+
+            ShowTrainStatistic();
+        }
+
+        public string Direction { get; private set; }
+
+        private void FillTrain(int passengersNumber)
+        {
+            for (int i = 0; i < passengersNumber;)
+            {
+                _wagons.Add(new Wagon(++_wagonNumber, ref passengersNumber));
+            }
+        }
+
+        public void ShowTrainStatistic()
+        {
+            Console.WriteLine($"Поезд {Direction}:");
+
+            foreach (var wagon in _wagons)
+            {
+                Console.WriteLine($"Вагон №{wagon.WagonNumber}. Количество свободных мест - {wagon.SeatsFree}");
+            }
+        }
+
+        class Wagon
+        {
+            private List<Person> _passengers;
+
+            public Wagon(int wagonNumber, ref int passengerNumber)
+            {
+                _passengers = new List<Person>();
+
+                SeatsFree = 30;
+                WagonNumber = wagonNumber;
+
+                FillWagon(ref passengerNumber);
+            }
+
+            public int SeatsFree { get; private set; }
+            public int WagonNumber { get; private set; }
+
+            private int FillWagon(ref int passengersNumber)
+            {
+                for (int i = 0; i < SeatsFree && i < passengersNumber; SeatsFree--)
+                {
+                    _passengers.Add(new Person());
+                    passengersNumber--;
+                }
+
+                return passengersNumber;
+            }
+        }
+
+        class Person { }
+    }
+}
