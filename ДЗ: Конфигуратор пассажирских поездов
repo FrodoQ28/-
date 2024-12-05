@@ -9,13 +9,13 @@ namespace HW_configuratorTrains
         {
             ConsoleMenu menu = new ConsoleMenu();
 
-            menu.GettingStarted();
+            menu.StartWork();
         }
     }
 
     class ConsoleMenu
     {
-        public void GettingStarted()
+        public void StartWork()
         {
             const string CommandExit = "0";
             const string CommandCreateTrain = "1";
@@ -75,6 +75,8 @@ namespace HW_configuratorTrains
             int maxPassengersNumber = 301;
             int passengersNumber = _random.Next(minPassengersNumber, maxPassengersNumber);
 
+            List<Wagon> wagons;
+
             Console.WriteLine("Введите название пункта отправки поезда:");
             departurePoint = Console.ReadLine();
 
@@ -83,7 +85,9 @@ namespace HW_configuratorTrains
 
             Console.WriteLine($"Количество пассажиров купивших билет на поезд \"{departurePoint} - {arryvalPoint}\" - {passengersNumber} человек.");
 
-            _trains.Add(new Train(departurePoint, arryvalPoint, passengersNumber));
+            wagons = GetWagons(passengersNumber);
+
+            _trains.Add(new Train(departurePoint, arryvalPoint, wagons));
 
             Console.WriteLine("Поезд успешно создан.");
         }
@@ -97,34 +101,43 @@ namespace HW_configuratorTrains
                 Console.WriteLine(new string('*', 120));
             }
         }
+
+        private List<Wagon> GetWagons(int passengersNumber)
+        {
+            List<Wagon> wagons = new List<Wagon>();
+
+            int wagonNumber = 0;
+
+            for (int i = 0; i < passengersNumber;)
+            {
+                wagons.Add(new Wagon(++wagonNumber, ref passengersNumber));
+            }
+
+            return wagons;
+        }
     }
 
     class Train
     {
-        private int _wagonNumber;
         private List<Wagon> _wagons;
 
-        public Train(string departurePoint, string arryvalPoint, int passengersNumber)
+        public Train(string departurePoint, string arryvalPoint, List<Wagon> wagons)
         {
-            _wagonNumber = 0;
-
             _wagons = new List<Wagon>();
 
             Direction = departurePoint + '-' + arryvalPoint;
 
-            FillTrain(passengersNumber);
+            AddWagons(wagons);
 
             ShowTrainStatistic();
         }
 
         public string Direction { get; private set; }
 
-        private void FillTrain(int passengersNumber)
+        private void AddWagons(List<Wagon> wagons)
         {
-            for (int i = 0; i < passengersNumber;)
-            {
-                _wagons.Add(new Wagon(++_wagonNumber, ref passengersNumber));
-            }
+            foreach(Wagon wagon in wagons)
+                _wagons.Add(wagon);
         }
 
         public void ShowTrainStatistic()
@@ -133,39 +146,39 @@ namespace HW_configuratorTrains
 
             foreach (var wagon in _wagons)
             {
-                Console.WriteLine($"Вагон №{wagon.WagonNumber}. Количество свободных мест - {wagon.SeatsFree}");
+                Console.WriteLine($"Вагон №{wagon.CarriageNumber}. Количество свободных мест - {wagon.SeatsFree}");
             }
         }
-
-        class Wagon
-        {
-            private List<Person> _passengers;
-
-            public Wagon(int wagonNumber, ref int passengerNumber)
-            {
-                _passengers = new List<Person>();
-
-                SeatsFree = 30;
-                WagonNumber = wagonNumber;
-
-                FillWagon(ref passengerNumber);
-            }
-
-            public int SeatsFree { get; private set; }
-            public int WagonNumber { get; private set; }
-
-            private int FillWagon(ref int passengersNumber)
-            {
-                for (int i = 0; i < SeatsFree && i < passengersNumber; SeatsFree--)
-                {
-                    _passengers.Add(new Person());
-                    passengersNumber--;
-                }
-
-                return passengersNumber;
-            }
-        }
-
-        class Person { }
     }
+
+    class Wagon
+    {
+        private List<Person> _passengers;
+
+        public Wagon(int carriageNumber, ref int passengerNumber)
+        {
+            _passengers = new List<Person>();
+
+            SeatsFree = 30;
+            CarriageNumber = carriageNumber;
+
+            AddPassengers(ref passengerNumber);
+        }
+
+        public int SeatsFree { get; private set; }
+        public int CarriageNumber { get; private set; }
+
+        private int AddPassengers(ref int passengersNumber)
+        {
+            for (int i = 0; i < SeatsFree && i < passengersNumber; SeatsFree--)
+            {
+                _passengers.Add(new Person());
+                passengersNumber--;
+            }
+
+            return passengersNumber;
+        }
+    }
+
+    class Person { }
 }
