@@ -38,7 +38,7 @@ namespace HW_configuratorTrains
                 switch (Console.ReadLine())
                 {
                     case CommandCreateTrain:
-                        dispatcher.CreateTrain();
+                        dispatcher.AddTrain();
                         break;
 
                     case CommandExit:
@@ -67,7 +67,7 @@ namespace HW_configuratorTrains
             _trains = new List<Train>();
         }
 
-        public void CreateTrain()
+        public void AddTrain()
         {
             string departurePoint;
             string arryvalPoint;
@@ -119,20 +119,20 @@ namespace HW_configuratorTrains
 
     class Train
     {
+        private string _direction;
+
         private List<Wagon> _wagons;
 
         public Train(string departurePoint, string arryvalPoint, List<Wagon> wagons)
         {
             _wagons = new List<Wagon>();
 
-            Direction = departurePoint + '-' + arryvalPoint;
+            _direction = departurePoint + '-' + arryvalPoint;
 
             AddWagons(wagons);
 
             ShowTrainStatistic();
         }
-
-        public string Direction { get; private set; }
 
         private void AddWagons(List<Wagon> wagons)
         {
@@ -142,43 +142,38 @@ namespace HW_configuratorTrains
 
         public void ShowTrainStatistic()
         {
-            Console.WriteLine($"Поезд {Direction}:");
+            Console.WriteLine($"Поезд {_direction}:");
 
             foreach (var wagon in _wagons)
             {
-                Console.WriteLine($"Вагон №{wagon.CarriageNumber}. Количество свободных мест - {wagon.SeatsFree}");
+                Console.WriteLine($"Вагон №{wagon.CarriageNumber}. Количество пассажиров - {wagon.TicketsSaleNumber}, количество свободных мест - {wagon.SeatsFree}");
             }
         }
     }
 
     class Wagon
     {
-        private List<Person> _passengers;
 
         public Wagon(int carriageNumber, ref int passengerNumber)
         {
-            _passengers = new List<Person>();
-
+            TicketsSaleNumber = default;
             SeatsFree = 30;
             CarriageNumber = carriageNumber;
 
             AddPassengers(ref passengerNumber);
         }
 
+        public int TicketsSaleNumber {  get; private set; }
         public int SeatsFree { get; private set; }
         public int CarriageNumber { get; private set; }
 
-        private int AddPassengers(ref int passengersNumber)
+        private void AddPassengers(ref int passengersNumber)
         {
             for (int i = 0; i < SeatsFree && i < passengersNumber; SeatsFree--)
             {
-                _passengers.Add(new Person());
+                TicketsSaleNumber++;
                 passengersNumber--;
             }
-
-            return passengersNumber;
         }
     }
-
-    class Person { }
 }
