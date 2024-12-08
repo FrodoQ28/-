@@ -10,13 +10,13 @@ namespace HW_configuratorTrains
         {
             ConsoleMenu menu = new ConsoleMenu();
 
-            menu.TurnWork();
+            menu.Work();
         }
     }
 
     class ConsoleMenu
     {
-        public void TurnWork()
+        public void Work()
         {
             const string CommandExit = "0";
             const string CommandCreateTrain = "1";
@@ -72,13 +72,13 @@ namespace HW_configuratorTrains
         {
             int minPassengersNumber = 20;
             int maxPassengersNumber = 301;
-            int passengersNumber = _random.Next(minPassengersNumber, maxPassengersNumber);
+            int passengersAmount = _random.Next(minPassengersNumber, maxPassengersNumber);
 
             bool isCorrectWay = false;
 
             List<Wagon> wagons;
 
-            wagons = SetWagons(passengersNumber);
+            wagons = GetWagons(passengersAmount);
 
             while (isCorrectWay == false)
             {
@@ -94,7 +94,7 @@ namespace HW_configuratorTrains
                 }
             }
 
-            Console.WriteLine($"Количество пассажиров купивших билет на поезд - {passengersNumber} человек.");
+            Console.WriteLine($"Количество пассажиров купивших билет на поезд - {passengersAmount} человек.");
             Console.WriteLine("Поезд успешно создан.");
         }
 
@@ -108,7 +108,7 @@ namespace HW_configuratorTrains
             }
         }
 
-        public bool EnterDirection(out Direction direction)
+        private bool EnterDirection(out Direction direction)
         {
             string departurePoint;
             string arryvalPoint;
@@ -133,17 +133,17 @@ namespace HW_configuratorTrains
             }
         }
 
-        private List<Wagon> SetWagons(int passengersNumber)
+        private List<Wagon> GetWagons(int passengersAmount)
         {
             List<Wagon> wagons = new List<Wagon>();
 
             int wagonNumber = 0;
 
-            for (int i = 0; i < passengersNumber;)
+            for (int i = 0; i < passengersAmount;)
             {
-                wagons.Add(new Wagon(++wagonNumber, passengersNumber));
+                wagons.Add(new Wagon(++wagonNumber, passengersAmount));
 
-                passengersNumber -= wagons.Last<Wagon>().PassengersAmount;
+                passengersAmount -= wagons.Last<Wagon>().PassengersAmount;
             }
 
             return wagons;
@@ -203,27 +203,27 @@ namespace HW_configuratorTrains
 
     class Wagon
     {
-        public Wagon(int carriageNumber, int passengerNumber)
+        public Wagon(int carriageNumber, int passengerAmount)
         {
             PassengersAmount = default;
             AvailableSeats = 30;
             CarriageNumber = carriageNumber;
 
-            AddPassengers(passengerNumber);
+            AddPassengers(passengerAmount);
         }
 
         public int PassengersAmount { get; private set; }
         public int AvailableSeats { get; private set; }
         public int CarriageNumber { get; private set; }
 
-        private void AddPassengers(int passengersNumber)
+        private void AddPassengers(int passengersAmount)
         {
-            if (passengersNumber > AvailableSeats)
+            if (passengersAmount > AvailableSeats)
             {
-                passengersNumber = AvailableSeats;
+                passengersAmount = AvailableSeats;
             }
 
-            for (int i = 0; i < passengersNumber; i++)
+            for (int i = 0; i < passengersAmount; i++)
             {
                 PassengersAmount++;
                 AvailableSeats--;
