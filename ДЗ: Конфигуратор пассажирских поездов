@@ -10,13 +10,13 @@ namespace HW_configuratorTrains
         {
             ConsoleMenu menu = new ConsoleMenu();
 
-            menu.StartWork();
+            menu.TurnWork();
         }
     }
 
     class ConsoleMenu
     {
-        public void StartWork()
+        public void TurnWork()
         {
             const string CommandExit = "0";
             const string CommandCreateTrain = "1";
@@ -74,14 +74,27 @@ namespace HW_configuratorTrains
             int maxPassengersNumber = 301;
             int passengersNumber = _random.Next(minPassengersNumber, maxPassengersNumber);
 
+            bool isCorrectWay = false;
+
             List<Wagon> wagons;
 
-            wagons = GetWagons(passengersNumber);
+            wagons = SetWagons(passengersNumber);
 
-            _trains.Add(new Train(wagons));
+            while (isCorrectWay == false)
+            {
+                if (EnterDirection(out Direction direction))
+                {
+                    isCorrectWay = true;
+                    _trains.Add(new Train(wagons, direction));
+                }
+                else
+                {
+                    Console.WriteLine("Пункт назначения и отправки не могут быть одинаковыми.");
+                    Console.ReadKey();
+                }
+            }
 
             Console.WriteLine($"Количество пассажиров купивших билет на поезд - {passengersNumber} человек.");
-
             Console.WriteLine("Поезд успешно создан.");
         }
 
@@ -89,13 +102,38 @@ namespace HW_configuratorTrains
         {
             foreach (var train in _trains)
             {
-                train.ShowTrainStatistic();
+                train.ShowStatistic();
 
                 Console.WriteLine(new string('*', 120));
             }
         }
 
-        private List<Wagon> GetWagons(int passengersNumber)
+        public bool EnterDirection(out Direction direction)
+        {
+            string departurePoint;
+            string arryvalPoint;
+
+            direction = default;
+
+            Console.WriteLine("Введите название пункта отправки поезда:");
+            departurePoint = Console.ReadLine();
+
+            Console.WriteLine("Введите название пункта прибытия поезда:");
+            arryvalPoint = Console.ReadLine();
+
+            if (departurePoint.ToLower() != arryvalPoint.ToLower())
+            {
+                direction = new Direction(departurePoint, arryvalPoint);
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private List<Wagon> SetWagons(int passengersNumber)
         {
             List<Wagon> wagons = new List<Wagon>();
 
@@ -118,15 +156,15 @@ namespace HW_configuratorTrains
 
         private List<Wagon> _wagons;
 
-        public Train(List<Wagon> wagons)
+        public Train(List<Wagon> wagons, Direction direction)
         {
             _wagons = new List<Wagon>();
 
-            _direction = new Direction();
+            _direction = direction;
 
             AddWagons(wagons);
 
-            ShowTrainStatistic();
+            ShowStatistic();
         }
 
         private void AddWagons(List<Wagon> wagons)
@@ -135,11 +173,11 @@ namespace HW_configuratorTrains
                 _wagons.Add(wagon);
         }
 
-        public void ShowTrainStatistic()
+        public void ShowStatistic()
         {
             Console.Write($"Поезд ");
 
-            _direction.ShowDirection();
+            _direction.ShowWay();
 
             foreach (var wagon in _wagons)
                 Console.WriteLine($"Вагон №{wagon.CarriageNumber}. Количество пассажиров - {wagon.PassengersAmount}, количество свободных мест - {wagon.AvailableSeats}");
@@ -151,21 +189,13 @@ namespace HW_configuratorTrains
         private string _departurePoint;
         private string _arryvalPoint;
 
-        public Direction()
+        public Direction(string departurePoint, string arryvalPoint)
         {
-            EnterDirection();
+            _departurePoint = departurePoint;
+            _arryvalPoint = arryvalPoint;
         }
 
-        public void EnterDirection()
-        {
-            Console.WriteLine("Введите название пункта отправки поезда:");
-            _departurePoint = Console.ReadLine();
-
-            Console.WriteLine("Введите название пункта прибытия поезда:");
-            _arryvalPoint = Console.ReadLine();
-        }
-
-        public void ShowDirection()
+        public void ShowWay()
         {
             Console.WriteLine(_departurePoint + " - " + _arryvalPoint);
         }
