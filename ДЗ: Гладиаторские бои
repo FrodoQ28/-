@@ -67,11 +67,11 @@ namespace HW_gladiatorFights
 
     class Arena
     {
-        private List<Fighter> fighterList;
+        private List<Fighter> _fighterList;
 
         public Arena()
         {
-            fighterList = new List<Fighter>()
+            _fighterList = new List<Fighter>()
             {
                 new Warrior(),
                 new Knight(),
@@ -83,7 +83,7 @@ namespace HW_gladiatorFights
 
         public void ShowFighters()
         {
-            foreach (Fighter fighter in fighterList)
+            foreach (Fighter fighter in _fighterList)
                 fighter.ShowInfo();
         }
 
@@ -107,6 +107,11 @@ namespace HW_gladiatorFights
 
             Console.ReadKey();
 
+            RunFight(fighter1, fighter2);
+        }
+
+        private void RunFight(Fighter fighter1, Fighter fighter2)
+        {
             Console.WriteLine("Битва началась.");
 
             while (fighter1.Health > 0 && fighter2.Health > 0)
@@ -147,19 +152,23 @@ namespace HW_gladiatorFights
 
                 if (int.TryParse(userInput, out int fighterIndex))
                 {
-                    if (fighterIndex <= fighterList.Count && fighterIndex > 0)
+                    if (fighterIndex <= _fighterList.Count && fighterIndex > 0)
                     {
                         fighterIndex--;
 
-                        fighter = fighterList[fighterIndex].Clone($"Боец {fighterNumber} ");
+                        fighter = _fighterList[fighterIndex].Clone($"Боец {fighterNumber} ");
 
                         isRunning = false;
                     }
                     else
+                    {
                         Console.WriteLine("Неверный ввод");
+                    }
                 }
                 else
+                {
                     Console.WriteLine("Неверный ввод");
+                }
             }
 
             return fighter;
@@ -178,6 +187,16 @@ namespace HW_gladiatorFights
         protected string Description;
         protected int Damage;
         protected int Armor;
+
+        public Fighter()
+        {
+            Name = string.Empty;
+            CharacterClass = string.Empty;
+            Description = string.Empty;
+            Armor = 0;
+            Damage = 0;
+            Health = 100;
+        }
 
         public int Health { get; protected set; }
 
@@ -198,12 +217,11 @@ namespace HW_gladiatorFights
 
     class Warrior : Fighter
     {
-        public Warrior(string name = "1")
+        public Warrior(string name = "1") : base()
         {
             Name = name;
             CharacterClass = "Воин";
             Description = "С шансом в 20% наносит двойной урон";
-            Health = 100;
             Damage = 15;
             Armor = 5;
         }
@@ -236,12 +254,11 @@ namespace HW_gladiatorFights
     {
         private int _attackNumber;
 
-        public Knight(string name = "2")
+        public Knight(string name = "2") : base()
         {
             Name = name;
             CharacterClass = "Рыцарь";
             Description = "Каждая третья атака наносит двойной урон";
-            Health = 100;
             Damage = 12;
             Armor = 7;
             _attackNumber = default;
@@ -275,11 +292,10 @@ namespace HW_gladiatorFights
         private int _requiredDamageAmount;
         private int _healingAmont;
 
-        public Barbarian(string name = "3")
+        public Barbarian(string name = "3") : base()
         {
             Name = name;
             CharacterClass = "Варвар";
-            Health = 100;
             Damage = 12;
             Armor = 7;
             _damageAmount = default;
@@ -320,11 +336,10 @@ namespace HW_gladiatorFights
         private int _fireBallManaAmount;
         private int _fireBallDamage;
 
-        public Wizard(string name = "4")
+        public Wizard(string name = "4") : base()
         {
             Name = name;
             CharacterClass = "Маг";
-            Health = 100;
             Damage = 9;
             Armor = 5;
             _mana = 100;
@@ -356,12 +371,11 @@ namespace HW_gladiatorFights
 
     class Rogue : Fighter
     {
-        public Rogue(string name = "5")
+        public Rogue(string name = "5") : base()
         {
             Name = name;
             CharacterClass = "Плут";
             Description = $"Имеет шанс в 20% уклониться от атаки";
-            Health = 100;
             Damage = 9;
             Armor = 5;
         }
