@@ -1,0 +1,428 @@
+using System;
+
+namespace HW_gladiatorFights
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            ConsoleMenu menu = new ConsoleMenu();
+
+            menu.Work();
+        }
+    }
+
+    class ConsoleMenu
+    {
+        const string CommandWatchFight = "1";
+        const string CommandExit = "2";
+
+        private Arena _arena;
+
+        public ConsoleMenu()
+        {
+            _arena = new Arena();
+        }
+
+        public void Work()
+        {
+            bool isRunning = true;
+
+            while (isRunning)
+            {
+                Console.Clear();
+
+                Console.WriteLine($"Добро пожаловать на арену!\n" +
+                                  $"Посмотреть бой - {CommandWatchFight}\n" +
+                                  $"Выйти из программы - {CommandExit}");
+
+                switch (Console.ReadLine())
+                {
+                    case CommandWatchFight:
+                        _arena.ShowFight();
+                        break;
+
+                    case CommandExit:
+                        isRunning = false;
+                        break;
+
+                    default:
+                        Console.WriteLine("Такой команды нет.");
+                        break;
+                }
+
+                Console.ReadKey();
+            }
+        }
+    }
+
+    class UserUtils
+    {
+        private static Random s_random = new Random();
+
+        public static int GenerateRandomNumber(int min, int max)
+        {
+            return s_random.Next(min, max);
+        }
+    }
+
+    class Arena
+    {
+        private Warrior _warrior;
+        private Knight _knight;
+        private Barbarian _barbarian;
+        private Wizard _wizard;
+        private Rogue _rogue;
+
+        public Arena()
+        {
+            _warrior = new Warrior();
+            _knight = new Knight();
+            _barbarian = new Barbarian();
+            _wizard = new Wizard();
+            _rogue = new Rogue();
+        }
+
+        public void ShowFighters()
+        {
+            _warrior.ShowInfo();
+            _knight.ShowInfo();
+            _barbarian.ShowInfo();
+            _wizard.ShowInfo();
+            _rogue.ShowInfo();
+        }
+
+        public void ShowFight()
+        {
+            const string CommandWarrior = "1";
+            const string CommandKnight = "2";
+            const string CommandBarbarian = "3";
+            const string CommandWizard = "4";
+            const string CommandRogue = "5";
+
+            bool isRunning = true;
+
+            Fighter fighter1 = default;
+            Fighter fighter2 = default;
+
+            Console.WriteLine("Доступные классы бойцов:");
+            ShowFighters();
+
+            Console.WriteLine("Введите класс первого бойца:");
+
+            while (isRunning)
+            {
+                switch (Console.ReadLine())
+                {
+                    case CommandWarrior:
+                        fighter1 = (Warrior)new Warrior("Боец 1");
+                        isRunning = false;
+                        break;
+                    case CommandKnight:
+                        fighter1 = (Knight)new Knight("Боец 1");
+                        isRunning = false;
+                        break;
+                    case CommandBarbarian:
+                        fighter1 = (Barbarian)new Barbarian("Боец 1");
+                        isRunning = false;
+                        break;
+                    case CommandWizard:
+                        fighter1 = (Wizard)new Wizard("Боец 1");
+                        isRunning = false;
+                        break;
+                    case CommandRogue:
+                        fighter1 = (Rogue)new Rogue("Боец 1");
+                        isRunning = false;
+                        break;
+                    default:
+                        Console.WriteLine("Неверный ввод.");
+                        break;
+                }
+            }
+
+            isRunning = true;
+
+            Console.WriteLine("Введите класс второго бойца:");
+
+            while (isRunning)
+            {
+                switch (Console.ReadLine())
+                {
+                    case CommandWarrior:
+                        fighter2 = (Warrior)new Warrior("Боец 2");
+                        isRunning = false;
+                        break;
+                    case CommandKnight:
+                        fighter2 = (Knight)new Knight("Боец 2");
+                        isRunning = false;
+                        break;
+                    case CommandBarbarian:
+                        fighter2 = (Barbarian)new Barbarian("Боец 2");
+                        isRunning = false;
+                        break;
+                    case CommandWizard:
+                        fighter2 = (Wizard)new Wizard("Боец 2");
+                        isRunning = false;
+                        break;
+                    case CommandRogue:
+                        fighter2 = (Rogue)new Rogue("Боец 2");
+                        isRunning = false;
+                        break;
+                    default:
+                        Console.WriteLine("Неверный ввод.");
+                        break;
+                }
+            }
+
+            Console.Clear();
+
+            Console.WriteLine("Боец 1:");
+            fighter1.ShowInfo();
+
+            Console.WriteLine("Боец 2:");
+            fighter2.ShowInfo();
+
+            Console.ReadKey();
+
+            Console.WriteLine("Битва началась.");
+
+            while (fighter1.Health > 0 && fighter2.Health > 0)
+            {
+                Console.WriteLine(new string ('-', 20));
+
+                fighter1.Attack(fighter2);
+                fighter2.Attack(fighter1);
+
+                fighter1.ShowInfoInFight();
+                fighter2.ShowInfoInFight();
+
+                Console.WriteLine(new string ('-', 20));
+            }
+
+            Console.Write("Бой окончен, ");
+
+            if (fighter1.Health <= 0 && fighter2.Health <= 0)
+                Console.WriteLine("ничья.");
+            else if (fighter1.Health <= 0 && fighter2.Health > 0)
+                Console.WriteLine("победил боец 2");
+            else if (fighter1.Health > 0 && fighter2.Health <= 0)
+                Console.WriteLine("победил боец 1");
+        }
+    }
+
+    interface IDamageble
+    {
+        void TakeDamage(int damage);
+    }
+
+    class Fighter : IDamageble
+    {
+        protected string Name;
+        protected string CharacterClass;
+        protected string Description;
+        protected int Damage;
+        protected int Armor;
+
+        public int Health { get; protected set; }
+
+        public virtual void TakeDamage(int damage)
+        {
+            Health -= damage - Armor;
+        }
+
+        public void ShowInfo()
+        {
+            Console.WriteLine($"Класс - {CharacterClass}\nСпособность - {Description}\nЗдоровье - {Health}\nУрон - {Damage}\nБроня - {Armor}\n");
+        }
+
+        public void ShowInfoInFight()
+        {
+            Console.WriteLine($"{Name} Здоровье - {Health}");
+        }
+
+        public virtual void Attack(IDamageble fighter) { }
+    }
+
+    class Warrior : Fighter
+    {
+        public Warrior(string name = "1")
+        {
+            Name = name;
+            CharacterClass = "Воин";
+            Description = "С шансом в 20% наносит двойной урон";
+            Health = 100;
+            Damage = 15;
+            Armor = 5;
+        }
+
+        public override void Attack(IDamageble fighter)
+        {
+            int maxChance = 101;
+            int minChance = 0;
+            int requiredChance = 20;
+
+            if (UserUtils.GenerateRandomNumber(minChance, maxChance) <= requiredChance)
+            {
+                Console.WriteLine($"Двойная атака! Критический урон {Damage * 2} ед.");
+
+                fighter.TakeDamage(Damage * 2);
+            }
+            else
+            {
+                Console.WriteLine($"Обычная атака. Нанесенный урон {Damage} ед.");
+
+                fighter.TakeDamage(Damage);
+            }
+        }
+    }
+
+    class Knight : Fighter
+    {
+        private int _attackNumber;
+
+        public Knight(string name = "2")
+        {
+            Name = name;
+            CharacterClass = "Рыцарь";
+            Description = "Каждая третья атака наносит двойной урон";
+            Health = 100;
+            Damage = 12;
+            Armor = 7;
+            _attackNumber = default;
+        }
+
+        public override void Attack(IDamageble fighter)
+        {
+            int requiredAttackNumber = 3;
+
+            if (++_attackNumber % requiredAttackNumber == 0)
+            {
+                Console.WriteLine($"Третья атака! Критический урон {Damage * 2} ед.");
+
+                fighter.TakeDamage(Damage * 2);
+            }
+            else
+            {
+                Console.WriteLine($"Обычная атака. Нанесенный урон {Damage} ед.");
+
+                fighter.TakeDamage(Damage);
+            }
+        }
+    }
+
+    class Barbarian : Fighter
+    {
+        private int _damageAmount;
+        private int _requiredDamageAmount;
+        private int _healingAmont;
+
+        public Barbarian(string name = "3")
+        {
+            Name = name;
+            CharacterClass = "Варвар";
+            Health = 100;
+            Damage = 12;
+            Armor = 7;
+            _damageAmount = default;
+            _requiredDamageAmount = 70;
+            _healingAmont = 20;
+            Description = $"Ярость - Накапливая {_requiredDamageAmount} ед. урона лечит {_healingAmont} ед. здоровья";
+        }
+
+        public override void TakeDamage(int damage)
+        {
+            base.TakeDamage(damage);
+
+            _damageAmount += damage;
+
+            if (_damageAmount >= _requiredDamageAmount && Health > 0)
+            {
+                Health += _healingAmont;
+                _damageAmount = 0;
+
+                Console.WriteLine($"{Name} в ярости! Восстановлено {_healingAmont} ед. здоровья");
+            }
+        }
+
+        public override void Attack(IDamageble fighter)
+        {
+            Console.WriteLine($"Обычная атака. Нанесенный урон {Damage} ед.");
+
+            fighter.TakeDamage(Damage);
+        }
+    }
+
+    class Wizard : Fighter
+    {
+        private int _mana;
+        private int _fireBallManaAmount;
+        private int _fireBallDamage;
+
+        public Wizard(string name = "4")
+        {
+            Name = name;
+            CharacterClass = "Маг";
+            Health = 100;
+            Damage = 9;
+            Armor = 5;
+            _mana = 100;
+            _fireBallManaAmount = 20;
+            _fireBallDamage = 20;
+            Description = $"Имеет {_mana} ед. маны. Использует заклинание огненный шар тратя по {_fireBallManaAmount} ед. маны.";
+        }
+
+        public override void Attack(IDamageble fighter)
+        {
+            if (_mana > 0)
+            {
+                Console.WriteLine($"Огненный шар! Нанесенный урон {_fireBallDamage} ед.");
+
+                fighter.TakeDamage(_fireBallDamage);
+
+                _mana -= _fireBallManaAmount;
+            }
+            else
+            {
+                Console.WriteLine($"Обычная атака. Нанесенный урон {Damage} ед.");
+
+                fighter.TakeDamage(Damage);
+            }
+        }
+    }
+
+    class Rogue : Fighter
+    {
+        public Rogue(string name = "5")
+        {
+            Name = name;
+            CharacterClass = "Плут";
+            Description = $"Имеет шанс в 20% уклониться от атаки";
+            Health = 100;
+            Damage = 9;
+            Armor = 5;
+        }
+
+        public override void Attack(IDamageble fighter)
+        {
+            Console.WriteLine($"Обычная атака. Нанесенный урон {Damage} ед.");
+
+            fighter.TakeDamage(Damage);
+        }
+
+        public override void TakeDamage(int damage)
+        {
+            int maxChance = 101;
+            int minChance = 0;
+            int requiredChance = 20;
+
+            if (UserUtils.GenerateRandomNumber(minChance, maxChance) >= requiredChance)
+            {
+                base.TakeDamage(damage);
+            }
+            else
+            {
+                Console.WriteLine("Выполнен уворот! Урон не прошел.");
+            }
+        }
+    }
+}
