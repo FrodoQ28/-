@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace HW_gladiatorFights
 {
@@ -68,28 +69,28 @@ namespace HW_gladiatorFights
 
     class Arena
     {
-        private Warrior _warrior;
-        private Knight _knight;
-        private Barbarian _barbarian;
-        private Wizard _wizard;
-        private Rogue _rogue;
+        List<Fighter> fighterList;
 
         public Arena()
         {
-            _warrior = new Warrior();
-            _knight = new Knight();
-            _barbarian = new Barbarian();
-            _wizard = new Wizard();
-            _rogue = new Rogue();
+            fighterList = new List<Fighter>()
+            {
+                new Warrior(),
+                new Knight(),
+                new Barbarian(),
+                new Wizard(),
+                new Rogue()
+            };
+
+            
         }
 
         public void ShowFighters()
         {
-            _warrior.ShowInfo();
-            _knight.ShowInfo();
-            _barbarian.ShowInfo();
-            _wizard.ShowInfo();
-            _rogue.ShowInfo();
+            foreach (Fighter fighter in fighterList)
+            {
+                fighter.ShowInfo();
+            }
         }
 
         public void ShowFight()
@@ -99,6 +100,8 @@ namespace HW_gladiatorFights
             const string CommandBarbarian = "3";
             const string CommandWizard = "4";
             const string CommandRogue = "5";
+
+            string userInput = default;
 
             bool isRunning = true;
 
@@ -112,31 +115,13 @@ namespace HW_gladiatorFights
 
             while (isRunning)
             {
-                switch (Console.ReadLine())
+                userInput = Console.ReadLine();
+
+                if (int.TryParse(userInput, out int fighterIndex))
                 {
-                    case CommandWarrior:
-                        fighter1 = (Warrior)new Warrior("Боец 1");
-                        isRunning = false;
-                        break;
-                    case CommandKnight:
-                        fighter1 = (Knight)new Knight("Боец 1");
-                        isRunning = false;
-                        break;
-                    case CommandBarbarian:
-                        fighter1 = (Barbarian)new Barbarian("Боец 1");
-                        isRunning = false;
-                        break;
-                    case CommandWizard:
-                        fighter1 = (Wizard)new Wizard("Боец 1");
-                        isRunning = false;
-                        break;
-                    case CommandRogue:
-                        fighter1 = (Rogue)new Rogue("Боец 1");
-                        isRunning = false;
-                        break;
-                    default:
-                        Console.WriteLine("Неверный ввод.");
-                        break;
+                    fighterIndex--;
+
+                    fighterList[fighterIndex].
                 }
             }
 
@@ -232,7 +217,7 @@ namespace HW_gladiatorFights
 
         public void ShowInfo()
         {
-            Console.WriteLine($"Класс - {CharacterClass}\nСпособность - {Description}\nЗдоровье - {Health}\nУрон - {Damage}\nБроня - {Armor}\n");
+            Console.WriteLine($"{Name}. Класс - {CharacterClass}\nСпособность - {Description}\nЗдоровье - {Health}\nУрон - {Damage}\nБроня - {Armor}\n");
         }
 
         public void ShowInfoInFight()
@@ -241,6 +226,9 @@ namespace HW_gladiatorFights
         }
 
         public virtual void Attack(IDamageble fighter) { }
+
+        
+
     }
 
     class Warrior : Fighter
@@ -273,6 +261,13 @@ namespace HW_gladiatorFights
 
                 fighter.TakeDamage(Damage);
             }
+        }
+
+        public Warrior Clone()
+        {
+            Warrior warrior = new Warrior();
+
+            return warrior;
         }
     }
 
@@ -307,6 +302,13 @@ namespace HW_gladiatorFights
 
                 fighter.TakeDamage(Damage);
             }
+        }
+
+        public Knight Clone()
+        {
+            Knight knight = new Knight();
+
+            return knight;
         }
     }
 
@@ -350,6 +352,13 @@ namespace HW_gladiatorFights
 
             fighter.TakeDamage(Damage);
         }
+
+        public new Barbarian Clone()
+        {
+            Barbarian barbarian = new Barbarian();
+
+            return barbarian;
+        }
     }
 
     class Wizard : Fighter
@@ -388,6 +397,12 @@ namespace HW_gladiatorFights
                 fighter.TakeDamage(Damage);
             }
         }
+        public new Wizard Clone()
+        {
+            Wizard wizard = new Wizard();
+
+            return wizard;
+        }
     }
 
     class Rogue : Fighter
@@ -423,6 +438,12 @@ namespace HW_gladiatorFights
             {
                 Console.WriteLine("Выполнен уворот! Урон не прошел.");
             }
+        }
+        public new Rogue Clone()
+        {
+            Rogue rogue = new Rogue();
+
+            return rogue;
         }
     }
 }
