@@ -1,0 +1,275 @@
+using System;
+using System.Collections.Generic;
+
+namespace HW_supermarket
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            ConsoleMenu menu = new ConsoleMenu();
+
+            menu.Work();
+        }
+    }
+
+    class ConsoleMenu
+    {
+        private Supermarket _supermarket;
+
+        public ConsoleMenu()
+        {
+            _supermarket = new Supermarket();
+        }
+
+        public void Work()
+        {
+            const string CommandExit = "0";
+
+            bool isRunning = true;
+
+            Console.WriteLine($"Программа администрирования супермаркета.");
+
+            while (isRunning)
+            {
+                Console.WriteLine($"\nНажмите любую клавишу чтобы начать работу или {CommandExit} для выхода");
+
+                switch (Console.ReadLine())
+                {
+                    case CommandExit:
+                        isRunning = false;
+                        break;
+
+                    default:
+                        _supermarket.Service();
+                        break;
+                }
+            }
+        }
+    }
+
+    class Supermarket
+    {
+        private int _money;
+        private List<Product> _products;
+        private Queue<Person> _clients;
+
+        public Supermarket()
+        {
+            _money = 0;
+            _products = new List<Product>();
+            _clients = new Queue<Person>();
+
+            AddProducts(_products);
+            AddClients(_clients);
+        }
+
+        private void AddProducts(List<Product> products)
+        {
+            products.Add(new Product("Апельсин", 10));
+            products.Add(new Product("Яблоко", 7));
+            products.Add(new Product("Банан", 15));
+            products.Add(new Product("Хлеб", 20));
+            products.Add(new Product("Молоко", 30));
+            products.Add(new Product("Картофель", 5));
+            products.Add(new Product("Лук", 4));
+            products.Add(new Product("Колбаса", 50));
+            products.Add(new Product("Сыр", 60));
+            products.Add(new Product("Сельдь", 25));
+            products.Add(new Product("Водка", 100));
+        }
+
+        private void AddClients(Queue<Person> clients)
+        {
+            clients.Enqueue(new Person("Андрей", _products));
+            clients.Enqueue(new Person("Борис", _products));
+            clients.Enqueue(new Person("Владимир", _products));
+            clients.Enqueue(new Person("Геннадий", _products));
+            clients.Enqueue(new Person("Денис", _products));
+            clients.Enqueue(new Person("Евгений", _products));
+            clients.Enqueue(new Person("Захар", _products));
+            clients.Enqueue(new Person("Игорь", _products));
+            clients.Enqueue(new Person("Кирилл", _products));
+            clients.Enqueue(new Person("Лев", _products));
+        }
+
+        public void ShowInfo()
+        {
+            Console.Clear();
+            Console.WriteLine($"Количество денег магазина - {_money}\nСписок товаров:");
+
+            foreach (Product product in _products)
+                product.ShowInfo();
+
+            Console.WriteLine($"В очереди {_clients.Count} человек.\nСледующий в очереди - {_clients.Peek().Name}");
+            Console.ReadKey();
+        }
+
+        public void Service()
+        {
+            bool isRunning = true;
+
+            ShowInfo();
+
+            while (isRunning)
+            {
+                Console.Clear();
+                Console.WriteLine($"{_clients.Peek().Name} хочет купить:");
+
+                _clients.Peek().ShowProducts();
+
+                if (_clients.Peek().CanMakePurchase())
+                {
+                    _clients.Dequeue().Buy(ref _money);
+                    isRunning = false;
+                }
+                else
+                {
+                    Console.WriteLine("\nУ клиента не хватает денег, он выложил один товар.");
+
+                    _clients.Peek().RemoveProduct();
+
+                    Console.ReadKey();
+                }
+            }
+        }
+    }
+
+    class Product
+    {
+        public Product(string name, int price)
+        {
+            Name = name;
+            Price = price;
+        }
+
+        public int Price { get; private set; }
+        public string Name { get; private set; }
+
+        public void ShowInfo()
+        {
+            Console.WriteLine($"{Name} - {Price} руб.");
+        }
+    }
+
+    class Person
+    {
+        private int _money;
+        private int _minMoney;
+        private int _maxMoney;
+
+        private Basket _basket;
+        private Bag _bag;
+
+        public Person(string name, List<Product> products)
+        {
+            Name = name;
+            _minMoney = 100;
+            _maxMoney = 501;
+            _money = UserUtils.Random(_minMoney, _maxMoney);
+            _basket = new Basket(products);
+            _bag = new Bag();
+        }
+
+        public string Name { get; private set; }
+
+        public bool CanMakePurchase() => _money > _basket.GetPurchaseAmount();
+
+        public void Buy(ref int money)
+        {
+            _money -= _basket.GetPurchaseAmount();
+            money += _basket.GetPurchaseAmount();
+
+            _bag.AddProducts(_basket.GiveProducts());
+
+            Console.Clear();
+            Console.WriteLine($"{Name} купил:");
+
+            _bag.ShowInfo();
+        }
+
+        public void RemoveProduct()
+        {
+            _basket.RemoveProduct();
+        }
+
+        public void ShowProducts() => _basket.ShowProducts();
+    }
+
+    class Basket
+    {
+        private List<Product> _products;
+
+        public Basket(List<Product> products)
+        {
+            _products = new List<Product>();
+
+            FillBasket(products);
+        }
+
+        public void FillBasket(List<Product> products)
+        {
+            foreach (Product product in products)
+                _products.Add(product);
+        }
+
+        public void ShowProducts()
+        {
+            foreach (Product product in _products)
+                product.ShowInfo();
+        }
+
+        public int GetPurchaseAmount()
+        {
+            int sum = default;
+
+            foreach (Product product in _products)
+                sum += product.Price;
+
+            return sum;
+        }
+
+        public List<Product> GiveProducts()
+        {
+            List<Product> products = new List<Product>();
+
+            foreach (Product product in _products)
+                products.Add(product);
+
+            _products.Clear();
+
+            return products;
+        }
+
+        public void RemoveProduct() => _products.RemoveAt(UserUtils.Random(0, _products.Count));
+    }
+
+    class Bag
+    {
+        private List<Product> _products;
+
+        public Bag()
+        {
+            _products = new List<Product>();
+        }
+
+        public void AddProducts(List<Product> products)
+        {
+            foreach (Product product in products)
+                _products.Add(product);
+        }
+
+        public void ShowInfo()
+        {
+            foreach (Product product in _products)
+                Console.WriteLine(product.Name);
+        }
+    }
+
+    class UserUtils
+    {
+        private static Random s_random = new Random();
+
+        public static int Random(int min, int max) => s_random.Next(min, max);
+    }
+}
