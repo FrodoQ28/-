@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace HW_supermarket
 {
@@ -64,35 +65,6 @@ namespace HW_supermarket
             AddClients(_clients);
         }
 
-        private void AddProducts(List<Product> products)
-        {
-            products.Add(new Product("Апельсин", 10));
-            products.Add(new Product("Яблоко", 7));
-            products.Add(new Product("Банан", 15));
-            products.Add(new Product("Хлеб", 20));
-            products.Add(new Product("Молоко", 30));
-            products.Add(new Product("Картофель", 5));
-            products.Add(new Product("Лук", 4));
-            products.Add(new Product("Колбаса", 50));
-            products.Add(new Product("Сыр", 60));
-            products.Add(new Product("Сельдь", 25));
-            products.Add(new Product("Водка", 100));
-        }
-
-        private void AddClients(Queue<Person> clients)
-        {
-            clients.Enqueue(new Person("Андрей", _products));
-            clients.Enqueue(new Person("Борис", _products));
-            clients.Enqueue(new Person("Владимир", _products));
-            clients.Enqueue(new Person("Геннадий", _products));
-            clients.Enqueue(new Person("Денис", _products));
-            clients.Enqueue(new Person("Евгений", _products));
-            clients.Enqueue(new Person("Захар", _products));
-            clients.Enqueue(new Person("Игорь", _products));
-            clients.Enqueue(new Person("Кирилл", _products));
-            clients.Enqueue(new Person("Лев", _products));
-        }
-
         public void ShowInfo()
         {
             Console.Clear();
@@ -120,7 +92,9 @@ namespace HW_supermarket
 
                 if (_clients.Peek().CanMakePurchase())
                 {
-                    _clients.Dequeue().Buy(ref _money);
+                    _clients.Dequeue().Buy(out int purchaseAmount);
+                    _money += purchaseAmount;
+
                     isRunning = false;
                 }
                 else
@@ -132,6 +106,35 @@ namespace HW_supermarket
                     Console.ReadKey();
                 }
             }
+        }
+
+        private void AddProducts(List<Product> products)
+        {
+            products.Add(new Product("Апельсин", 10));
+            products.Add(new Product("Яблоко", 7));
+            products.Add(new Product("Банан", 15));
+            products.Add(new Product("Хлеб", 20));
+            products.Add(new Product("Молоко", 30));
+            products.Add(new Product("Картофель", 5));
+            products.Add(new Product("Лук", 4));
+            products.Add(new Product("Колбаса", 50));
+            products.Add(new Product("Сыр", 60));
+            products.Add(new Product("Сельдь", 25));
+            products.Add(new Product("Водка", 100));
+        }
+
+        private void AddClients(Queue<Person> clients)
+        {
+            clients.Enqueue(new Person("Андрей", _products.ToList()));
+            clients.Enqueue(new Person("Борис", _products.ToList()));
+            clients.Enqueue(new Person("Владимир", _products.ToList()));
+            clients.Enqueue(new Person("Геннадий", _products.ToList()));
+            clients.Enqueue(new Person("Денис", _products.ToList()));
+            clients.Enqueue(new Person("Евгений", _products.ToList()));
+            clients.Enqueue(new Person("Захар", _products.ToList()));
+            clients.Enqueue(new Person("Игорь", _products.ToList()));
+            clients.Enqueue(new Person("Кирилл", _products.ToList()));
+            clients.Enqueue(new Person("Лев", _products.ToList()));
         }
     }
 
@@ -166,19 +169,20 @@ namespace HW_supermarket
             Name = name;
             _minMoney = 100;
             _maxMoney = 501;
-            _money = UserUtils.Random(_minMoney, _maxMoney);
+            _money = UserUtils.GenerateRandomNumber(_minMoney, _maxMoney);
             _basket = new Basket(products);
             _bag = new Bag();
         }
 
         public string Name { get; private set; }
 
-        public bool CanMakePurchase() => _money > _basket.GetPurchaseAmount();
+        public bool CanMakePurchase() =>
+            _money > _basket.GetPurchaseAmount();
 
-        public void Buy(ref int money)
+        public void Buy(out int purchaseAmount)
         {
             _money -= _basket.GetPurchaseAmount();
-            money += _basket.GetPurchaseAmount();
+            purchaseAmount = _basket.GetPurchaseAmount();
 
             _bag.AddProducts(_basket.GiveProducts());
 
@@ -193,7 +197,8 @@ namespace HW_supermarket
             _basket.RemoveProduct();
         }
 
-        public void ShowProducts() => _basket.ShowProducts();
+        public void ShowProducts() =>
+            _basket.ShowProducts();
     }
 
     class Basket
@@ -241,7 +246,8 @@ namespace HW_supermarket
             return products;
         }
 
-        public void RemoveProduct() => _products.RemoveAt(UserUtils.Random(0, _products.Count));
+        public void RemoveProduct() =>
+            _products.RemoveAt(UserUtils.GenerateRandomNumber(0, _products.Count));
     }
 
     class Bag
@@ -270,6 +276,6 @@ namespace HW_supermarket
     {
         private static Random s_random = new Random();
 
-        public static int Random(int min, int max) => s_random.Next(min, max);
+        public static int GenerateRandomNumber(int min, int max) => s_random.Next(min, max);
     }
 }
