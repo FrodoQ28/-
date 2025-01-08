@@ -1,0 +1,246 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace HW_war
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            ConsoleMenu consoleMenu = new ConsoleMenu();
+
+            consoleMenu.Work();
+        }
+    }
+
+    class UserUtils
+    {
+        private static Random s_random = new Random();
+
+        public static int GenerateRandomNumber(int min, int max) =>
+            s_random.Next(min, max);
+    }
+
+    interface IDamagble
+    {
+        void TakeDamage (int damage);
+    }
+
+    class ConsoleMenu
+    {
+        private Battlefield _battlefield;
+
+        public ConsoleMenu()
+        {
+            _battlefield = new Battlefield();
+        }
+
+        public void Work()
+        {
+            Console.WriteLine("Одна из битв в забытой войне.");
+            _battlefield.ShowInfo();
+            Console.ReadKey();
+
+            Console.Clear();
+            Console.WriteLine("Битва начинается.");
+
+            while (_battlefield.CheckAvailabilitySoldiers())
+            {
+                _battlefield.Attack();
+            }
+        }
+    }
+
+    class Battlefield
+    {
+        private Platoon _platoon1;
+        private Platoon _platoon2;
+
+        public Battlefield()
+        {
+            _platoon1 = new Platoon();
+            _platoon2 = new Platoon();
+        }
+
+        public void ShowInfo()
+        {
+            Console.WriteLine("\nВзвод 1:");
+            _platoon1.ShowInfo();
+
+            Console.WriteLine("\nВзвод 2:");
+            _platoon2.ShowInfo();
+        }
+
+        public void Attack()
+        {
+            _platoon1.Attack(_platoon2.CloneList());
+            _platoon2.Attack(_platoon1.CloneList());
+
+            _platoon1.CheckOnDeath();
+            _platoon2.CheckOnDeath();
+        }
+
+        public bool CheckAvailabilitySoldiers()
+        {
+            if (_platoon1.CheckAvailabilitySoldiers() && _platoon2.CheckAvailabilitySoldiers())
+            {
+                return true;
+            }
+            else if (_platoon1.CheckAvailabilitySoldiers() == false)
+            {
+                Console.WriteLine("Взвод 1 уничтожен.\nВыжившие бойцы 2 взвода:\n");
+                _platoon2.ShowInfo();
+
+                return false;
+            }
+            else
+            {
+                Console.WriteLine("Взвод 2 уничтожен.\nВыжившие бойцы 1 взвода:\n");
+                _platoon1.ShowInfo();
+
+                return false;
+            }
+        }
+    }
+
+    class Platoon
+    {
+        private List<Soldier> _soldiers;
+
+        public Platoon()
+        {
+            _soldiers = new List<Soldier>();
+
+            AddSoldiers();
+        }
+
+        private void AddSoldiers()
+        {
+            _soldiers.Add(new Soldier());
+            _soldiers.Add(new Soldier());
+            _soldiers.Add(new Soldier());
+            _soldiers.Add(new Soldier());
+            _soldiers.Add(new Soldier());
+            _soldiers.Add(new Sniper());
+            _soldiers.Add(new GrenadeLauncher());
+            _soldiers.Add(new MachineGunner());
+        }
+
+        public void ShowInfo()
+        {
+            foreach (var soldier in _soldiers)
+                Console.WriteLine(soldier.Name);
+        }
+
+        public void Attack(List<Soldier> soldiers)
+        {
+            foreach (var soldier in _soldiers)
+                soldier.Attack(soldiers);
+        }
+
+        public List<Soldier> CloneList() =>
+            _soldiers.ToList();
+
+        public void CheckOnDeath()
+        {
+            List<int> deadSoldiersIndexes = new List<int>();
+
+            foreach (var soldier in _soldiers)
+            {
+                if (soldier.CheckHealth() == false)
+                    deadSoldiersIndexes.Add(_soldiers.IndexOf(soldier));
+            }
+
+            if (deadSoldiersIndexes.Count > 0)
+            {
+                for (int i = deadSoldiersIndexes.Count - 1; i >= 0; i--)
+                    _soldiers.RemoveAt(deadSoldiersIndexes[i]);
+            }
+        }
+
+        public bool CheckAvailabilitySoldiers() =>
+            _soldiers.Count > 0;
+    }
+
+    class Soldier : IDamagble
+    {
+        protected int _damage;
+
+        private int _health;
+        private int _armor;
+
+        public Soldier(string name = "Солдат", int damage = 20)
+        {
+            Name = name;
+            _health = 100;
+            _damage = damage;
+            _armor = 10;
+        }
+
+        public string Name { get; protected set; }
+
+        public void TakeDamage (int damage) =>
+            _health -= damage - _armor;
+
+        public virtual void Attack(List<Soldier> soldiers)
+        {
+            soldiers[UserUtils.GenerateRandomNumber(0, soldiers.Count)].TakeDamage(_damage);
+        }
+
+        public bool CheckHealth() =>
+            _health > 0;
+
+    }
+
+    class Sniper : Soldier
+    {
+        public Sniper() : base("Снайпер", 50) { }
+    }
+
+    class GrenadeLauncher : Soldier
+    {
+        public GrenadeLauncher() : base("Гранатометчик") { }
+
+        public override void Attack(List<Soldier> soldiers)
+        {
+            List<int> attackedSoldiersIndexes = new List<int>()
+            {
+                UserUtils.GenerateRandomNumber (0, soldiers.Count),
+                UserUtils.GenerateRandomNumber (0, soldiers.Count),
+                UserUtils.GenerateRandomNumber (0, soldiers.Count),
+                UserUtils.GenerateRandomNumber (0, soldiers.Count)
+            };
+
+            for (int i = attackedSoldiersIndexes.Count - 1; i >= 0; i--)
+            {
+                for (int j = 0; j < i; j++)
+                {
+                    if (attackedSoldiersIndexes[i] == attackedSoldiersIndexes[j])
+                    {
+                        attackedSoldiersIndexes.RemoveAt(i);
+                        j = attackedSoldiersIndexes.Count;
+                    }
+                }
+            }
+
+            foreach (var index in attackedSoldiersIndexes)
+                soldiers[index].TakeDamage(_damage);
+        }
+    }
+
+    class MachineGunner : Soldier
+    {
+        public MachineGunner() : base("Пулеметчик") { }
+
+        public override void Attack(List<Soldier> soldiers)
+        {
+            int attacksAmount = 3;
+
+            for (int i = 0; i < attacksAmount; i++)
+            {
+                base.Attack(soldiers);
+            }
+        }
+    }
+}
