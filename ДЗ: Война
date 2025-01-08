@@ -44,10 +44,7 @@ namespace HW_war
             Console.Clear();
             Console.WriteLine("Битва начинается.");
 
-            while (_battlefield.HaveSoldiers())
-            {
-                _battlefield.RunBattle();
-            }
+            _battlefield.RunBattle();
         }
     }
 
@@ -73,20 +70,23 @@ namespace HW_war
 
         public void RunBattle()
         {
-            _platoon1.Attack(_platoon2.CloneListSoldiers());
-            _platoon2.Attack(_platoon1.CloneListSoldiers());
+            while (CanBattle())
+            {
+                _platoon1.Attack(_platoon2.GetSoldiers());
+                _platoon2.Attack(_platoon1.GetSoldiers());
 
-            _platoon1.RemoveDeadSoldiers();
-            _platoon2.RemoveDeadSoldiers();
+                _platoon1.RemoveDeadSoldiers();
+                _platoon2.RemoveDeadSoldiers();
+            }
         }
 
-        public bool HaveSoldiers()
+        public bool CanBattle()
         {
-            if (_platoon1.HaveSoliders && _platoon2.HaveSoliders)
+            if (_platoon1.CanBattle && _platoon2.CanBattle)
             {
                 return true;
             }
-            else if (_platoon1.HaveSoliders == false)
+            else if (_platoon1.CanBattle == false)
             {
                 Console.WriteLine("Взвод 1 уничтожен.\nВыжившие бойцы 2 взвода:\n");
                 _platoon2.ShowInfo();
@@ -114,11 +114,7 @@ namespace HW_war
             AddSoldiers();
         }
 
-        public bool HaveSoliders
-        {
-            get => _soldiers.Count > 0;
-            private set { }
-        }
+        public bool CanBattle => _soldiers.Count > 0;
 
         public void ShowInfo()
         {
@@ -132,23 +128,23 @@ namespace HW_war
                 soldier.Attack(soldiers);
         }
 
-        public List<IDamagble> CloneListSoldiers() =>
+        public List<IDamagble> GetSoldiers() =>
             new List<IDamagble>(_soldiers);
 
         public void RemoveDeadSoldiers()
         {
-            List<int> deadSoldiersIndexes = new List<int>();
+            List<Soldier> deadSoldiers = new List<Soldier>();
 
             foreach (var soldier in _soldiers)
             {
-                if (soldier.HaveHealth == false)
-                    deadSoldiersIndexes.Add(_soldiers.IndexOf(soldier));
+                if (soldier.IsAlive == false)
+                    deadSoldiers.Add(soldier);
             }
 
-            if (deadSoldiersIndexes.Count > 0)
+            if (deadSoldiers.Count > 0)
             {
-                for (int i = deadSoldiersIndexes.Count - 1; i >= 0; i--)
-                    _soldiers.RemoveAt(deadSoldiersIndexes[i]);
+                for (int i = 0; i < deadSoldiers.Count; i++)
+                    _soldiers.Remove(deadSoldiers[i]);
             }
         }
 
@@ -180,11 +176,7 @@ namespace HW_war
             _armor = 10;
         }
 
-        public bool HaveHealth
-        {
-            get => _health > 0;
-            private set { }
-        }
+        public bool IsAlive => _health > 0;
 
         public string Name { get; protected set; }
 
@@ -208,11 +200,20 @@ namespace HW_war
 
         public override void Attack(List<IDamagble> soldiers)
         {
-            int attacksAmount = 4;
+            int attacksAmount;
+
+            if (soldiers.Count > 4)
+            {
+                attacksAmount = 4;
+            }
+            else
+            {
+                attacksAmount = soldiers.Count;
+            }
 
             IDamagble tempSoldier;
 
-            Queue<IDamagble>tempSoldiers = new Queue<IDamagble>();
+            Queue<IDamagble> tempSoldiers = new Queue<IDamagble>();
 
             while (tempSoldiers.Count < attacksAmount)
             {
