@@ -44,9 +44,9 @@ namespace HW_war
             Console.Clear();
             Console.WriteLine("Битва начинается.");
 
-            while (_battlefield.CheckAvailabilitySoldiers())
+            while (_battlefield.HaveSoldiers())
             {
-                _battlefield.Attack();
+                _battlefield.RunBattle();
             }
         }
     }
@@ -71,22 +71,22 @@ namespace HW_war
             _platoon2.ShowInfo();
         }
 
-        public void Attack()
+        public void RunBattle()
         {
-            _platoon1.Attack(_platoon2.CloneList());
-            _platoon2.Attack(_platoon1.CloneList());
+            _platoon1.Attack(_platoon2.CloneListSoldiers());
+            _platoon2.Attack(_platoon1.CloneListSoldiers());
 
-            _platoon1.CheckOnDeath();
-            _platoon2.CheckOnDeath();
+            _platoon1.RemoveDeadSoldiers();
+            _platoon2.RemoveDeadSoldiers();
         }
 
-        public bool CheckAvailabilitySoldiers()
+        public bool HaveSoldiers()
         {
-            if (_platoon1.HaveSoliders() && _platoon2.HaveSoliders())
+            if (_platoon1.HaveSoliders && _platoon2.HaveSoliders)
             {
                 return true;
             }
-            else if (_platoon1.HaveSoliders() == false)
+            else if (_platoon1.HaveSoliders == false)
             {
                 Console.WriteLine("Взвод 1 уничтожен.\nВыжившие бойцы 2 взвода:\n");
                 _platoon2.ShowInfo();
@@ -114,16 +114,10 @@ namespace HW_war
             AddSoldiers();
         }
 
-        private void AddSoldiers()
+        public bool HaveSoliders
         {
-            _soldiers.Add(new Soldier());
-            _soldiers.Add(new Soldier());
-            _soldiers.Add(new Soldier());
-            _soldiers.Add(new Soldier());
-            _soldiers.Add(new Soldier());
-            _soldiers.Add(new Sniper());
-            _soldiers.Add(new GrenadeLauncher());
-            _soldiers.Add(new MachineGunner());
+            get => _soldiers.Count > 0;
+            private set { }
         }
 
         public void ShowInfo()
@@ -138,17 +132,17 @@ namespace HW_war
                 soldier.Attack(soldiers);
         }
 
-        public List<IDamagble> CloneList() =>
+        public List<IDamagble> CloneListSoldiers() =>
             new List<IDamagble>(_soldiers);
-        
 
-        public void CheckOnDeath()
+
+        public void RemoveDeadSoldiers()
         {
             List<int> deadSoldiersIndexes = new List<int>();
 
             foreach (var soldier in _soldiers)
             {
-                if (soldier.HaveHealth() == false)
+                if (soldier.HaveHealth == false)
                     deadSoldiersIndexes.Add(_soldiers.IndexOf(soldier));
             }
 
@@ -159,13 +153,22 @@ namespace HW_war
             }
         }
 
-        public bool HaveSoliders() =>
-            _soldiers.Count > 0;
+        private void AddSoldiers()
+        {
+            _soldiers.Add(new Soldier());
+            _soldiers.Add(new Soldier());
+            _soldiers.Add(new Soldier());
+            _soldiers.Add(new Soldier());
+            _soldiers.Add(new Soldier());
+            _soldiers.Add(new Sniper());
+            _soldiers.Add(new GrenadeLauncher());
+            _soldiers.Add(new MachineGunner());
+        }
     }
 
     class Soldier : IDamagble
     {
-        protected int _damage;
+        protected int Damage;
 
         private int _health;
         private int _armor;
@@ -174,8 +177,14 @@ namespace HW_war
         {
             Name = name;
             _health = 100;
-            _damage = damage;
+            Damage = damage;
             _armor = 10;
+        }
+
+        public bool HaveHealth
+        {
+            get => _health > 0;
+            private set { }
         }
 
         public string Name { get; protected set; }
@@ -185,11 +194,8 @@ namespace HW_war
 
         public virtual void Attack(List<IDamagble> soldiers)
         {
-            soldiers[UserUtils.GenerateRandomNumber(0, soldiers.Count)].TakeDamage(_damage);
+            soldiers[UserUtils.GenerateRandomNumber(0, soldiers.Count)].TakeDamage(Damage);
         }
-
-        public bool HaveHealth() =>
-            _health > 0;
     }
 
     class Sniper : Soldier
@@ -223,7 +229,7 @@ namespace HW_war
             }
 
             foreach (var index in attackedSoldiersIndexes)
-                soldiers[index].TakeDamage(_damage);
+                soldiers[index].TakeDamage(Damage);
         }
     }
 
