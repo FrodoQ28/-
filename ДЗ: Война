@@ -80,7 +80,7 @@ namespace HW_war
             }
         }
 
-        public bool CanBattle()
+        private bool CanBattle()
         {
             if (_platoon1.CanBattle && _platoon2.CanBattle)
             {
