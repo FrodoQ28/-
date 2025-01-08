@@ -135,7 +135,6 @@ namespace HW_war
         public List<IDamagble> CloneListSoldiers() =>
             new List<IDamagble>(_soldiers);
 
-
         public void RemoveDeadSoldiers()
         {
             List<int> deadSoldiersIndexes = new List<int>();
@@ -211,25 +210,20 @@ namespace HW_war
         {
             int attacksAmount = 4;
 
-            List<int> attackedSoldiersIndexes = new List<int>();
+            IDamagble tempSoldier;
 
-            for (int i = 0; i < attacksAmount; i++)
-                attackedSoldiersIndexes.Add(UserUtils.GenerateRandomNumber(0, soldiers.Count));
+            Queue<IDamagble>tempSoldiers = new Queue<IDamagble>();
 
-            for (int i = attackedSoldiersIndexes.Count - 1; i >= 0; i--)
+            while (tempSoldiers.Count < attacksAmount)
             {
-                for (int j = 0; j < i; j++)
-                {
-                    if (attackedSoldiersIndexes[i] == attackedSoldiersIndexes[j])
-                    {
-                        attackedSoldiersIndexes.RemoveAt(i);
-                        j = attackedSoldiersIndexes.Count;
-                    }
-                }
+                tempSoldier = soldiers[UserUtils.GenerateRandomNumber(0, soldiers.Count)];
+
+                if (tempSoldiers.Contains(tempSoldier) == false)
+                    tempSoldiers.Enqueue(tempSoldier);
             }
 
-            foreach (var index in attackedSoldiersIndexes)
-                soldiers[index].TakeDamage(Damage);
+            for (int i = tempSoldiers.Count - 1; i >= 0; i--)
+                tempSoldiers.Dequeue().TakeDamage(Damage);
         }
     }
 
