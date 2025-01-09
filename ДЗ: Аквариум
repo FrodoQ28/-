@@ -1,0 +1,167 @@
+using System;
+using System.Collections.Generic;
+
+namespace HW_aquarium
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            ConsoleMenu menu = new ConsoleMenu();
+
+            menu.Work();
+        }
+    }
+
+    class ConsoleMenu
+    {
+        private Aquarium _aquarium;
+
+        public ConsoleMenu()
+        {
+            _aquarium = new Aquarium();
+        }
+
+        public void Work()
+        {
+            const string CommandAddFish = "1";
+            const string CommandRemoveFish = "2";
+            const string CommandExit = "3";
+
+            bool isRunning = true;
+
+            while (isRunning)
+            {
+                Console.WriteLine($"Это аквариум.");
+
+                _aquarium.ShowInfo();
+
+                Console.WriteLine($"\n\nДобавить рыбу - { CommandAddFish}\nУбрать рыбу - { CommandRemoveFish}\nВыйти - { CommandExit}");
+
+                switch (Console.ReadLine())
+                {
+                    case CommandAddFish:
+                        _aquarium.AddFish();
+                        break;
+
+                    case CommandRemoveFish:
+                        _aquarium.RemoveFish();
+                        break;
+
+                    case CommandExit:
+                        isRunning = false;
+                        break;
+
+                    default:
+                        Console.WriteLine("Неизвестная команда.");
+                        break;
+                }
+
+                _aquarium.Aging();
+
+                _aquarium.ShowInfo();
+
+                Console.ReadKey();
+                Console.Clear();
+            }
+        }
+    }
+
+    class Aquarium
+    {
+        private List<Fish> _fishes;
+
+        public Aquarium()
+        {
+            _fishes = new List<Fish>();
+
+            AddFishes();
+        }
+
+        public void Aging()
+        {
+            foreach (Fish fish in _fishes)
+                fish.Aging();
+        }
+
+        public void ShowInfo()
+        {
+            Console.WriteLine("Сейчас в аквариуме:");
+
+            foreach (Fish fish in _fishes)
+                fish.ShowInfo();
+        }
+
+        public void AddFish()
+        {
+            _fishes.Add(new Fish());
+        }
+
+        public void RemoveFish()
+        {
+            Fish tempFish = default;
+
+            Console.WriteLine("Введите номер рыбы:");
+
+            if (int.TryParse(Console.ReadLine(), out int userInput))
+            {
+                foreach (Fish fish in _fishes)
+                {
+                    if (fish.IdentificationNumber == userInput)
+                        tempFish = fish;
+                }
+
+                if (tempFish != default)
+                {
+                    tempFish.ShowInfo();
+
+                    Console.WriteLine(" удалена.");
+
+                    _fishes.Remove(tempFish);
+                }
+                else
+                {
+                    Console.WriteLine("Такой рыбы нет.");
+                }
+            }
+        }
+
+        private void AddFishes()
+        {
+            _fishes.Add(new Fish());
+            _fishes.Add(new Fish());
+            _fishes.Add(new Fish());
+            _fishes.Add(new Fish());
+            _fishes.Add(new Fish());
+            _fishes.Add(new Fish());
+        }
+    }
+
+    class Fish
+    {
+        private static int s_identifications = 0;
+
+        private int _age;
+        private string _name;
+
+        public Fish()
+        {
+            s_identifications++;
+            IdentificationNumber = s_identifications;
+            _age = 0;
+            _name = "Рыба " + IdentificationNumber;
+        }
+
+        public int IdentificationNumber { get; }
+
+        public void Aging()
+        {
+            _age++;
+        }
+
+        public void ShowInfo()
+        {
+            Console.Write($"\n{_name} - {_age} лет.");
+        }
+    }
+}
