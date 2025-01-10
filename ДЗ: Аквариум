@@ -36,7 +36,7 @@ namespace HW_aquarium
 
                 _aquarium.ShowInfo();
 
-                Console.WriteLine($"\n\nДобавить рыбу - { CommandAddFish}\nУбрать рыбу - { CommandRemoveFish}\nВыйти - { CommandExit}");
+                Console.WriteLine($"\n\nДобавить рыбу - {CommandAddFish}\nУбрать рыбу - {CommandRemoveFish}\nВыйти - {CommandExit}");
 
                 switch (Console.ReadLine())
                 {
@@ -57,7 +57,9 @@ namespace HW_aquarium
                         break;
                 }
 
-                _aquarium.Aging();
+                _aquarium.GettingOld();
+
+                _aquarium.IsAlive();
 
                 _aquarium.ShowInfo();
 
@@ -78,10 +80,10 @@ namespace HW_aquarium
             AddFishes();
         }
 
-        public void Aging()
+        public void GettingOld()
         {
             foreach (Fish fish in _fishes)
-                fish.Aging();
+                fish.GettingOld();
         }
 
         public void ShowInfo()
@@ -126,6 +128,28 @@ namespace HW_aquarium
             }
         }
 
+        public void IsAlive()
+        {
+            List<Fish> tempListFishes = new List<Fish>();
+
+            foreach (Fish fish in _fishes)
+            {
+                if (fish.IsAlive == false)
+                    tempListFishes.Add(fish);
+            }
+
+            if (tempListFishes.Count != 0)
+            {
+                foreach (Fish fish in tempListFishes)
+                {
+                    fish.ShowInfo();
+                    Console.WriteLine(" умерла от старости.");
+
+                    _fishes.Remove(fish);
+                }
+            }
+        }
+
         private void AddFishes()
         {
             _fishes.Add(new Fish());
@@ -143,6 +167,7 @@ namespace HW_aquarium
 
         private int _age;
         private string _name;
+        private int _ageOfDeath;
 
         public Fish()
         {
@@ -150,11 +175,13 @@ namespace HW_aquarium
             IdentificationNumber = s_identifications;
             _age = 0;
             _name = "Рыба " + IdentificationNumber;
+            _ageOfDeath = 5;
         }
 
         public int IdentificationNumber { get; }
+        public bool IsAlive => _age < _ageOfDeath;
 
-        public void Aging()
+        public void GettingOld()
         {
             _age++;
         }
