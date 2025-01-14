@@ -1,0 +1,240 @@
+using System;
+using System.Collections.Generic;
+
+namespace HW_zoo
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Zoo zoo = new Zoo();
+
+            zoo.Work();
+        }
+    }
+
+    public enum Gender
+    {
+        мужской,
+        женский
+    }
+
+    public class Zoo
+    {
+        private List<Animal> _animalsList;
+        private List<Aviary> _aviarys;
+
+        public Zoo()
+        {
+            _animalsList = new List<Animal>();
+            _aviarys = new List<Aviary>();
+
+            FillAnimalList();
+
+            FillAviaryList();
+        }
+
+        public void Work()
+        {
+            const int CommandExit = 0;
+
+            bool isRunning = true;
+
+            while (isRunning)
+            {
+                ShowInfo();
+
+                Console.WriteLine($"Введите номер вольера к которому хотите отправиться или {CommandExit} для выхода:");
+
+                if (int.TryParse(Console.ReadLine(), out int userInput) && userInput <= _aviarys.Count && userInput > CommandExit)
+                {
+                    userInput--;
+
+                    _aviarys[userInput].ShowInfo();
+                }
+                else if (userInput == CommandExit)
+                {
+                    isRunning = false;
+                }
+                else
+                {
+                    Console.WriteLine("Такого вольера нет.");
+                }
+
+                Console.ReadKey();
+                Console.Clear();
+            }
+        }
+
+        private void ShowInfo()
+        {
+            int extensionNumberToIndex = 1;
+
+            Console.WriteLine("Это зоопарк.\nВ зоопарке содержатся:");
+
+            foreach (var animal in _animalsList)
+            {
+                Console.Write(_animalsList.IndexOf(animal) + extensionNumberToIndex + ".");
+
+                animal.ShowName();
+            }
+        }
+
+        private void FillAnimalList()
+        {
+            _animalsList.Add(new Elephant());
+            _animalsList.Add(new Giraffe());
+            _animalsList.Add(new Hare());
+            _animalsList.Add(new Lion());
+        }
+
+        private void FillAviaryList()
+        {
+            for (int i = 0; i < _animalsList.Count; i++)
+            {
+                _aviarys.Add(new Aviary(_animalsList[i]));
+            }
+        }
+    }
+
+    public class Aviary
+    {
+        private string _name;
+        private string _description;
+
+        private List<Animal> _animals;
+
+        public Aviary(Animal animal)
+        {
+            _animals = new List<Animal>();
+
+            AddAnimals(animal);
+
+            _name = _animals[0].Name + " - ";
+            _description = _animals[0].Description + " " + _animals[0].CreatureSound;
+        }
+
+        public void ShowInfo()
+        {
+            Console.WriteLine(_name + _description);
+            Console.WriteLine($"\nВ вольере содержатся {_animals.Count} животных:");
+
+            foreach (Animal animal in _animals)
+                animal.ShowInfo();
+        }
+
+        private void AddAnimals(Animal animal)
+        {
+            int minAnimalAmount = 2;
+            int maxAnimalAmount = 10;
+
+            for (int i = 0; i < UserUtils.GenerateRandomNumber(minAnimalAmount, maxAnimalAmount); i++)
+                _animals.Add(animal.Clone());
+        }
+    }
+
+    public class Animal
+    {
+        protected static int s_minGenderIndex = 0;
+        protected static int s_maxGenderIndex = 2;
+
+        protected int IdentificationNumber;
+
+        private string _gender;
+
+        public Animal(string name, int genderIndex, string description, string creatureSound)
+        {
+            IdentificationNumber = 0;
+            Description = description;
+            Name = name;
+            _gender = Enum.GetName(typeof(Gender), genderIndex);
+            CreatureSound = creatureSound;
+            s_minGenderIndex = 0;
+            s_maxGenderIndex = 2;
+        }
+
+        public string Name { get; }
+        public string Description { get; }
+        public string CreatureSound { get; }
+
+        public virtual Animal Clone() =>
+            new Animal(string.Empty, default, string.Empty, string.Empty);
+
+        public void ShowInfo()=>
+            Console.WriteLine($"{IdentificationNumber}.{Name}. Пол {_gender}.");
+
+        public void ShowName()=>
+            Console.WriteLine(Name);
+    }
+
+    public class Elephant : Animal
+    {
+        private static int s_idendifications = 0;
+
+        public Elephant() : base("Слон", UserUtils.GenerateRandomNumber(s_minGenderIndex, s_maxGenderIndex),
+            "Крупное травоядное млекопитающее с длинным хоботом и двумя бивнями.", "Издает трубный звук.")
+        {
+            IdentificationNumber = s_idendifications;
+            s_idendifications++;
+        }
+
+        public override Animal Clone() =>
+            new Elephant();
+    }
+
+    public class Giraffe : Animal
+    {
+        private static int s_idendifications = 0;
+
+        public Giraffe() : base("Жираф", UserUtils.GenerateRandomNumber(s_minGenderIndex, s_maxGenderIndex), 
+            "Парнокопытное млекопитающее из семейства жирафовых. Самое высокое наземное животное планеты.", 
+            "Жирафы общаются между собой на частотах ниже 20 Гц, которые не слышны для человеческого слуха.")
+        {
+            IdentificationNumber = s_idendifications;
+            s_idendifications++;
+        }
+
+        public override Animal Clone() =>
+            new Giraffe();
+    }
+
+    public class Hare : Animal
+    {
+        private static int s_idendifications = 0;
+
+        public Hare() : base("Заяц", UserUtils.GenerateRandomNumber(s_minGenderIndex, s_maxGenderIndex), 
+            "Род из семейства зайцевых. Отличаются длинными ушами, коротким поднятым хвостом, " +
+                "недоразвитыми ключицами, длинными задними лапами, что позволяет им двигаться прыжками",
+            "В основном не издает звуков.")
+        {
+            IdentificationNumber = s_idendifications;
+            s_idendifications++;
+        }
+
+        public override Animal Clone() =>
+            new Hare();
+    }
+
+    public class Lion : Animal
+    {
+        private static int s_idendifications = 0;
+
+        public Lion() : base("Лев", UserUtils.GenerateRandomNumber(s_minGenderIndex, s_maxGenderIndex), 
+            "Один из видов крупных хищных млекопитающих, представитель семейства кошачьих", "Рычит.")
+        {
+            IdentificationNumber = s_idendifications;
+            s_idendifications++;
+        }
+
+        public override Animal Clone() =>
+            new Lion();
+    }
+
+    public class UserUtils
+    {
+        private static Random s_random = new Random();
+
+        public static int GenerateRandomNumber(int min, int max) =>
+            s_random.Next(min, max);
+    }
+}
