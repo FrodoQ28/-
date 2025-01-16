@@ -15,8 +15,8 @@ namespace HW_zoo
 
     public enum Gender
     {
-        мужской,
-        женский
+        male,
+        female
     }
 
     public class Zoo
@@ -108,7 +108,7 @@ namespace HW_zoo
         {
             _animals = new List<Animal>();
 
-            AddAnimals(animal);
+            UserUtils.AddAnimals(animal, _animals);
 
             _name = _animals[0].Name + " - ";
             _description = _animals[0].Description + " " + _animals[0].CreatureSound;
@@ -119,64 +119,40 @@ namespace HW_zoo
             Console.WriteLine(_name + _description);
             Console.WriteLine($"\nВ вольере содержатся {_animals.Count} животных:");
 
-            foreach (Animal animal in _animals)
-                animal.ShowInfo();
-        }
-
-        private void AddAnimals(Animal animal)
-        {
-            int minAnimalAmount = 2;
-            int maxAnimalAmount = 10;
-
-            for (int i = 0; i < UserUtils.GenerateRandomNumber(minAnimalAmount, maxAnimalAmount); i++)
-                _animals.Add(animal.Clone());
+            for (int i = 0; i < _animals.Count;)
+                _animals[i].ShowInfo(++i);
         }
     }
 
-    public class Animal
+    public abstract class Animal
     {
-        protected static int s_minGenderIndex = 0;
-        protected static int s_maxGenderIndex = 2;
+        private Gender _gender;
 
-        protected int IdentificationNumber;
-
-        private string _gender;
-
-        public Animal(string name, int genderIndex, string description, string creatureSound)
+        public Animal(string name, Gender gender, string description, string creatureSound)
         {
-            IdentificationNumber = 0;
             Description = description;
             Name = name;
-            _gender = Enum.GetName(typeof(Gender), genderIndex);
+            _gender = gender;
             CreatureSound = creatureSound;
-            s_minGenderIndex = 0;
-            s_maxGenderIndex = 2;
         }
 
         public string Name { get; }
         public string Description { get; }
         public string CreatureSound { get; }
 
-        public virtual Animal Clone() =>
-            new Animal(string.Empty, default, string.Empty, string.Empty);
+        public abstract Animal Clone();
 
-        public void ShowInfo()=>
-            Console.WriteLine($"{IdentificationNumber}.{Name}. Пол {_gender}.");
+        public void ShowInfo(int animalNumber) =>
+            Console.WriteLine($"{animalNumber}.{Name}. Пол {_gender}.");
 
-        public void ShowName()=>
+        public void ShowName() =>
             Console.WriteLine(Name);
     }
 
     public class Elephant : Animal
     {
-        private static int s_idendifications = 0;
-
-        public Elephant() : base("Слон", UserUtils.GenerateRandomNumber(s_minGenderIndex, s_maxGenderIndex),
-            "Крупное травоядное млекопитающее с длинным хоботом и двумя бивнями.", "Издает трубный звук.")
-        {
-            IdentificationNumber = s_idendifications;
-            s_idendifications++;
-        }
+        public Elephant() : base("Слон", UserUtils.GetGender(),
+            "Крупное травоядное млекопитающее с длинным хоботом и двумя бивнями.", "Издает трубный звук.") { }
 
         public override Animal Clone() =>
             new Elephant();
@@ -184,15 +160,9 @@ namespace HW_zoo
 
     public class Giraffe : Animal
     {
-        private static int s_idendifications = 0;
-
-        public Giraffe() : base("Жираф", UserUtils.GenerateRandomNumber(s_minGenderIndex, s_maxGenderIndex), 
-            "Парнокопытное млекопитающее из семейства жирафовых. Самое высокое наземное животное планеты.", 
-            "Жирафы общаются между собой на частотах ниже 20 Гц, которые не слышны для человеческого слуха.")
-        {
-            IdentificationNumber = s_idendifications;
-            s_idendifications++;
-        }
+        public Giraffe() : base("Жираф", UserUtils.GetGender(),
+            "Парнокопытное млекопитающее из семейства жирафовых. Самое высокое наземное животное планеты.",
+            "Жирафы общаются между собой на частотах ниже 20 Гц, которые не слышны для человеческого слуха.") { }
 
         public override Animal Clone() =>
             new Giraffe();
@@ -200,16 +170,10 @@ namespace HW_zoo
 
     public class Hare : Animal
     {
-        private static int s_idendifications = 0;
-
-        public Hare() : base("Заяц", UserUtils.GenerateRandomNumber(s_minGenderIndex, s_maxGenderIndex), 
+        public Hare() : base("Заяц", UserUtils.GetGender(),
             "Род из семейства зайцевых. Отличаются длинными ушами, коротким поднятым хвостом, " +
                 "недоразвитыми ключицами, длинными задними лапами, что позволяет им двигаться прыжками",
-            "В основном не издает звуков.")
-        {
-            IdentificationNumber = s_idendifications;
-            s_idendifications++;
-        }
+            "В основном не издает звуков.") { }
 
         public override Animal Clone() =>
             new Hare();
@@ -217,14 +181,8 @@ namespace HW_zoo
 
     public class Lion : Animal
     {
-        private static int s_idendifications = 0;
-
-        public Lion() : base("Лев", UserUtils.GenerateRandomNumber(s_minGenderIndex, s_maxGenderIndex), 
-            "Один из видов крупных хищных млекопитающих, представитель семейства кошачьих", "Рычит.")
-        {
-            IdentificationNumber = s_idendifications;
-            s_idendifications++;
-        }
+        public Lion() : base("Лев", UserUtils.GetGender(),
+            "Один из видов крупных хищных млекопитающих, представитель семейства кошачьих", "Рычит.") { }
 
         public override Animal Clone() =>
             new Lion();
@@ -236,5 +194,23 @@ namespace HW_zoo
 
         public static int GenerateRandomNumber(int min, int max) =>
             s_random.Next(min, max);
+
+        public static Gender GetGender()
+        {
+            int minGender = 0;
+            int maxGender = 2;
+
+            return (Gender)GenerateRandomNumber(minGender, maxGender);
+        }
+
+        public static void AddAnimals(Animal animal, List<Animal> animals)
+        {
+            int minAnimalAmount = 2;
+            int maxAnimalAmount = 10;
+            int animalAmount = UserUtils.GenerateRandomNumber(minAnimalAmount, maxAnimalAmount);
+
+            for (int i = 0; i < animalAmount; i++)
+                animals.Add(animal.Clone());
+        }
     }
 }
