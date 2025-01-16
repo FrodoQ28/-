@@ -15,8 +15,8 @@ namespace HW_zoo
 
     public enum Gender
     {
-        male,
-        female
+        Male,
+        Female
     }
 
     public class Zoo
@@ -29,7 +29,7 @@ namespace HW_zoo
             _animalsList = new List<Animal>();
             _aviarys = new List<Aviary>();
 
-            FillAnimalList();
+            AnimalFabric.FillAnimalList(_animalsList);
 
             FillAviaryList();
         }
@@ -80,14 +80,6 @@ namespace HW_zoo
             }
         }
 
-        private void FillAnimalList()
-        {
-            _animalsList.Add(new Elephant());
-            _animalsList.Add(new Giraffe());
-            _animalsList.Add(new Hare());
-            _animalsList.Add(new Lion());
-        }
-
         private void FillAviaryList()
         {
             for (int i = 0; i < _animalsList.Count; i++)
@@ -124,7 +116,7 @@ namespace HW_zoo
         }
     }
 
-    public abstract class Animal
+    public class Animal
     {
         private Gender _gender;
 
@@ -140,7 +132,8 @@ namespace HW_zoo
         public string Description { get; }
         public string CreatureSound { get; }
 
-        public abstract Animal Clone();
+        public Animal Clone() =>
+            new Animal(Name, _gender, Description, CreatureSound);
 
         public void ShowInfo(int animalNumber) =>
             Console.WriteLine($"{animalNumber}.{Name}. Пол {_gender}.");
@@ -149,51 +142,9 @@ namespace HW_zoo
             Console.WriteLine(Name);
     }
 
-    public class Elephant : Animal
-    {
-        public Elephant() : base("Слон", UserUtils.GetGender(),
-            "Крупное травоядное млекопитающее с длинным хоботом и двумя бивнями.", "Издает трубный звук.") { }
-
-        public override Animal Clone() =>
-            new Elephant();
-    }
-
-    public class Giraffe : Animal
-    {
-        public Giraffe() : base("Жираф", UserUtils.GetGender(),
-            "Парнокопытное млекопитающее из семейства жирафовых. Самое высокое наземное животное планеты.",
-            "Жирафы общаются между собой на частотах ниже 20 Гц, которые не слышны для человеческого слуха.") { }
-
-        public override Animal Clone() =>
-            new Giraffe();
-    }
-
-    public class Hare : Animal
-    {
-        public Hare() : base("Заяц", UserUtils.GetGender(),
-            "Род из семейства зайцевых. Отличаются длинными ушами, коротким поднятым хвостом, " +
-                "недоразвитыми ключицами, длинными задними лапами, что позволяет им двигаться прыжками",
-            "В основном не издает звуков.") { }
-
-        public override Animal Clone() =>
-            new Hare();
-    }
-
-    public class Lion : Animal
-    {
-        public Lion() : base("Лев", UserUtils.GetGender(),
-            "Один из видов крупных хищных млекопитающих, представитель семейства кошачьих", "Рычит.") { }
-
-        public override Animal Clone() =>
-            new Lion();
-    }
-
-    public class UserUtils
+    public static class UserUtils
     {
         private static Random s_random = new Random();
-
-        public static int GenerateRandomNumber(int min, int max) =>
-            s_random.Next(min, max);
 
         public static Gender GetGender()
         {
@@ -211,6 +162,27 @@ namespace HW_zoo
 
             for (int i = 0; i < animalAmount; i++)
                 animals.Add(animal.Clone());
+        }
+
+        private static int GenerateRandomNumber(int min, int max) =>
+            s_random.Next(min, max);
+    }
+
+    public static class AnimalFabric
+    {
+        public static void FillAnimalList(List<Animal> animalsList)
+        {
+            animalsList.Add(new Animal("Слон", UserUtils.GetGender(),
+            "Крупное травоядное млекопитающее с длинным хоботом и двумя бивнями.", "Издает трубный звук."));
+            animalsList.Add(new Animal("Жираф", UserUtils.GetGender(),
+            "Парнокопытное млекопитающее из семейства жирафовых. Самое высокое наземное животное планеты.",
+            "Жирафы общаются между собой на частотах ниже 20 Гц, которые не слышны для человеческого слуха."));
+            animalsList.Add(new Animal("Заяц", UserUtils.GetGender(),
+            "Род из семейства зайцевых. Отличаются длинными ушами, коротким поднятым хвостом, " +
+                "недоразвитыми ключицами, длинными задними лапами, что позволяет им двигаться прыжками",
+            "В основном не издает звуков."));
+            animalsList.Add(new Animal("Лев", UserUtils.GetGender(),
+            "Один из видов крупных хищных млекопитающих, представитель семейства кошачьих", "Рычит."));
         }
     }
 }
