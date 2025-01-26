@@ -156,7 +156,7 @@ namespace HW_carService
                 {
                     if (_warehouse.TryGetNewPart(brokenParts.Peek(), out Part newPart))
                     {
-                        brokenCar.Repairing(brokenParts.Dequeue(), newPart);
+                        brokenCar.Repair(brokenParts.Dequeue(), newPart);
                         receipt += newPart.Price;
 
                         Console.WriteLine($"{newPart.Name} заменен.");
@@ -199,11 +199,11 @@ namespace HW_carService
     {
         private Dictionary<string, List<Part>> _parts;
 
-        private PartsDelivery _delivery;
+        private PartsFactory _partsFactory;
 
         public Warehouse()
         {
-            _parts = _delivery.GivePartsList();
+            _parts = _partsFactory.GivePartsList();
         }
 
         public void ShowInfo()
@@ -304,7 +304,7 @@ namespace HW_carService
                 Console.WriteLine(part.Name);
         }
 
-        public void Repairing(Part oldPart, Part newPart)
+        public void Repair(Part oldPart, Part newPart)
         {
             int index = _parts.IndexOf(oldPart);
 
@@ -312,55 +312,9 @@ namespace HW_carService
         }
     }
 
-    public class PartsDelivery
+    public class PartsFactory
     {
-        private CarFactory _carFactory;
-        public Dictionary<string, List<Part>> GivePartsList()
-        {
-            int partsAmount = 1;
-
-            Dictionary<string, List<Part>> list = new Dictionary<string, List<Part>>();
-
-            List<Part> parts = new List<Part>();
-
-            foreach (var part in _carFactory.s_partsNamesAndPrices)
-            {
-                parts.Clear();
-
-                for (int j = 0; j < partsAmount; j++)
-                {
-
-                    parts.Add(new Part(part.Key, part.Value));
-                }
-
-                list.Add(parts[0].Name, parts.ToList());
-            }
-
-            return list;
-        }
-    }
-
-    public class CarFactory
-    {
-        private static List<string> s_carNames;
-
-        static CarFactory()
-        {
-            s_carNames = new List<string>
-            {
-            "Ford",
-            "Mazda",
-            "Lada",
-            "Mersedes",
-            "BMW",
-            "Cadillac",
-            "Honda",
-            "Hyndai",
-            "Suzuki"
-            };
-        }
-
-        public Dictionary<string, int> s_partsNamesAndPrices
+        public Dictionary<string, int> PartsNamesAndPrices
         {
             get
             {
@@ -383,14 +337,60 @@ namespace HW_carService
         {
             List<Part> parts = new List<Part>();
 
-            foreach (var part in s_partsNamesAndPrices)
+            foreach (var part in PartsNamesAndPrices)
                 parts.Add(new Part(part.Key, part.Value));
 
             return parts;
         }
 
+        public Dictionary<string, List<Part>> GivePartsList()
+        {
+            int partsAmount = 1;
+
+            Dictionary<string, List<Part>> list = new Dictionary<string, List<Part>>();
+
+            List<Part> parts = new List<Part>();
+
+            foreach (var part in PartsNamesAndPrices)
+            {
+                parts.Clear();
+
+                for (int j = 0; j < partsAmount; j++)
+                {
+
+                    parts.Add(new Part(part.Key, part.Value));
+                }
+
+                list.Add(parts[0].Name, parts.ToList());
+            }
+
+            return list;
+        }
+    }
+
+    public class CarFactory
+    {
+        private PartsFactory _partsFactory;
+        private List<string> _carNames;
+
+        public CarFactory()
+        {
+            _carNames = new List<string>
+            {
+            "Ford",
+            "Mazda",
+            "Lada",
+            "Mersedes",
+            "BMW",
+            "Cadillac",
+            "Honda",
+            "Hyndai",
+            "Suzuki"
+            };
+        }
+
         public Car Create() =>
-           new Car(s_carNames[UserUtils.GetRandomNumber(0, s_carNames.Count)], GetPartsList());
+           new Car(_carNames[UserUtils.GetRandomNumber(0, _carNames.Count)], _partFactory.GetPartsList());
     }
 
     public static class UserUtils
