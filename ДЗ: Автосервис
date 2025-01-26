@@ -1,0 +1,384 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace HW_carService
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            CarService carService = new CarService();
+
+            carService.Work();
+        }
+    }
+
+    public class CarService
+    {
+        private Warehouse _warehouse;
+
+        private int _money;
+        private int _fullPenalty;
+        private int _partialPenalty;
+
+        private Queue<Car> _cars;
+
+        public CarService()
+        {
+            _cars = new Queue<Car>();
+            _warehouse = new Warehouse();
+            _money = 1000;
+            _fullPenalty = 50;
+            _partialPenalty = 10;
+
+            FillCarQueue();
+        }
+
+        public void Work()
+        {
+            const string CommandRepair = "1";
+            const string CommandRefuseToRepair = "2";
+            const string CommandExit = "3";
+
+            while (_cars.Count > 0 && _money > 0)
+            {
+                Console.Clear();
+                Console.WriteLine($"Это автосервис.\nКасса - {_money}\n{new string('-', 25)}\n" +
+                                  $"Машин в очереди на ремонт - {_cars.Count}\n" +
+                                  $"Следующий в очереди - {_cars.Peek().Name}\n{new string('-', 25)}\n" +
+                                  $"При отказе до начала ремонта штраф - {_fullPenalty}\n" +
+                                  $"При отказе в процессе ремонта штраф - {_partialPenalty}\n{new string('-', 25)}");
+
+                _warehouse.ShowInfo();
+
+                Console.WriteLine($"{new string('-', 25)}\nВведите команду:\nДля ремонта следующего автомобиля - {CommandRepair}\n" +
+                                  $"Для отказа от ремонта следующего автомобиля - {CommandRefuseToRepair}\n" +
+                                  $"Для вывода денег и объявления банкротства - {CommandExit}");
+
+                switch (Console.ReadLine())
+                {
+                    case CommandRepair:
+                        Repairing();
+                        break;
+
+                    case CommandRefuseToRepair:
+                        RefuseToRepair();
+                        break;
+
+                    case CommandExit:
+                        _money = 0;
+                        break;
+
+                    default:
+                        Console.WriteLine("Неверная команда.");
+                        break;
+                }
+
+                Console.ReadKey();
+            }
+        }
+
+        private void FillCarQueue()
+        {
+            int minCarsAmount = 5;
+            int maxCarsAmount = 15;
+            int carsAmount = UserUtils.GetRandomNumber(minCarsAmount, maxCarsAmount);
+
+            for (int i = 0; i < carsAmount; i++)
+            {
+                Car newCar = CarFactory.Create();
+
+                newCar.BreakParts();
+
+                _cars.Enqueue(newCar);
+            }
+        }
+
+        private void RefuseToRepair()
+        {
+            _money -= _fullPenalty;
+
+            _cars.Dequeue();
+
+            Console.WriteLine($"Штраф за отказ от ремонта - {_fullPenalty}");
+        }
+
+        private void Repairing()
+        {
+            const string CommandRepair = "1";
+            const string CommandRefuseToRepair = "2";
+
+            bool isRepairCar = true;
+            bool isReplacePair = false;
+
+            Car brokenCar = _cars.Dequeue();
+
+            int receipt = 0;
+
+            Queue<Part> brokenParts = brokenCar.GetBrokenParts();
+
+            while (brokenParts.Count > 0 && isRepairCar)
+            {
+                Console.Clear();
+
+                brokenCar.ShowBrokenParts(brokenParts);
+
+                Console.WriteLine($"Требуется ремонт {brokenParts.Peek().Name}.\n" +
+                                  $"Начать ремонт - {CommandRepair}\nОтказаться от ремонта - {CommandRefuseToRepair}\nВведите команду:");
+
+                switch (Console.ReadLine())
+                {
+                    case CommandRepair:
+                        isReplacePair = true;
+                        break;
+
+                    case CommandRefuseToRepair:
+                        isReplacePair = false;
+                        break;
+
+                    default:
+                        Console.WriteLine("Неверная команда.");
+                        Console.ReadKey();
+                        break;
+                }
+
+                if (isReplacePair)
+                {
+                    if (_warehouse.TryGetNewPart(brokenParts.Peek(), out Part newPart))
+                    {
+                        brokenCar.Repairing(brokenParts.Dequeue(), newPart);
+                        receipt += newPart.Price;
+
+                        Console.WriteLine($"{newPart.Name} заменен.");
+
+                        isReplacePair = false;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Закончились запчасти.");
+
+                        isReplacePair = false;
+                    }
+                }
+                else
+                {
+                    int brokenPartsAmount = default;
+                    int penalty;
+
+                    foreach (Part part in brokenParts)
+                        brokenPartsAmount++;
+
+                    penalty = brokenPartsAmount * _partialPenalty;
+                    receipt -= penalty;
+
+                    Console.WriteLine($"Штраф за отказ от ремонта - {penalty}");
+
+                    isRepairCar = false;
+                }
+
+                Console.ReadKey();
+            }
+
+            _money += receipt;
+
+            Console.WriteLine($"Заработано за ремонт - {receipt}");
+        }
+    }
+
+    public class Warehouse
+    {
+        private Dictionary<string, List<Part>> _parts;
+
+        public Warehouse()
+        {
+            _parts = PartsDelivery.AddParts();
+        }
+
+        public void ShowInfo()
+        {
+            Console.WriteLine("Детали на складе:");
+
+            foreach (var parts in _parts)
+                Console.WriteLine($"{parts.Key} - {parts.Value.Count}");
+        }
+
+        public bool TryGetNewPart(Part oldPart, out Part newPart)
+        {
+            newPart = default;
+
+            foreach (var parts in _parts)
+            {
+                if (parts.Key == oldPart.Name && parts.Value.Count > 0)
+                {
+                    newPart = _parts[parts.Key].Last();
+
+                    _parts[parts.Key].Remove(newPart);
+                }
+            }
+
+            return newPart != default;
+        }
+    }
+
+    public class Part
+    {
+        public Part(string name, int price)
+        {
+            Name = name;
+            IsBroken = false;
+            Price = price;
+        }
+        public string Name { get; }
+        public int Price { get; }
+        public bool IsBroken { get; private set; }
+
+        public void BreaksDown() =>
+            IsBroken = true;
+    }
+
+    public class Car
+    {
+        private List<Part> _parts;
+
+        public Car(string name, List<Part> parts)
+        {
+            _parts = parts;
+
+            Name = name;
+        }
+
+        public string Name { get; }
+
+        public void BreakParts()
+        {
+            int minPartBreakAmount = 1;
+            int maxPartBreakAmount = _parts.Count;
+            int partIndex;
+            int partBreakAmount = UserUtils.GetRandomNumber(minPartBreakAmount, maxPartBreakAmount);
+
+            for (int i = 0; i < partBreakAmount;)
+            {
+                partIndex = UserUtils.GetRandomNumber(0, _parts.Count);
+
+                if (_parts[partIndex].IsBroken == false)
+                {
+                    _parts[partIndex].BreaksDown();
+
+                    i++;
+                }
+            }
+        }
+
+        public Queue<Part> GetBrokenParts()
+        {
+            Queue<Part> brokenParts = new Queue<Part>();
+
+            foreach (Part part in _parts)
+            {
+                if (part.IsBroken == true)
+                    brokenParts.Enqueue(part);
+            }
+
+            return brokenParts;
+        }
+
+        public void ShowBrokenParts(Queue<Part> brokenParts)
+        {
+            Console.WriteLine("Список сломанных деталей:");
+
+            foreach (Part part in brokenParts)
+                Console.WriteLine(part.Name);
+        }
+
+        public void Repairing(Part oldPart, Part newPart)
+        {
+            int index = _parts.IndexOf(oldPart);
+
+            _parts[index] = newPart;
+        }
+    }
+
+    public static class PartsDelivery
+    {
+        public static Dictionary<string, List<Part>> AddParts()
+        {
+            int partsAmount = 1;
+
+            Dictionary<string, List<Part>> list = new Dictionary<string, List<Part>>();
+
+            List<Part> parts = new List<Part>();
+
+            foreach (var part in CarFactory.s_partsNamesAndPrices)
+            {
+                parts.Clear();
+
+                for (int j = 0; j < partsAmount; j++)
+                {
+
+                    parts.Add(new Part(part.Key, part.Value));
+                }
+
+                list.Add(parts[0].Name, parts.ToList());
+            }
+
+            return list;
+        }
+    }
+
+    public static class CarFactory
+    {
+        private static List<string> s_carNames = new List<string>()
+        {
+            "Ford",
+            "Mazda",
+            "Lada",
+            "Mersedes",
+            "BMW",
+            "Cadillac",
+            "Honda",
+            "Hyndai",
+            "Suzuki"
+        };
+
+        public static Dictionary<string, int> s_partsNamesAndPrices
+        {
+            get
+            {
+                return new Dictionary<string, int>()
+                {
+                    { "Колесо", 40 },
+                    {"Амортизатор", 50},
+                    {"Капот", 100},
+                    {"Бензобак", 80},
+                    {"Кузов", 250},
+                    {"Лобовое стекло", 70},
+                    {"Двигатель", 200},
+                    {"Топливный насос", 50},
+                    {"Кондиционер", 150}
+                };
+            }
+        }
+
+        public static List<Part> AddParts()
+        {
+            List<Part> parts = new List<Part>();
+
+            foreach (var part in s_partsNamesAndPrices)
+                parts.Add(new Part(part.Key, part.Value));
+
+            return parts;
+        }
+
+        public static Car Create() =>
+           new Car(s_carNames[UserUtils.GetRandomNumber(0, s_carNames.Count)], AddParts());
+    }
+
+    public static class UserUtils
+    {
+        private static Random s_random = new Random();
+
+        public static int GetRandomNumber(int minRandom, int maxRandom) =>
+            s_random.Next(minRandom, maxRandom);
+    }
+}
