@@ -16,6 +16,8 @@ namespace HW_carService
 
     public class CarService
     {
+        private CarFactory _carFactory;
+
         private Warehouse _warehouse;
 
         private int _money;
@@ -87,7 +89,7 @@ namespace HW_carService
 
             for (int i = 0; i < carsAmount; i++)
             {
-                Car newCar = CarFactory.Create();
+                Car newCar = _carFactory.Create();
 
                 newCar.BreakParts();
 
@@ -154,7 +156,7 @@ namespace HW_carService
                 {
                     if (_warehouse.TryGetNewPart(brokenParts.Peek(), out Part newPart))
                     {
-                        brokenCar.ServeCar(brokenParts.Dequeue(), newPart);
+                        brokenCar.Repairing(brokenParts.Dequeue(), newPart);
                         receipt += newPart.Price;
 
                         Console.WriteLine($"{newPart.Name} заменен.");
@@ -197,9 +199,11 @@ namespace HW_carService
     {
         private Dictionary<string, List<Part>> _parts;
 
+        private PartsDelivery _delivery;
+
         public Warehouse()
         {
-            _parts = PartsDelivery.AddParts();
+            _parts = _delivery.GivePartsList();
         }
 
         public void ShowInfo()
@@ -300,7 +304,7 @@ namespace HW_carService
                 Console.WriteLine(part.Name);
         }
 
-        public void ServeCar(Part oldPart, Part newPart)
+        public void Repairing(Part oldPart, Part newPart)
         {
             int index = _parts.IndexOf(oldPart);
 
@@ -308,9 +312,10 @@ namespace HW_carService
         }
     }
 
-    public static class PartsDelivery
+    public class PartsDelivery
     {
-        public static Dictionary<string, List<Part>> AddParts()
+        private CarFactory _carFactory;
+        public Dictionary<string, List<Part>> GivePartsList()
         {
             int partsAmount = 1;
 
@@ -318,7 +323,7 @@ namespace HW_carService
 
             List<Part> parts = new List<Part>();
 
-            foreach (var part in CarFactory.s_partsNamesAndPrices)
+            foreach (var part in _carFactory.s_partsNamesAndPrices)
             {
                 parts.Clear();
 
@@ -335,7 +340,7 @@ namespace HW_carService
         }
     }
 
-    public static class CarFactory
+    public class CarFactory
     {
         private static List<string> s_carNames;
 
@@ -355,7 +360,7 @@ namespace HW_carService
             };
         }
 
-        public static Dictionary<string, int> s_partsNamesAndPrices
+        public Dictionary<string, int> s_partsNamesAndPrices
         {
             get
             {
@@ -374,7 +379,7 @@ namespace HW_carService
             }
         }
 
-        public static List<Part> GetPartsList()
+        public List<Part> GetPartsList()
         {
             List<Part> parts = new List<Part>();
 
@@ -384,7 +389,7 @@ namespace HW_carService
             return parts;
         }
 
-        public static Car Create() =>
+        public Car Create() =>
            new Car(s_carNames[UserUtils.GetRandomNumber(0, s_carNames.Count)], GetPartsList());
     }
 
