@@ -59,7 +59,7 @@ namespace HW_carService
                 switch (Console.ReadLine())
                 {
                     case CommandRepair:
-                        Repairing();
+                        ServeCar();
                         break;
 
                     case CommandRefuseToRepair:
@@ -104,7 +104,7 @@ namespace HW_carService
             Console.WriteLine($"Штраф за отказ от ремонта - {_fullPenalty}");
         }
 
-        private void Repairing()
+        private void ServeCar()
         {
             const string CommandRepair = "1";
             const string CommandRefuseToRepair = "2";
@@ -120,6 +120,8 @@ namespace HW_carService
 
             while (brokenParts.Count > 0 && isRepairCar)
             {
+                bool isCorrectInput = false;
+
                 Console.Clear();
 
                 brokenCar.ShowBrokenParts(brokenParts);
@@ -127,27 +129,32 @@ namespace HW_carService
                 Console.WriteLine($"Требуется ремонт {brokenParts.Peek().Name}.\n" +
                                   $"Начать ремонт - {CommandRepair}\nОтказаться от ремонта - {CommandRefuseToRepair}\nВведите команду:");
 
-                switch (Console.ReadLine())
+                while (isCorrectInput == false)
                 {
-                    case CommandRepair:
-                        isReplacePair = true;
-                        break;
+                    switch (Console.ReadLine())
+                    {
+                        case CommandRepair:
+                            isReplacePair = true;
+                            isCorrectInput = true;
+                            break;
 
-                    case CommandRefuseToRepair:
-                        isReplacePair = false;
-                        break;
+                        case CommandRefuseToRepair:
+                            isReplacePair = false;
+                            isCorrectInput = true;
+                            break;
 
-                    default:
-                        Console.WriteLine("Неверная команда.");
-                        Console.ReadKey();
-                        break;
+                        default:
+                            Console.WriteLine("Неверная команда.");
+                            Console.ReadKey(true);
+                            break;
+                    }
                 }
 
                 if (isReplacePair)
                 {
                     if (_warehouse.TryGetNewPart(brokenParts.Peek(), out Part newPart))
                     {
-                        brokenCar.Repairing(brokenParts.Dequeue(), newPart);
+                        brokenCar.ServeCar(brokenParts.Dequeue(), newPart);
                         receipt += newPart.Price;
 
                         Console.WriteLine($"{newPart.Name} заменен.");
@@ -214,6 +221,8 @@ namespace HW_carService
                     newPart = _parts[parts.Key].Last();
 
                     _parts[parts.Key].Remove(newPart);
+
+                    return true;
                 }
             }
 
@@ -291,7 +300,7 @@ namespace HW_carService
                 Console.WriteLine(part.Name);
         }
 
-        public void Repairing(Part oldPart, Part newPart)
+        public void ServeCar(Part oldPart, Part newPart)
         {
             int index = _parts.IndexOf(oldPart);
 
@@ -328,8 +337,12 @@ namespace HW_carService
 
     public static class CarFactory
     {
-        private static List<string> s_carNames = new List<string>()
+        private static List<string> s_carNames;
+
+        static CarFactory()
         {
+            s_carNames = new List<string>
+            {
             "Ford",
             "Mazda",
             "Lada",
@@ -339,7 +352,8 @@ namespace HW_carService
             "Honda",
             "Hyndai",
             "Suzuki"
-        };
+            };
+        }
 
         public static Dictionary<string, int> s_partsNamesAndPrices
         {
@@ -360,7 +374,7 @@ namespace HW_carService
             }
         }
 
-        public static List<Part> AddParts()
+        public static List<Part> GetPartsList()
         {
             List<Part> parts = new List<Part>();
 
@@ -371,7 +385,7 @@ namespace HW_carService
         }
 
         public static Car Create() =>
-           new Car(s_carNames[UserUtils.GetRandomNumber(0, s_carNames.Count)], AddParts());
+           new Car(s_carNames[UserUtils.GetRandomNumber(0, s_carNames.Count)], GetPartsList());
     }
 
     public static class UserUtils
