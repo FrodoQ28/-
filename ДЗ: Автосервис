@@ -189,10 +189,9 @@ namespace HW_carService
                 int brokenPartsAmount = default;
                 int penalty;
 
-                foreach (Part part in brokenParts)
-                    brokenPartsAmount++;
-
+                brokenPartsAmount = brokenParts.Count;
                 brokenParts.Clear();
+
                 penalty = brokenPartsAmount * _partialPenalty;
                 receipt -= penalty;
 
@@ -207,13 +206,13 @@ namespace HW_carService
     {
         private Dictionary<string, List<Part>> _parts;
 
-        private PartsFactory _partsFactory;
+
 
         public Warehouse()
         {
-            _partsFactory = new PartsFactory();
+            PartsFactory partsFactory = new PartsFactory();
 
-            _parts = _partsFactory.GivePartsList();
+            _parts = partsFactory.GivePartsList();
         }
 
         public void ShowInfo()
@@ -226,22 +225,25 @@ namespace HW_carService
 
         public bool TryGetNewPart(Part oldPart, out Part newPart)
         {
-            newPart = default;
-
-            foreach (var parts in _parts)
+            if (_parts.TryGetValue(oldPart.Name, out List<Part> partList))
             {
-                if (parts.Key == oldPart.Name && parts.Value.Count > 0)
-                {
-                    newPart = _parts[parts.Key].Last();
+                newPart = partList.FirstOrDefault();
 
-                    _parts[parts.Key].Remove(newPart);
+                _parts[oldPart.Name].Remove(newPart);
 
-                    return true;
-                }
+                return true;
+            }
+            else
+            {
+                newPart = default;
+
+                return false;
             }
 
-            return newPart != default;
+
+
         }
+
     }
 
     public class Part
@@ -280,15 +282,18 @@ namespace HW_carService
             int partIndex;
             int partBreakAmount = UserUtils.GetRandomNumber(minPartBreakAmount, maxPartBreakAmount);
 
-            for (int i = 0; i < partBreakAmount;)
+            if (_parts.Where(part => part.IsBroken == false).Count() >= partBreakAmount)
             {
-                partIndex = UserUtils.GetRandomNumber(0, _parts.Count);
-
-                if (_parts[partIndex].IsBroken == false)
+                for (int i = 0; i < partBreakAmount;)
                 {
-                    _parts[partIndex].BreaksDown();
+                    partIndex = UserUtils.GetRandomNumber(0, _parts.Count);
 
-                    i++;
+                    if (_parts[partIndex].IsBroken == false)
+                    {
+                        _parts[partIndex].BreaksDown();
+
+                        i++;
+                    }
                 }
             }
         }
