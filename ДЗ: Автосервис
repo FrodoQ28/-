@@ -28,6 +28,8 @@ namespace HW_carService
 
         public CarService()
         {
+            _carFactory = new CarFactory();
+
             _cars = new Queue<Car>();
             _warehouse = new Warehouse();
             _money = 1000;
@@ -108,83 +110,21 @@ namespace HW_carService
 
         private void ServeCar()
         {
-            const string CommandRepair = "1";
-            const string CommandRefuseToRepair = "2";
-
-            bool isRepairCar = true;
-            bool isReplacePair = false;
-
             Car brokenCar = _cars.Dequeue();
 
             int receipt = 0;
 
             Queue<Part> brokenParts = brokenCar.GetBrokenParts();
 
-            while (brokenParts.Count > 0 && isRepairCar)
+            while (brokenParts.Count > 0)
             {
-                bool isCorrectInput = false;
-
                 Console.Clear();
 
                 brokenCar.ShowBrokenParts(brokenParts);
 
-                Console.WriteLine($"Требуется ремонт {brokenParts.Peek().Name}.\n" +
-                                  $"Начать ремонт - {CommandRepair}\nОтказаться от ремонта - {CommandRefuseToRepair}\nВведите команду:");
+                Console.WriteLine($"Требуется ремонт {brokenParts.Peek().Name}.");
 
-                while (isCorrectInput == false)
-                {
-                    switch (Console.ReadLine())
-                    {
-                        case CommandRepair:
-                            isReplacePair = true;
-                            isCorrectInput = true;
-                            break;
-
-                        case CommandRefuseToRepair:
-                            isReplacePair = false;
-                            isCorrectInput = true;
-                            break;
-
-                        default:
-                            Console.WriteLine("Неверная команда.");
-                            Console.ReadKey(true);
-                            break;
-                    }
-                }
-
-                if (isReplacePair)
-                {
-                    if (_warehouse.TryGetNewPart(brokenParts.Peek(), out Part newPart))
-                    {
-                        brokenCar.Repair(brokenParts.Dequeue(), newPart);
-                        receipt += newPart.Price;
-
-                        Console.WriteLine($"{newPart.Name} заменен.");
-
-                        isReplacePair = false;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Закончились запчасти.");
-
-                        isReplacePair = false;
-                    }
-                }
-                else
-                {
-                    int brokenPartsAmount = default;
-                    int penalty;
-
-                    foreach (Part part in brokenParts)
-                        brokenPartsAmount++;
-
-                    penalty = brokenPartsAmount * _partialPenalty;
-                    receipt -= penalty;
-
-                    Console.WriteLine($"Штраф за отказ от ремонта - {penalty}");
-
-                    isRepairCar = false;
-                }
+                receipt = ReplacePair(brokenCar, brokenParts, receipt);
 
                 Console.ReadKey();
             }
@@ -192,6 +132,74 @@ namespace HW_carService
             _money += receipt;
 
             Console.WriteLine($"Заработано за ремонт - {receipt}");
+        }
+
+        private bool IsReplacePair()
+        {
+            const string CommandRepair = "1";
+            const string CommandRefuseToRepair = "2";
+
+            bool isCorrectInput = false;
+            bool isReplacePair = false;
+
+            Console.WriteLine($"Начать ремонт - {CommandRepair}\nОтказаться от ремонта - {CommandRefuseToRepair}\nВведите команду:");
+
+            while (isCorrectInput == false)
+            {
+                switch (Console.ReadLine())
+                {
+                    case CommandRepair:
+                        isReplacePair = true;
+                        isCorrectInput = true;
+                        break;
+
+                    case CommandRefuseToRepair:
+                        isReplacePair = false;
+                        isCorrectInput = true;
+                        break;
+
+                    default:
+                        Console.WriteLine("Неверная команда.");
+                        Console.ReadKey(true);
+                        break;
+                }
+            }
+
+            return isReplacePair;
+        }
+
+        public int ReplacePair(Car brokenCar, Queue<Part> brokenParts, int receipt)
+        {
+            if (IsReplacePair())
+            {
+                if (_warehouse.TryGetNewPart(brokenParts.Peek(), out Part newPart))
+                {
+                    brokenCar.Repair(brokenParts.Dequeue(), newPart);
+                    receipt += newPart.Price;
+
+                    Console.WriteLine($"{newPart.Name} заменен.");
+                }
+                else
+                {
+                    Console.WriteLine("Закончились запчасти.");
+                }
+            }
+            else
+            {
+                int brokenPartsAmount = default;
+                int penalty;
+
+                foreach (Part part in brokenParts)
+                    brokenPartsAmount++;
+
+                brokenParts.Clear();
+                penalty = brokenPartsAmount * _partialPenalty;
+                receipt -= penalty;
+
+                Console.WriteLine($"Штраф за отказ от ремонта - {penalty}");
+            }
+
+            return receipt;
         }
     }
 
@@ -203,6 +211,8 @@ namespace HW_carService
 
         public Warehouse()
         {
+            _partsFactory = new PartsFactory();
+
             _parts = _partsFactory.GivePartsList();
         }
 
@@ -375,6 +385,8 @@ namespace HW_carService
 
         public CarFactory()
         {
+            _partsFactory = new PartsFactory();
+
             _carNames = new List<string>
             {
             "Ford",
@@ -390,7 +402,7 @@ namespace HW_carService
         }
 
         public Car Create() =>
-           new Car(_carNames[UserUtils.GetRandomNumber(0, _carNames.Count)], _partFactory.GetPartsList());
+           new Car(_carNames[UserUtils.GetRandomNumber(0, _carNames.Count)], _partsFactory.GetPartsList());
     }
 
     public static class UserUtils
