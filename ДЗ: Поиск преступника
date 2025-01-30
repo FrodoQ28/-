@@ -1,0 +1,192 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace HW_findCriminal
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            CriminalDatabase database = new CriminalDatabase();
+
+            database.Work();
+        }
+    }
+
+    public class CriminalDatabase
+    {
+        private List<Criminal> _criminals;
+
+        public CriminalDatabase()
+        {
+            CriminalFactory factory = new CriminalFactory();
+
+            _criminals = factory.CreateCriminals();
+        }
+
+        public void Work()
+        {
+            const string CommandFind = "1";
+            const string CommandExit = "0";
+
+            bool isRunning = true;
+
+            while (isRunning)
+            {
+                Console.Clear();
+                Console.WriteLine($"Это программа для детективов.");
+
+                ShowInfo();
+
+                Console.WriteLine($"\nДля поиска введите - {CommandFind}\nДля выхода введите - {CommandExit}");
+
+                switch (Console.ReadLine())
+                {
+                    case CommandFind:
+                        FindCriminals();
+                        break;
+
+                    case CommandExit:
+                        isRunning = false;
+                        break;
+
+                    default:
+                        Console.WriteLine("Такой команды нет.");
+                        break;
+                }
+
+                Console.ReadKey();
+            }
+        }
+
+        private void ShowInfo()
+        {
+            Console.WriteLine("\nСписок преступников в базе данных:");
+
+            foreach (Criminal criminal in _criminals)
+                criminal.ShowInfo();
+        }
+
+        private void FindCriminals()
+        {
+            int weight;
+            int height;
+            string nationality;
+
+            weight = GetNumber("вес");
+            height = GetNumber("рост");
+
+            Console.WriteLine("Введите национальность:");
+
+            nationality = Console.ReadLine().ToLower();
+            
+            if(TryGetCriminalsList(weight, height, nationality, out List<Criminal> criminals))
+            {
+                Console.WriteLine("Список подходящих под описание преступников на свободе:");
+
+                foreach (var criminal in criminals)
+                    criminal.ShowInfo();
+            }
+            else
+            {
+                Console.WriteLine("Подходящих под описание преступников на свободе не найдено.");
+            }
+        }
+
+        private bool TryGetCriminalsList(int weight, int height, string nationality, out List<Criminal> criminals)
+        {
+            int searchRange = 10;
+
+            int minWeight = weight - searchRange;
+            int maxWeight = weight + searchRange;
+            int minHeight = height - searchRange;
+            int maxHeight = height + searchRange;
+
+            var filteredCriminals = _criminals.Where(criminal => criminal.Weight > minWeight && criminal.Weight < maxWeight &&
+            criminal.Height > minHeight && criminal.Height < maxHeight && criminal.Nationality.ToLower() == nationality && 
+            criminal.IsArrest == false);
+
+            criminals = filteredCriminals.ToList();
+
+            if (criminals.Any())
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private int GetNumber(string requiredParameter)
+        {
+            bool isRunning = true;
+            int number = default;
+
+            while (isRunning)
+            {
+                Console.Clear();
+                Console.WriteLine($"Введите приблизительный {requiredParameter}:");
+
+                if (Int32.TryParse(Console.ReadLine(), out int result))
+                {
+                    isRunning = false;
+                    number = result;
+                }
+                else
+                {
+                    Console.WriteLine("Неверный ввод, попробуйте еще раз.");
+                    Console.ReadKey();
+                }
+            }
+
+            return number;
+        }
+    }
+
+    public class Criminal
+    {
+        public Criminal(string name, string gender, string nationality, bool isArrest, int weight, int height)
+        {
+            Name = name;
+            Gender = gender;
+            Nationality = nationality;
+            IsArrest = isArrest;
+            Weight = weight;
+            Height = height;
+        }
+
+        public string Name { get; }
+        public string Gender { get; }
+        public string Nationality { get; }
+        public bool IsArrest { get; }
+        public int Weight { get; }
+        public int Height { get; }
+
+        public void ShowInfo() =>
+            Console.WriteLine($"{Name}, пол - {Gender}, {Nationality}, {Weight} кг., {Height} см., статус ареста - {IsArrest}.");
+    }
+
+    class CriminalFactory
+    {
+        public List<Criminal> CreateCriminals()
+        {
+            List<Criminal> criminals = new List<Criminal>
+            {
+                new Criminal("Иванов Иван Иванович", "М", "Русский", true, 80, 165),
+                new Criminal("Сидоров Сидор Сидорович", "М", "Русский", false, 90, 170),
+                new Criminal("Магомедов Магомед Магомедович", "М", "Дагестанец", true, 100, 175),
+                new Criminal("Ариев Ара Ариевич", "М", "Армян", false, 86, 180),
+                new Criminal("Армэнов Армэн Армэнович", "М", "Армян", true, 107, 176),
+                new Criminal("Баяров Баяр Баярович", "М", "Бурят", false, 78, 156),
+                new Criminal("Айдаров Айдар Айдарович", "М", "Казах", true, 94, 179),
+                new Criminal("Аннова Анна Анновна", "Ж", "Русский", false, 56, 165),
+                new Criminal("Перизатова Перизат Перизатовна", "Ж", "Казах", true, 65, 156),
+                new Criminal("Цырелмова Цырелма Цырелмовна", "Ж", "Бурят", false, 54, 160)
+            };
+
+            return criminals;
+        }
+    }
+}
