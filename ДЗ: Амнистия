@@ -1,0 +1,90 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace HW_amnesty
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Arstocka arstocka = new Arstocka();
+
+            arstocka.Work();
+        }
+    }
+
+    public class Arstocka
+    {
+        private List<Criminal> _criminals;
+
+        public Arstocka()
+        {
+            CriminalFactory factory = new CriminalFactory();
+
+            _criminals = factory.CreateCriminals();
+        }
+
+        public void Work()
+        {
+            Console.WriteLine("Это Арстоцка.\n");
+
+            Showinfo();
+
+            Console.WriteLine("\nОбъявлена амнистия.\n");
+
+            _criminals = GetNotAmnestyCriminals();
+
+            Showinfo();
+        }
+
+        private List<Criminal> GetNotAmnestyCriminals() =>
+            _criminals.Where(criminal => criminal.Crime != "Антиправительственные действия").ToList();
+
+        private void Showinfo()
+        {
+            Console.WriteLine("Список осужденных:");
+
+            foreach (Criminal criminal in _criminals)
+                criminal.ShowInfo();
+        }
+    }
+
+    public class Criminal
+    {
+        private string _name;
+
+        public Criminal(string name, string crime)
+        {
+            _name = name;
+            Crime = crime;
+        }
+
+        public string Crime { get; }
+
+        public void ShowInfo() =>
+            Console.WriteLine(_name + " " + Crime);
+    }
+
+    class CriminalFactory
+    {
+        public List<Criminal> CreateCriminals()
+        {
+            List<Criminal> criminals = new List<Criminal>
+            {
+                new Criminal("Иванов Иван Иванович", "Воровство"),
+                new Criminal("Сидоров Сидор Сидорович", "Убийство"),
+                new Criminal("Магомедов Магомед Магомедович", "Антиправительственные действия"),
+                new Criminal("Ариев Ара Ариевич", "Антиправительственные действия"),
+                new Criminal("Армэнов Армэн Армэнович", "Антиправительственные действия"),
+                new Criminal("Баяров Баяр Баярович", "Разбой"),
+                new Criminal("Айдаров Айдар Айдарович", "Убийство"),
+                new Criminal("Аннова Анна Анновна", "Коррупция"),
+                new Criminal("Перизатова Перизат Перизатовна", "Антиправительственные действия"),
+                new Criminal("Цырелмова Цырелма Цырелмовна", "Антиправительственные действия")
+            };
+
+            return criminals;
+        }
+    }
+}
