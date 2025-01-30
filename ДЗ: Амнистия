@@ -20,7 +20,7 @@ namespace HW_amnesty
 
         public Arstocka()
         {
-            CriminalFactory factory = new CriminalFactory();
+            OffenderFactory factory = new OffenderFactory();
 
             _criminals = factory.CreateCriminals();
         }
@@ -38,8 +38,13 @@ namespace HW_amnesty
             Showinfo();
         }
 
-        private List<Criminal> GetNotAmnestyCriminals() =>
-            _criminals.Where(criminal => criminal.Crime != "Антиправительственные действия").ToList();
+        private List<Criminal> GetNotAmnestyCriminals()
+        {
+            string amnestyCrime = "Антиправительственные действия";
+            List<Criminal> criminals = _criminals.Where(criminal => criminal.Crime != amnestyCrime).ToList();
+
+            return criminals;
+        }
 
         private void Showinfo()
         {
@@ -66,7 +71,7 @@ namespace HW_amnesty
             Console.WriteLine(_name + " " + Crime);
     }
 
-    class CriminalFactory
+    class OffenderFactory
     {
         public List<Criminal> CreateCriminals()
         {
