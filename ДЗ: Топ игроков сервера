@@ -1,0 +1,104 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace HW_topPlayers
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            PlayersDatabase playersDatabase = new PlayersDatabase();
+
+            playersDatabase.Work();
+        }
+    }
+
+    public class PlayersDatabase
+    {
+        private List<Player> _players;
+
+        public PlayersDatabase()
+        {
+            GamerFactory gamerFactory = new GamerFactory();
+
+            _players = gamerFactory.CreatePlayers();
+        }
+
+        public void Work()
+        {
+            Console.WriteLine("Это база данных игроков.");
+
+            ShowInfo();
+
+            ShowTopByLevel();
+
+            ShowTopByPower();
+
+            Console.ReadKey();
+        }
+
+        private void ShowInfo()
+        {
+            Console.WriteLine("\nСписок всех игроков:");
+
+            _players.ForEach(player =>  player.ShowInfo());
+        }
+
+        private void ShowTopByLevel()
+        {
+            Console.WriteLine("\nТоп 3 игроков по уровню:");
+
+            _players.OrderByDescending(player => player.Level).Take(3).ToList().ForEach(player => player.ShowInfo());
+        }
+
+        private void ShowTopByPower()
+        {
+            Console.WriteLine("\nТоп 3 игроков по силе:");
+
+            _players.OrderByDescending(player => player.Power).Take(3).ToList().ForEach(player => player.ShowInfo());
+        }
+    }
+
+    public class Player
+    {
+        private string _name;
+
+        public Player(string name, int level, int power)
+        {
+            _name = name;
+            Level = level;
+            Power = power;
+        }
+
+        public int Level { get; }
+        public int Power { get; }
+
+        public void ShowInfo()
+        {
+            Console.WriteLine(_name + " " + Level + " уровень " + Power + " сила");
+        }
+    }
+
+    class GamerFactory
+    {
+        public List<Player> CreatePlayers()
+        {
+            List<Player> players = new List<Player>
+            {
+                new Player("Иванов Иван Иванович", 10, 25),
+                new Player("Сидоров Сидор Сидорович", 12, 50),
+                new Player("Магомедов Магомед Магомедович", 56, 41),
+                new Player("Ариев Ара Ариевич", 85, 35),
+                new Player("Армэнов Армэн Армэнович", 2, 36),
+                new Player("Баяров Баяр Баярович", 57, 85),
+                new Player("Айдаров Айдар Айдарович", 16, 47),
+                new Player("Аннова Анна Анновна", 98, 15),
+                new Player("Перизатова Перизат Перизатовна", 47, 32),
+                new Player("Цырелмова Цырелма Цырелмовна", 32, 62)
+            };
+
+            return players;
+        }
+    }
+}
