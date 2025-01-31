@@ -29,7 +29,11 @@ namespace HW_weaponsReport
         {
             ShowInfo();
 
-            ShowNameAndRank();
+            var data = _soldiers.Select(soldier => new {Name = soldier.Name, Rank = soldier.Rank}).ToList();
+
+            Console.WriteLine("\nДанные:\n");
+
+            data.ForEach(soldier => Console.WriteLine(soldier.Name + " " + soldier.Rank));
 
             Console.ReadKey();
         }
@@ -39,13 +43,6 @@ namespace HW_weaponsReport
             Console.WriteLine("\nСписок военнослужащих:");
 
             _soldiers.ForEach(soldiers => soldiers.ShowInfo());
-        }
-
-        private void ShowNameAndRank()
-        {
-            Console.WriteLine("\nСписок имен и званий:");
-
-            _soldiers.Select(soldier => soldier.Name + " " + soldier.Rank).ToList().ForEach(Console.WriteLine);
         }
     }
 
