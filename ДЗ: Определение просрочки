@@ -1,0 +1,91 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace HW_definitionOfDelay
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Warehouse warehouse = new Warehouse();
+
+            warehouse.Work();
+        }
+    }
+
+    public class Warehouse
+    {
+        private List<Stew> _stews;
+
+        public Warehouse()
+        {
+            CanneryFactory factory = new CanneryFactory();
+
+            _stews = factory.CreateStews();
+        }
+
+        public void Work()
+        {
+            ShowInfo();
+
+            ShowOverdue();
+
+            Console.ReadKey();
+        }
+
+        private void ShowInfo()
+        {
+            Console.WriteLine("Список тушенки на складе:");
+
+            _stews.ForEach(stew => stew.ShowInfo());
+        }
+
+        private void ShowOverdue()
+        {
+            Console.WriteLine("\nСписок просроченной тушенки:");
+            _stews.Where(stew => stew.IsOverdue).ToList().ForEach(stew => stew.ShowInfo());
+        }
+    }
+
+    public class Stew
+    {
+        private string _name;
+        private int _releaseDate;
+        private int _expirationDate;
+
+        public Stew(string name, int releaseDate, int expirationDate)
+        {
+            _name = name;
+            _releaseDate = releaseDate;
+            _expirationDate = expirationDate;
+        }
+
+        public bool IsOverdue => DateTime.Today.Year - _releaseDate > _expirationDate;
+
+        public void ShowInfo() =>
+            Console.WriteLine(_name + " " + _releaseDate + " года производства, срок годности - " + _expirationDate);
+    }
+
+    public class CanneryFactory
+    {
+        public List<Stew> CreateStews()
+        {
+            List<Stew> stews = new List<Stew>
+            {
+                new Stew("Толстая корова", 2020, 6),
+                new Stew("Толстая лошадь", 2018, 5),
+                new Stew("Толстая свинья", 2005, 8),
+                new Stew("Толстый заяц", 2022, 10),
+                new Stew("Толстый жираф", 2015, 5),
+                new Stew("Толстая сова", 2024, 4),
+                new Stew("Толстая лань", 2011, 12),
+                new Stew("Толстая божья коровка", 1999, 20),
+                new Stew("Толстая жизнь", 3002, 1),
+                new Stew("Толстая собака", 2000, 100)
+            };
+
+            return stews;
+        }
+    }
+}
