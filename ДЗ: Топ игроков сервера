@@ -27,13 +27,15 @@ namespace HW_topPlayers
 
         public void Work()
         {
+            int topPlayersAmount = 3;
+
             Console.WriteLine("Это база данных игроков.");
 
             ShowInfo();
 
-            ShowTopByLevel();
+            ShowTopByLevel(topPlayersAmount);
 
-            ShowTopByPower();
+            ShowTopByPower(topPlayersAmount);
 
             Console.ReadKey();
         }
@@ -45,18 +47,18 @@ namespace HW_topPlayers
             _players.ForEach(player =>  player.ShowInfo());
         }
 
-        private void ShowTopByLevel()
+        private void ShowTopByLevel(int topPlayersAmount)
         {
-            Console.WriteLine("\nТоп 3 игроков по уровню:");
+            Console.WriteLine($"\nТоп {topPlayersAmount} игроков по уровню:");
 
-            _players.OrderByDescending(player => player.Level).Take(3).ToList().ForEach(player => player.ShowInfo());
+            _players.OrderByDescending(player => player.Level).Take(topPlayersAmount).ToList().ForEach(player => player.ShowInfo());
         }
 
-        private void ShowTopByPower()
+        private void ShowTopByPower(int topPlayersAmount)
         {
-            Console.WriteLine("\nТоп 3 игроков по силе:");
+            Console.WriteLine($"\nТоп {topPlayersAmount} игроков по силе:");
 
-            _players.OrderByDescending(player => player.Power).Take(3).ToList().ForEach(player => player.ShowInfo());
+            _players.OrderByDescending(player => player.Power).Take(topPlayersAmount).ToList().ForEach(player => player.ShowInfo());
         }
     }
 
