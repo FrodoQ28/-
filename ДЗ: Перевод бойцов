@@ -1,0 +1,118 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace HW_transferOfFighters
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Barracks barracks = new Barracks();
+
+            barracks.Work();
+        }
+    }
+
+    public class Barracks
+    {
+        private List<Soldier> _squad1;
+        private List<Soldier> _squad2;
+
+        public Barracks()
+        {
+            MilitaryFactory militaryFactory = new MilitaryFactory();
+
+            _squad1 = militaryFactory.CreateSquad1();
+            _squad2 = militaryFactory.CreateSquad2();
+        }
+
+        public void Work()
+        {
+            ShowInfo();
+
+            Console.WriteLine("\nПеревод солдат с именем на букву Б");
+
+            TransferSoliders();
+
+            ShowInfo();
+
+            Console.ReadKey();
+        }
+
+        private void ShowInfo()
+        {
+            Console.WriteLine("\nСписок военнослужащих\nОтряд 1:");
+
+            _squad1.ForEach(soldiers => soldiers.ShowInfo());
+
+            Console.WriteLine("\nОтряд 2:");
+
+            _squad2.ForEach(soldiers => soldiers.ShowInfo());
+        }
+
+        private void TransferSoliders()
+        {
+            string filterValue = "Б";
+
+            List<Soldier> filteredSoldiers = _squad2.Union(_squad1.Where(soldier => soldier.Name.ToUpper().StartsWith(filterValue))
+                .ToList()).ToList();
+
+            _squad2 = filteredSoldiers;
+
+            for (int i = 0; i < filteredSoldiers.Count; i++)
+                _squad1.Remove(filteredSoldiers[i]);
+        }
+    }
+
+    public class Soldier
+    {
+        private string _weapon;
+        private int _monthsOfService;
+        private string _rank;
+
+        public Soldier(string name, string rank, string weapon, int monthOfService)
+        {
+            Name = name;
+            _rank = rank;
+            _weapon = weapon;
+            _monthsOfService = monthOfService;
+        }
+
+        public string Name { get; }
+
+        public void ShowInfo() =>
+            Console.WriteLine(Name + " " + _rank + " " + _weapon + " " + _monthsOfService + " месяцев службы.");
+    }
+
+    public class MilitaryFactory
+    {
+        public List<Soldier> CreateSquad1()
+        {
+            List<Soldier> soldiers = new List<Soldier>
+            {
+                new Soldier("Иванов Иван Иванович", "Рядовой", "Автомат", 25),
+                new Soldier("Сидоров Сидор Сидорович", "Рядовой", "Автомат", 2),
+                new Soldier("Магомедов Магомед Магомедович", "Рядовой", "Автомат", 41),
+                new Soldier("Ариев Ара Ариевич", "Сержант", "Автомат", 35),
+                new Soldier("Армэнов Армэн Армэнович", "Капитан", "Пистолет", 16),
+                new Soldier("Баяров Баяр Баярович", "Прапорщик", "Пистолет", 10),
+            };
+
+            return soldiers;
+        }
+
+        public List<Soldier> CreateSquad2()
+        {
+            List<Soldier> soldiers = new List<Soldier>
+            {
+                new Soldier("Айдаров Айдар Айдарович", "Старший лейтенант", "Пистолет", 26),
+                new Soldier("Аннова Анна Анновна", "Ефрейтор", "Автомат", 15),
+                new Soldier("Перизатова Перизат Перизатовна", "Майор", "Пистолет", 32),
+                new Soldier("Цырелмова Цырелма Цырелмовна", "Полковник", "Пистолет", 20)
+            };
+
+            return soldiers;
+        }
+    }
+}
