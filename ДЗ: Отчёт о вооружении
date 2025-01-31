@@ -1,0 +1,93 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace HW_weaponsReport
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Barracks barracks = new Barracks();
+
+            barracks.Work();
+        }
+    }
+
+    public class Barracks
+    {
+        private List<Soldier> _soldiers;
+
+        public Barracks()
+        {
+            MilitaryFactory militaryFactory = new MilitaryFactory();
+
+            _soldiers = militaryFactory.CreateSoldiers();
+        }
+
+        public void Work()
+        {
+            ShowInfo();
+
+            ShowNameAndRank();
+
+            Console.ReadKey();
+        }
+
+        private void ShowInfo()
+        {
+            Console.WriteLine("\nСписок военнослужащих:");
+
+            _soldiers.ForEach(soldiers => soldiers.ShowInfo());
+        }
+
+        private void ShowNameAndRank()
+        {
+            Console.WriteLine("\nСписок имен и званий:");
+
+            _soldiers.Select(soldier => soldier.Name + " " + soldier.Rank).ToList().ForEach(Console.WriteLine);
+        }
+    }
+
+    public class Soldier
+    {
+        private string _weapon;
+        private int _monthsOfService;
+
+        public Soldier(string name, string rank, string weapon, int monthOfService)
+        {
+            Name = name;
+            Rank = rank;
+            _weapon = weapon;
+            _monthsOfService = monthOfService;
+        }
+
+        public string Name { get; }
+        public string Rank { get; }
+
+        public void ShowInfo() =>
+            Console.WriteLine(Name + " " + Rank + " " + _weapon + " " + _monthsOfService + " месяцев службы.");
+    }
+
+    public class MilitaryFactory
+    {
+        public List<Soldier> CreateSoldiers()
+        {
+            List<Soldier> soldiers = new List<Soldier>
+            {
+                new Soldier("Иванов Иван Иванович", "Рядовой", "Автомат", 25),
+                new Soldier("Сидоров Сидор Сидорович", "Рядовой", "Автомат", 2),
+                new Soldier("Магомедов Магомед Магомедович", "Рядовой", "Автомат", 41),
+                new Soldier("Ариев Ара Ариевич", "Сержант", "Автомат", 35),
+                new Soldier("Армэнов Армэн Армэнович", "Капитан", "Пистолет", 16),
+                new Soldier("Баяров Баяр Баярович", "Прапорщик", "Пистолет", 10),
+                new Soldier("Айдаров Айдар Айдарович", "Старший лейтенант", "Пистолет", 26),
+                new Soldier("Аннова Анна Анновна", "Ефрейтор", "Автомат", 15),
+                new Soldier("Перизатова Перизат Перизатовна", "Майор", "Пистолет", 32),
+                new Soldier("Цырелмова Цырелма Цырелмовна", "Полковник", "Пистолет", 20)
+            };
+
+            return soldiers;
+        }
+    }
+}
