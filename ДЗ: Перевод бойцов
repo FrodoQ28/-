@@ -16,24 +16,24 @@ namespace HW_transferOfFighters
 
     public class Barracks
     {
-        private List<Soldier> _squad1;
-        private List<Soldier> _squad2;
+        private List<List<Soldier>> _squads;
 
         public Barracks()
         {
             MilitaryFactory militaryFactory = new MilitaryFactory();
 
-            _squad1 = militaryFactory.CreateSquad1();
-            _squad2 = militaryFactory.CreateSquad2();
+            _squads = militaryFactory.CreateSquadsList();
         }
 
         public void Work()
         {
+            string filterValue = "Б";
+
             ShowInfo();
 
-            Console.WriteLine("\nПеревод солдат с именем на букву Б");
+            Console.WriteLine($"\nПеревод солдат с именем на букву {filterValue}");
 
-            TransferSoliders();
+            TransferSoliders(filterValue);
 
             ShowInfo();
 
@@ -42,26 +42,32 @@ namespace HW_transferOfFighters
 
         private void ShowInfo()
         {
-            Console.WriteLine("\nСписок военнослужащих\nОтряд 1:");
+            Console.WriteLine("\nСписок военнослужащих");
 
-            _squad1.ForEach(soldiers => soldiers.ShowInfo());
+            for (int i = 0; i < _squads.Count; i++)
+            {
+                int squadNumber = i + 1;
 
-            Console.WriteLine("\nОтряд 2:");
+                Console.WriteLine("\nОтряд " + squadNumber);
 
-            _squad2.ForEach(soldiers => soldiers.ShowInfo());
+                _squads[i].ForEach(soldier => soldier.ShowInfo());
+            }
         }
 
-        private void TransferSoliders()
+        private void TransferSoliders(string filterValue)
         {
-            string filterValue = "Б";
+            int squadOneIndex = 0;
+            int squadTwoIndex = 1;
 
-            List<Soldier> filteredSoldiers = _squad2.Union(_squad1.Where(soldier => soldier.Name.ToUpper().StartsWith(filterValue))
-                .ToList()).ToList();
+            List<Soldier> filteredSoldiersSquad2 = _squads[squadTwoIndex].Union(_squads[squadOneIndex]
+                                                   .Where(soldier => soldier.Name.ToUpper().StartsWith(filterValue)).ToList()).ToList();
 
-            _squad2 = filteredSoldiers;
+            _squads[squadTwoIndex] = filteredSoldiersSquad2;
 
-            for (int i = 0; i < filteredSoldiers.Count; i++)
-                _squad1.Remove(filteredSoldiers[i]);
+            List<Soldier> filteredSoldiersSquad1 = _squads[squadOneIndex].Except(_squads[squadTwoIndex]
+                                                   .Where(soldier => soldier.Name.ToUpper().StartsWith(filterValue)).ToList()).ToList();
+
+            _squads[squadOneIndex] = filteredSoldiersSquad1;
         }
     }
 
@@ -87,7 +93,18 @@ namespace HW_transferOfFighters
 
     public class MilitaryFactory
     {
-        public List<Soldier> CreateSquad1()
+        public List<List<Soldier>> CreateSquadsList()
+        {
+            List<List<Soldier>> squads = new List<List<Soldier>>
+            {
+                new List<Soldier>(CreateSquadOne()),
+                new List<Soldier>(CreateSquadTwo())
+            };
+
+            return squads;
+        }
+
+        private List<Soldier> CreateSquadOne()
         {
             List<Soldier> soldiers = new List<Soldier>
             {
@@ -102,7 +119,7 @@ namespace HW_transferOfFighters
             return soldiers;
         }
 
-        public List<Soldier> CreateSquad2()
+        private List<Soldier> CreateSquadTwo()
         {
             List<Soldier> soldiers = new List<Soldier>
             {
